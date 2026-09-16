@@ -243,10 +243,10 @@ export default function RegistrationForm() {
             >
               {isSubmitting ? (
                 <span>
-                  {isFoodSelected ? "registering..." : "redirecting to stripe..."}
+                  {isFoodSelected ? "registering..." : isDonationSelected ? "redirecting to stripe..." : "register"}
                 </span>
               ) : (
-                <span>{isFoodSelected ? "Register" : "Donate with Stripe"}</span>
+                <span>{isDonationSelected ? "Donate with Stripe" : "Register"}</span>
               )}
             </button>
           </form>
