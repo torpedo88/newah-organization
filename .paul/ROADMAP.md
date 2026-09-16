@@ -13,7 +13,7 @@ From an empty repository to a live site on a real domain capturing real event re
 ## Current Milestone
 
 **v0.1 Initial Release** (v0.1.0)
-Status: Not started
+Status: In progress
 Phases: 0 of 5 complete
 
 Scope: public pages + event list + event registration portal, live on a real domain.
@@ -28,7 +28,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Name | Plans | Status | Completed |
 |-------|------|-------|--------|-----------|
-| 1 | Foundation | TBD | Not started | - |
+| 1 | Foundation | 2 | Planning | - |
 | 2 | Public Site | TBD | Not started | - |
 | 3 | Events | TBD | Not started | - |
 | 4 | Registration | TBD | Not started | - |
@@ -52,7 +52,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 **Testable:** deploy returns 200; build fails loudly on missing env; anon can read published events; anon **cannot** read `people` or `registrations`; committed tree has no secrets.
 
-**Plans:** Defined at `/paul:plan`. Expect a split: scaffold/deploy, then schema/RLS.
+**Plans:**
+- [ ] 01-01: Restore the audited scaffold, re-verify independently, deploy to Vercel
+- [ ] 01-02: Schema (`people`/`events`/`registrations`) + RLS policies
 
 ### Phase 2: Public Site
 

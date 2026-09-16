@@ -11,25 +11,26 @@ about: "newah-organization"
 See: .paul/PROJECT.md (updated 2026-09-15)
 
 **Core value:** The Newah community of Northern California can find out what's happening and sign up for it in one place, while the chapter owns its own community data.
-**Current focus:** Project initialized from SEED ideation — ready for planning
+**Current focus:** v0.1 Initial Release — Phase 1 Foundation, plan 01-01
 
 ## Current Position
 
 Milestone: v0.1 Initial Release
-Phase: Not yet planned (5 defined in ROADMAP)
-Plan: None yet
-Status: Ready for first PLAN
-Last activity: 2026-09-15 — Initialized from PLANNING.md (SEED, application type)
+Phase: 1 of 5 (Foundation) — Planning
+Plan: 01-01 created, awaiting approval
+Status: PLAN created, ready for APPLY
+Last activity: 2026-09-15 — Created .paul/phases/01-foundation/01-01-PLAN.md
 
 Progress:
 - Milestone: [░░░░░░░░░░] 0%
+- Phase 1: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ○        ○        ○     [Ready for first PLAN]
+  ✓        ○        ○     [Plan created, awaiting approval]
 ```
 
 ## Performance Metrics
@@ -74,14 +75,21 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 ## Boundaries (Active)
 
-None yet — set when the first PLAN is created.
+From plan 01-01:
+- `.paul/**` — SEED-derived state is authoritative; the prior branch's `.paul/` is superseded and must never be restored over it
+- `PLANNING.md` — ideation record, frozen
+- `main` / `torpedo88/main` — work happens on `phase-01/foundation`
+- `.env.local`, `pnpm-lock.yaml` — maintainer-created / restored as committed
+- Branch `phase-01/foundation-scaffold` — recovery point; do not delete, rebase, or force-push
+- No schema, migrations, or RLS in 01-01 (owned by 01-02)
+- No content, design, events, registration, auth, domain, analytics, Stripe, or email provider
 
 ## Session Continuity
 
 Last session: 2026-09-15
-Stopped at: PAUL initialized from SEED PLANNING.md
-Next action: Run /paul:plan to create the first plan for Phase 1 (Foundation)
-Resume file: .paul/PROJECT.md
+Stopped at: Plan 01-01 created
+Next action: Review plan, then /paul:audit .paul/phases/01-foundation/01-01-PLAN.md (enterprise audit enabled)
+Resume file: .paul/phases/01-foundation/01-01-PLAN.md
 
 **Prior work:** branch `phase-01/foundation-scaffold` holds a complete Next.js 16 + Supabase scaffold, CI workflow, and an enterprise plan audit (5 must-have + 5 strongly-recommended findings). Worth re-reading before re-executing Phase 1 — it already found three real defects.
 
