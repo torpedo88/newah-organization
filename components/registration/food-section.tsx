@@ -29,7 +29,7 @@ export default function FoodSection({ form }: FoodSectionProps) {
             <input
               type="radio"
               value={option.id}
-              {...form.register("foodOption")}
+              {...form.register("foodOption", { shouldUnregister: true })}
               className="w-4 h-4 text-blue-600 dark:text-blue-400 cursor-pointer"
             />
             <span className="ml-3 text-slate-900 dark:text-white font-medium">{option.label}</span>

@@ -21,7 +21,7 @@ export default function RegistrationForm() {
 
   const form = useForm<Registration>({
     resolver: zodResolver(registrationSchema),
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       fullName: "",
       phone: "",
@@ -34,7 +34,7 @@ export default function RegistrationForm() {
 
   const handleRegistrationTypeChange = (type: "FOOD" | "DONATION") => {
     setRegistrationType(type);
-    form.setValue("registrationType", type, { shouldValidate: true });
+    form.setValue("registrationType", type);
 
     if (type === "FOOD") {
       form.setValue("foodOption", "");

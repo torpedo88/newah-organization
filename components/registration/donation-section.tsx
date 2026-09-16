@@ -14,16 +14,16 @@ export default function DonationSection({ form }: DonationSectionProps) {
   const selectedAmount = form.watch("donationAmount");
 
   const handlePredefinedAmount = (amount: number) => {
-    form.setValue("donationAmount", amount, { shouldValidate: true });
+    form.setValue("donationAmount", amount);
     setCustomAmount("");
   };
 
   const handleCustomAmount = (value: string) => {
     setCustomAmount(value);
-    if (value && !isNaN(parseFloat(value))) {
+    if (value) {
       const numValue = parseFloat(value);
-      if (numValue > 0) {
-        form.setValue("donationAmount", numValue, { shouldValidate: true });
+      if (!isNaN(numValue) && numValue > 0) {
+        form.setValue("donationAmount", numValue);
       }
     }
   };
