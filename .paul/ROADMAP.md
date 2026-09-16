@@ -28,7 +28,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Name | Plans | Status | Completed |
 |-------|------|-------|--------|-----------|
-| 1 | Foundation | 2 | Planning | - |
+| 1 | Foundation | 2 | Planned — ready to execute | - |
 | 2 | Public Site | TBD | Not started | - |
 | 3 | Events | TBD | Not started | - |
 | 4 | Registration | TBD | Not started | - |
