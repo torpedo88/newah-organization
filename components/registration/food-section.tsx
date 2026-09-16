@@ -14,8 +14,8 @@ export default function FoodSection({ form }: FoodSectionProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-[#666666] dark:text-[#B0B0B0]">
-        Choose Your Food *
+      <h2 className="text-sm font-semibold text-[#0A0E27] dark:text-white">
+        Choose Your Food
       </h2>
 
       <div className="space-y-3">
@@ -24,15 +24,15 @@ export default function FoodSection({ form }: FoodSectionProps) {
             key={option.id}
             className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all ${
               selectedFood === option.id
-                ? "border-[#9D4EDD] bg-[#F5EFFF] dark:bg-[#2A1E4E]"
-                : "border-[#E5E5E7] dark:border-[#2A2E4E] bg-white dark:bg-[#161B35] hover:border-[#9D4EDD]"
+                ? "border-[#FF7A45] bg-[#FFF3ED] dark:bg-[#3a2820]"
+                : "border-[#E8F0F7] dark:border-[#2A2E4E] bg-[#E8F0F7] dark:bg-[#161B35] hover:border-[#FF7A45]"
             }`}
           >
             <input
               type="radio"
               value={option.id}
               {...form.register("foodOption", { shouldUnregister: true })}
-              className="w-4 h-4 text-[#9D4EDD] dark:text-[#9D4EDD] cursor-pointer"
+              className="w-4 h-4 text-[#FF7A45] dark:text-[#FF7A45] cursor-pointer"
             />
             <span className="ml-3 text-[#0A0E27] dark:text-white font-medium">{option.label}</span>
           </label>

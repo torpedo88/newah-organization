@@ -23,7 +23,7 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
             <>
               {/* Success Icon */}
               <div className="text-5xl mb-4">✓</div>
-              <h1 className="text-3xl font-bold text-[#9D4EDD] mb-2">
+              <h1 className="text-3xl font-bold text-[#FF7A45] mb-2">
                 Registration successful
               </h1>
               <p className="text-lg text-[#666666] dark:text-[#B0B0B0] mb-8">
@@ -62,7 +62,7 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
             <>
               {/* Donation Success Icon */}
               <div className="text-5xl mb-4">❤️</div>
-              <h1 className="text-3xl font-bold text-[#9D4EDD] mb-2">
+              <h1 className="text-3xl font-bold text-[#FF7A45] mb-2">
                 Thank you
               </h1>
               <p className="text-lg text-[#666666] dark:text-[#B0B0B0] mb-8">
@@ -98,7 +98,7 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
           {/* Done Button */}
           <Link
             href="/"
-            className="inline-block bg-[#9D4EDD] hover:bg-[#8B3FCC] dark:hover:bg-[#AE5FFF] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block bg-[#FF7A45] hover:bg-[#FF6B35] dark:hover:bg-[#FF8555] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             Done
           </Link>
