@@ -25,6 +25,7 @@ export default function RegistrationForm() {
       fullName: "",
       phone: "",
       email: "",
+      numberOfGuests: undefined,
       registrationType: undefined,
       foodOption: "",
       donationAmount: undefined,
@@ -157,6 +158,24 @@ export default function RegistrationForm() {
                 />
                 {form.formState.errors.email && (
                   <p className="mt-1 text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.email.message}</p>
+                )}
+              </div>
+
+              {/* Number of Guests */}
+              <div>
+                <label className="block text-sm font-semibold text-[#0A0E27] dark:text-white mb-2">
+                  Number of Guests
+                </label>
+                <input
+                  type="number"
+                  {...form.register("numberOfGuests", { valueAsNumber: true })}
+                  placeholder="1"
+                  min="1"
+                  max="100"
+                  className="w-full px-4 py-3 rounded-lg bg-[#E8F0F7] dark:bg-[#1a2a3a] border border-[#E8F0F7] dark:border-[#2a3a4a] text-[#0A0E27] dark:text-white placeholder-[#7a8a9a] dark:placeholder-[#8a9aaa] focus:outline-none focus:border-[#FF7A45] transition-colors"
+                />
+                {form.formState.errors.numberOfGuests && (
+                  <p className="mt-1 text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.numberOfGuests.message}</p>
                 )}
               </div>
             </div>

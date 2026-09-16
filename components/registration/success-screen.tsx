@@ -46,10 +46,16 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
                   <span className="text-[#999999] dark:text-[#808090]">registration</span>
                   <span className="font-medium text-[#0A0E27] dark:text-white">food</span>
                 </div>
-                <div className="flex justify-between py-2">
+                <div className="flex justify-between py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E]">
                   <span className="text-[#999999] dark:text-[#808090]">food selection</span>
                   <span className="font-medium text-[#0A0E27] dark:text-white">
                     {getFoodLabel((data as any).foodOption)}
+                  </span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span className="text-[#999999] dark:text-[#808090]">number of guests</span>
+                  <span className="font-medium text-[#0A0E27] dark:text-white">
+                    {(data as any).numberOfGuests}
                   </span>
                 </div>
               </div>

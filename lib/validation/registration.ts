@@ -13,6 +13,7 @@ export const baseSchema = z.object({
     .regex(/^\d{10}$/, "Phone number must be 10 digits")
     .trim(),
   email: z.string().email("Invalid email address").trim().toLowerCase(),
+  numberOfGuests: z.number().int("Must be a whole number").min(1, "At least 1 guest required").max(100, "Maximum 100 guests").optional(),
   registrationType: registrationTypeSchema.optional(),
   foodOption: z.string().optional(),
   donationAmount: z.number().optional(),
@@ -21,7 +22,10 @@ export const baseSchema = z.object({
 export const registrationSchema = baseSchema.refine(
   (data) => {
     if (!data.registrationType) return false;
-    if (data.registrationType === "FOOD" && (!data.foodOption || data.foodOption.trim().length < 2)) return false;
+    if (data.registrationType === "FOOD") {
+      if (!data.foodOption || data.foodOption.trim().length < 2) return false;
+      if (!data.numberOfGuests || data.numberOfGuests < 1) return false;
+    }
     if (data.registrationType === "DONATION" && (!data.donationAmount || data.donationAmount < 1 || data.donationAmount > 10000)) return false;
     return true;
   },
