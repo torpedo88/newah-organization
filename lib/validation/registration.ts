@@ -24,7 +24,7 @@ export const registrationSchema = baseSchema.refine(
     if (!data.registrationType) return false;
     if (data.registrationType === "FOOD") {
       if (!data.foodOption || data.foodOption.trim().length < 2) return false;
-      if (!data.numberOfGuests || data.numberOfGuests < 1) return false;
+      if (data.numberOfGuests === undefined || data.numberOfGuests === null || data.numberOfGuests < 1) return false;
     }
     if (data.registrationType === "DONATION" && (!data.donationAmount || data.donationAmount < 1 || data.donationAmount > 10000)) return false;
     return true;
