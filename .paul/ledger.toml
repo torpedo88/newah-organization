@@ -1,0 +1,18 @@
+# .paul/ledger.toml — Session history for cost/time attribution
+# Append-only. BASE extracts for usage analytics cross-reference.
+
+[[entry]]
+action = "plan"
+phase = 1
+plan = "01-01"
+at = "2026-09-16T05:40:00Z"
+
+[[entry]]
+action = "audit"
+phase = 1
+plan = "01-01"
+at = "2026-09-16T05:48:00Z"
+verdict = "conditionally_acceptable"
+must_have_applied = 5
+strongly_recommended_applied = 5
+deferred = 5
