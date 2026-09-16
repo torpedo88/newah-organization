@@ -8,7 +8,7 @@ about: "newah-organization"
 
 ## Overview
 
-From an empty repository to a live site on a real domain capturing real event registrations. Foundation proves the stack and makes the data layer safe before any real data exists; the public site and events give the community something to read; registration retires the spreadsheet; launch hands the board a self-serve tool. Membership, payments, and outreach follow after v0.1 ships.
+A website for the NOA Northern California chapter: org information, an events calendar with email-only registration, member signup, and a board-facing admin portal that grows into a light CRM. The journey runs from an empty repo to a live public site capturing real event registrations, then outward to membership, payments, and outreach.
 
 ## Current Milestone
 
@@ -16,7 +16,7 @@ From an empty repository to a live site on a real domain capturing real event re
 Status: In progress
 Phases: 0 of 5 complete
 
-Scope: public pages + event list + event registration portal, live on a real domain.
+Scope of v0.1 — the MVP slice: public pages + event list + event registration portal.
 
 ## Phases
 
@@ -38,52 +38,46 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 ### Phase 1: Foundation
 
-**Goal:** A typed Next.js app wired to Supabase, deployed to Vercel, with the `people`/`events`/`registrations` schema and RLS policies that make the data layer safe by default.
+**Goal:** A typed Next.js app wired to Supabase, styled with Tailwind + shadcn/ui, deployed to Vercel, with the events/registrations schema and RLS policies in place.
 **Depends on:** Nothing (first phase)
-**Research:** Unlikely (well-trodden stack; prior scaffold exists on `phase-01/foundation-scaffold` for reference)
+**Research:** Unlikely (well-trodden stack)
 
 **Scope:**
-- Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui scaffold, pnpm, Node 22 pinned
-- Supabase browser and server clients, fail-fast public env validation
-- CI: lint, typecheck, build, gitleaks secret scan
-- Schema: `people` (email-keyed spine), `events`, `registrations` with unique (event_id, person_id)
-- RLS: anon SELECTs published events only; anon INSERTs into `people`/`registrations` with **no SELECT**
-- Vercel deploy, robots noindex until launch
-
-**Testable:** deploy returns 200; build fails loudly on missing env; anon can read published events; anon **cannot** read `people` or `registrations`; committed tree has no secrets.
+- Next.js 15 App Router + TypeScript scaffold, pnpm
+- Tailwind + shadcn/ui baseline
+- Supabase client wiring (browser + server), env var conventions
+- Vercel project + first successful deploy
+- Database schema: events, registrations
+- Row Level Security policies: public reads published events; nobody reads registrations without an admin role
 
 **Plans:**
-- [ ] 01-01: Restore the audited scaffold, re-verify independently, deploy to Vercel
-- [ ] 01-02: Schema (`people`/`events`/`registrations`) + RLS policies
+- [ ] 01-01: Scaffold Next.js + Tailwind/shadcn + Supabase clients, deploy to Vercel
+- [ ] 01-02: Database schema (events, registrations) + RLS policies + generated types
 
 ### Phase 2: Public Site
 
 **Goal:** The public shell and org information pages a visitor can read and share.
-**Depends on:** Phase 1 (scaffold, styling baseline)
+**Depends on:** Phase 1 (app scaffold, styling baseline)
 **Research:** Unlikely
 
 **Scope:**
-- Visual direction: palette, typography, Newah cultural visual language
-- Mobile-first responsive layout: header, nav, footer
+- Design direction: palette, typography, Newah cultural visual language
+- Site layout: header, nav, footer, mobile-first responsive shell
 - Pages: home, about, board, mission, culture, contact
-
-**Testable:** renders correctly at 375px and desktop; passes WCAG AA contrast and keyboard navigation.
 
 **Plans:** Defined when Phase 2 begins.
 
 ### Phase 3: Events
 
-**Goal:** Visitors browse upcoming events and open a detail page, driven by real Supabase data.
+**Goal:** Visitors can browse upcoming events and open a detail page, driven by real Supabase data.
 **Depends on:** Phase 1 (schema), Phase 2 (layout, design system)
 **Research:** Unlikely
 
 **Scope:**
-- Event list with upcoming/past grouping
-- Event detail page by slug
-- Cover images via Supabase Storage
+- Event list / calendar view, upcoming vs past
+- Event detail page with slug routing
 - Empty and error states
-
-**Testable:** a published event shows correct date, time, location; a draft event is invisible to anonymous visitors.
+- Event images via Supabase Storage
 
 **Plans:** Defined when Phase 3 begins.
 
@@ -92,15 +86,13 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 **Goal:** A visitor registers for an event with email only, and the board can see who is coming.
 **Depends on:** Phase 3 (event pages to register from)
 **Research:** Likely
-**Research topics:** Transactional email provider (Resend vs Supabase SMTP vs Postmark); abuse mitigation for an unauthenticated write
+**Research topics:** Transactional email provider (Resend vs Supabase SMTP vs other), spam/abuse mitigation for an unauthenticated form
 
 **Scope:**
-- `registerForEvent` Server Action with server-side validation
-- `people` upsert by email; registration insert; per-event dedupe; capacity enforcement
-- Confirmation email — best-effort, never rolls back a successful registration
-- Vercel firewall rules; captcha only if spam materializes
-
-**Testable:** a registration lands in Supabase; duplicate submit does not double-book; a full event refuses politely; an email outage does not lose the registration.
+- Registration form: name, email, phone, party size, notes
+- Server-side validation, duplicate handling per event+email, capacity enforcement
+- Bot/abuse mitigation on an unauthenticated endpoint
+- Confirmation email to registrant
 
 **Plans:** Defined when Phase 4 begins.
 
@@ -109,25 +101,22 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 **Goal:** The site lives on a real domain the board can share, and the board can get the registration list out.
 **Depends on:** Phase 4
 **Research:** Likely
-**Research topics:** Domain selection and registrar; analytics choice
+**Research topics:** Domain selection and registrar, analytics choice
 
 **Scope:**
-- Domain purchase, DNS, Vercel custom domain
+- Domain purchase + DNS + Vercel custom domain
 - SEO basics, Open Graph images for event sharing
 - Privacy notice covering collected PII
 - Admin-authenticated registration list + CSV export
-- Remove robots noindex
-- Credential handover document for the board
-
-**Testable:** a board member logs in, sees the list, exports a CSV; a non-board user cannot reach it; shared event links render a preview card.
 
 **Plans:** Defined when Phase 5 begins.
 
 ## Post-v0.1 (not yet scheduled)
 
-- Memberships + Stripe dues
+- Member signup + membership records
+- Stripe payments (dues, paid events)
 - Full admin portal / CRM
-- SMS and email marketing with consent capture and unsubscribe handling
+- SMS and email marketing with consent capture
 
 ---
 *Roadmap created: 2026-09-15*

@@ -8,46 +8,48 @@
 
 ## Project-Level Dependencies
 
+Skills and commands that apply to this project's work.
+
 | Work Type | Skill/Command | Priority | When Required | Notes |
 |-----------|---------------|----------|---------------|-------|
-| UI/UX design decisions | `/ui-ux-pro-max` | required | Before building any new page or component | Mobile-first; most visitors arrive on a phone |
-| Frontend implementation | `/frontend-design` | required | Writing React/Next.js components | Carries the design decision into code |
-| Visual QA | `/design-review` | required | After a UI phase, before UNIFY | Spacing, responsive, contrast |
-| Live-site QA | `/browse` | required | Before shipping any phase | gstack browse is the mandated path — never `mcp__claude-in-chrome__*` |
-| Next.js / Vercel patterns | `/vercel:nextjs`, `/vercel:deploy` | required | Routing, rendering, env vars, deploys | Stack is Vercel-native |
-| Schema, RLS, auth, PII | `/engineering-skills:senior-security` | required | Any change touching Supabase schema or policies | The INSERT-without-SELECT split is the project's load-bearing control |
-| Code review before merge | `/code-review` | required | Before landing any phase branch | Use `high` for RLS, auth, or payment code |
-| Codebase audit | `/aegis:audit` | recommended | End of a milestone, or when inheriting unknown code | 14 domains; `/aegis:transform` emits PAUL-ready remediation plans |
-| Payments | `/stripe:stripe-best-practices` | optional | Only when dues or paid events are implemented | Dormant until post-v0.1 |
+| UI/UX design decisions | `/ui-ux-pro-max` | required | Before building any new page or component — layout, palette, typography, states | Community site; visual credibility matters to a volunteer org |
+| Frontend implementation | `/frontend-design` | required | When writing React/Next.js components and page markup | Carries the design decision into code |
+| Visual QA | `/design-review` | required | After a UI phase, before UNIFY | Catches spacing/responsive/contrast regressions |
+| Live-site QA | `/browse` | required | Before shipping any phase to production | gstack browse is the mandated browsing path — never use `mcp__claude-in-chrome__*` |
+| Next.js / Vercel patterns | `/vercel:nextjs`, `/vercel:deploy` | required | Routing, rendering, caching, env vars, and every deploy | Stack is Vercel-native |
+| Data & PII security review | `/engineering-skills:senior-security` | required | Any change touching Supabase schema, RLS policies, or auth | Board-admins-only PII rule is enforced at the database layer |
+| Code review before merge | `/code-review` | required | Before landing any phase branch | Use `/code-review high` for auth, RLS, or payment code |
+| Payments | `/stripe:stripe-best-practices` | optional | Only when dues or paid events are implemented | Dormant until that phase |
 | Notes / vault sync | `/obsidian-sync` | required | End of any substantive session | Mandated by global CLAUDE.md |
-| Bug investigation | `/superpowers:systematic-debugging` | optional | Non-obvious bug or test failure | Process before domain fixes |
+| Bug investigation | `/superpowers:systematic-debugging` | optional | Any non-obvious bug or test failure | Process-first before domain fixes |
 
 **Priority Legend:**
-- `required` — Gap documented if not invoked during UNIFY
-- `optional` — Informational only
+- `required` - Gap documented if not invoked during UNIFY
+- `optional` - Informational only, no gap logged
 
 ---
 
 ## Phase Overrides
 
+Skills needed for specific phases beyond project-level defaults.
+
 | Phase | Additional Skills | Notes |
 |-------|-------------------|-------|
-| 1 Foundation | `/engineering-advanced-skills:database-schema-designer` | `people`/`events`/`registrations` modeling before any table exists |
-| 1 Foundation | `/engineering-skills:senior-security` | RLS policy design — promote to blocking; this is the phase that protects community PII |
-| 4 Registration | `/engineering-skills:senior-security` | Unauthenticated write endpoint — abuse, spam, dedupe review |
-| 5 Launch | `/engineering-skills:senior-security` | Admin auth + PII export surface |
-| post-v0.1 Payments | `/stripe:stripe-integration-expert` | Promote from optional to required when that phase starts |
-| post-v0.1 Marketing | `/engineering-skills:email-template-builder` | Consent capture and unsubscribe handling in scope |
+| Foundation (schema + RLS) | `/engineering-advanced-skills:database-schema-designer` | Events / registrations / members / profiles modeling before any table exists |
+| Registration portal | `/engineering-skills:senior-security` | Email-only flow with no auth — needs abuse, spam, and dedupe review |
+| Payments (post-v0.1) | `/stripe:stripe-integration-expert` | Promote from optional to required when this phase starts |
+| SMS + email marketing (post-v0.1) | `/engineering-skills:email-template-builder` | Consent capture and unsubscribe handling are in scope |
 
 ---
 
 ## Templates & Assets
 
+Reference templates, assets, or external resources for this project.
+
 | Asset Type | Location | When Used |
 |------------|----------|-----------|
-| Org branding (logo, colors) | TBD — from board | Phase 2 |
-| Newah cultural content and photos | TBD — from board | Phase 2 |
-| Prior scaffold + enterprise audit | branch `phase-01/foundation-scaffold` | Phase 1 — reference before re-executing |
+| Org branding (logo, colors) | TBD — not yet supplied | First UI phase |
+| Newah cultural content/photos | TBD — from board | Public info pages |
 
 ---
 
@@ -55,10 +57,12 @@
 
 During UNIFY, confirm:
 - [ ] Required skills were invoked for matching work types
-- [ ] Gaps documented in STATE.md
-- [ ] Patterns updated if an intentional deviation is now standard
+- [ ] Gaps documented in STATE.md Deviations section
+- [ ] Patterns updated if intentional deviation is now standard
 
 ### Skill Audit Template
+
+Use this during UNIFY to track invocations:
 
 | Expected Skill | Invoked? | Gap? | Notes |
 |----------------|----------|------|-------|
@@ -77,7 +81,7 @@ During UNIFY, confirm:
 
 | Date | Change | Reason |
 |------|--------|--------|
-| 2026-09-15 | Initial creation | PAUL init from SEED PLANNING.md |
+| 2026-09-15 | Initial creation | Project setup during /paul:init |
 
 ---
 

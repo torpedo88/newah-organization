@@ -2,12 +2,26 @@
 # Append-only. BASE extracts for usage analytics cross-reference.
 
 [[entry]]
-action = "init"
-source = "PLANNING.md (SEED, application)"
-at = "2026-09-16T06:30:00Z"
-
-[[entry]]
 action = "plan"
 phase = 1
 plan = "01-01"
-at = "2026-09-16T06:45:00Z"
+at = "2026-09-16T05:40:00Z"
+
+[[entry]]
+action = "audit"
+phase = 1
+plan = "01-01"
+at = "2026-09-16T05:48:00Z"
+verdict = "conditionally_acceptable"
+must_have_applied = 5
+strongly_recommended_applied = 5
+deferred = 5
+
+[[entry]]
+action = "apply"
+phase = 1
+plan = "01-01"
+at = "2026-09-16T06:05:00Z"
+tasks_completed = 4
+tasks_total = 5
+paused_at = "checkpoint:human-action"
