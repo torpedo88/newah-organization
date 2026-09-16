@@ -21,25 +21,27 @@ export default function RegistrationForm() {
 
   const form = useForm<Registration>({
     resolver: zodResolver(registrationSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
       fullName: "",
       phone: "",
       email: "",
-      registrationType: undefined as any,
+      registrationType: undefined,
       foodOption: "",
-      donationAmount: 0,
+      donationAmount: undefined,
     },
   });
 
   const handleRegistrationTypeChange = (type: "FOOD" | "DONATION") => {
     setRegistrationType(type);
-    form.setValue("registrationType", type);
+    form.setValue("registrationType", type, { shouldValidate: true });
 
     if (type === "FOOD") {
-      form.setValue("donationAmount", 0);
+      form.setValue("foodOption", "");
+      form.setValue("donationAmount", undefined);
     } else {
       form.setValue("foodOption", "");
+      form.setValue("donationAmount", undefined);
     }
   };
 

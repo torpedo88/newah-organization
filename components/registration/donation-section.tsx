@@ -20,11 +20,11 @@ export default function DonationSection({ form }: DonationSectionProps) {
 
   const handleCustomAmount = (value: string) => {
     setCustomAmount(value);
-    if (value) {
+    if (value && !isNaN(parseFloat(value))) {
       const numValue = parseFloat(value);
-      form.setValue("donationAmount", numValue, { shouldValidate: true });
-    } else {
-      form.setValue("donationAmount", 0, { shouldValidate: true });
+      if (numValue > 0) {
+        form.setValue("donationAmount", numValue, { shouldValidate: true });
+      }
     }
   };
 
