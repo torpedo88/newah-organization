@@ -21,7 +21,7 @@ export const baseSchema = z.object({
 export const registrationSchema = baseSchema.refine(
   (data) => {
     if (!data.registrationType) return false;
-    if (data.registrationType === "FOOD" && !data.foodOption) return false;
+    if (data.registrationType === "FOOD" && (!data.foodOption || data.foodOption.trim().length < 2)) return false;
     if (data.registrationType === "DONATION" && (!data.donationAmount || data.donationAmount < 1 || data.donationAmount > 10000)) return false;
     return true;
   },
