@@ -33,7 +33,9 @@ export default function DonationSection({ form }: DonationSectionProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Donation Amount *</h2>
+        <h2 className="text-base font-semibold text-[#1A1A18] dark:text-[#FAFAF8] mb-4">
+          donation amount *
+        </h2>
 
         {/* Predefined Amounts Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
@@ -44,8 +46,8 @@ export default function DonationSection({ form }: DonationSectionProps) {
               onClick={() => handlePredefinedAmount(amount)}
               className={`p-3 rounded-lg border-2 font-semibold transition-all ${
                 selectedAmount === amount
-                  ? "border-blue-500 bg-blue-600 text-white dark:bg-blue-700"
-                  : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white hover:border-slate-400 dark:hover:border-slate-500"
+                  ? "border-[#C41E3A] bg-[#C41E3A] text-white dark:bg-[#C41E3A]"
+                  : "border-[#E8E8E5] dark:border-[#2A2A28] bg-white dark:bg-[#0F0F0D] text-[#1A1A18] dark:text-[#FAFAF8] hover:border-[#C41E3A]"
               }`}
             >
               ${amount}
@@ -55,11 +57,11 @@ export default function DonationSection({ form }: DonationSectionProps) {
 
         {/* Custom Amount Input */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Other Amount
+          <label className="block text-sm font-semibold lowercase text-[#8B8B85] dark:text-[#A0A09A] mb-2">
+            other amount
           </label>
           <div className="flex items-center gap-2">
-            <span className="text-slate-700 dark:text-slate-300 font-medium">$</span>
+            <span className="text-[#1A1A18] dark:text-[#FAFAF8] font-medium">$</span>
             <input
               type="number"
               value={customAmount}
@@ -68,20 +70,20 @@ export default function DonationSection({ form }: DonationSectionProps) {
               min="1"
               max="10000"
               step="0.01"
-              className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-0 py-3 border-b-2 border-[#E8E8E5] dark:border-[#2A2A28] bg-transparent text-[#1A1A18] dark:text-[#FAFAF8] placeholder-[#C0C0B8] dark:placeholder-[#666660] focus:outline-none focus:border-b-2 focus:border-[#C41E3A] dark:focus:border-[#C41E3A] transition-colors"
             />
           </div>
         </div>
 
         {donationError && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{donationError.message}</p>
+          <p className="mt-2 text-sm text-[#C41E3A]">{donationError.message}</p>
         )}
       </div>
 
       {/* Summary */}
       {selectedAmount && (
-        <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg">
-          <p className="text-sm text-blue-900 dark:text-blue-300">
+        <div className="p-4 bg-[#2D5016] bg-opacity-10 dark:bg-opacity-20 border border-[#2D5016] rounded-lg">
+          <p className="text-sm text-[#2D5016] dark:text-[#7FD876]">
             You are donating <span className="font-semibold">${selectedAmount.toFixed(2)}</span> to support Newah Organization.
           </p>
         </div>

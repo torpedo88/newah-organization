@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { registrationSchema, Registration, FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
 import { registerFood, registerDonation } from "@/lib/actions/register";
 import FoodSection from "./food-section";
@@ -62,7 +61,6 @@ export default function RegistrationForm() {
       } else if (data.registrationType === "DONATION") {
         const result = await registerDonation(data as DonationRegistration);
         if (result.success && result.sessionUrl) {
-          // Redirect to Stripe
           window.location.href = result.sessionUrl;
         } else if (result.sessionUrl) {
           form.setError("root", { message: "Could not create Stripe session" });
@@ -84,134 +82,172 @@ export default function RegistrationForm() {
   const canSubmit = form.formState.isValid && !isSubmitting;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-[#FAFAF8] to-[#F5F5F3] dark:from-[#0F0F0D] dark:to-[#1A1A18] py-8 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-2xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-            Newah Organization
+        <div className="mb-12 text-center">
+          <p className="text-sm font-semibold lowercase tracking-wide text-[#8B8B85] dark:text-[#A0A09A] mb-2">
+            newah organization
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#1A1A18] dark:text-[#FAFAF8] mb-2">
+            Join us
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 mt-2">Registration</p>
+          <p className="text-base text-[#8B8B85] dark:text-[#A0A09A]">
+            Register for food or make a donation
+          </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-lg shadow-lg p-8">
+        <div className="bg-white dark:bg-[#1A1A18] rounded-lg shadow-sm border border-[#E8E8E5] dark:border-[#2A2A28] p-8">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {/* Basic Information Section */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Basic Information</h2>
+              <h2 className="text-base font-semibold text-[#1A1A18] dark:text-[#FAFAF8]">
+                your information
+              </h2>
 
               {/* Full Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Full Name *
+                <label className="block text-sm font-semibold lowercase text-[#8B8B85] dark:text-[#A0A09A] mb-2">
+                  full name *
                 </label>
                 <input
                   type="text"
                   {...form.register("fullName")}
                   placeholder="Enter your full name"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-0 py-3 border-b-2 border-[#E8E8E5] dark:border-[#2A2A28] bg-transparent text-[#1A1A18] dark:text-[#FAFAF8] placeholder-[#C0C0B8] dark:placeholder-[#666660] focus:outline-none focus:border-b-2 focus:border-[#C41E3A] dark:focus:border-[#C41E3A] transition-colors"
                 />
                 {form.formState.errors.fullName && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{form.formState.errors.fullName.message}</p>
+                  <p className="mt-1 text-sm text-[#C41E3A]">{form.formState.errors.fullName.message}</p>
                 )}
               </div>
 
               {/* Phone Number */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Phone Number *
+                <label className="block text-sm font-semibold lowercase text-[#8B8B85] dark:text-[#A0A09A] mb-2">
+                  phone number *
                 </label>
                 <input
                   type="tel"
                   {...form.register("phone")}
-                  placeholder="10-digit number (e.g., 5101234567)"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="10-digit number"
+                  className="w-full px-0 py-3 border-b-2 border-[#E8E8E5] dark:border-[#2A2A28] bg-transparent text-[#1A1A18] dark:text-[#FAFAF8] placeholder-[#C0C0B8] dark:placeholder-[#666660] focus:outline-none focus:border-b-2 focus:border-[#C41E3A] dark:focus:border-[#C41E3A] transition-colors"
                 />
                 {form.formState.errors.phone && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{form.formState.errors.phone.message}</p>
+                  <p className="mt-1 text-sm text-[#C41E3A]">{form.formState.errors.phone.message}</p>
                 )}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Email Address *
+                <label className="block text-sm font-semibold lowercase text-[#8B8B85] dark:text-[#A0A09A] mb-2">
+                  email address *
                 </label>
                 <input
                   type="email"
                   {...form.register("email")}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-0 py-3 border-b-2 border-[#E8E8E5] dark:border-[#2A2A28] bg-transparent text-[#1A1A18] dark:text-[#FAFAF8] placeholder-[#C0C0B8] dark:placeholder-[#666660] focus:outline-none focus:border-b-2 focus:border-[#C41E3A] dark:focus:border-[#C41E3A] transition-colors"
                 />
                 {form.formState.errors.email && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{form.formState.errors.email.message}</p>
+                  <p className="mt-1 text-sm text-[#C41E3A]">{form.formState.errors.email.message}</p>
                 )}
               </div>
             </div>
 
             {/* Registration Type Section */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">How would you like to register?</h2>
+            <div className="space-y-4 pt-4">
+              <h2 className="text-base font-semibold text-[#1A1A18] dark:text-[#FAFAF8]">
+                how would you like to help?
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Food Card */}
+                {/* Food Button */}
                 <button
                   type="button"
                   onClick={() => handleRegistrationTypeChange("FOOD")}
-                  className={`p-4 rounded-lg border-2 transition-all ${
+                  className={`p-6 rounded-lg border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isFoodSelected
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
-                      : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-500"
+                      ? "border-[#C41E3A] bg-[#FEF5F5] dark:bg-[#2A1A1A] text-[#C41E3A]"
+                      : "border-[#E8E8E5] dark:border-[#2A2A28] bg-white dark:bg-[#0F0F0D] text-[#1A1A18] dark:text-[#FAFAF8] hover:border-[#C41E3A] dark:hover:border-[#C41E3A]"
                   }`}
                 >
-                  <div className="text-2xl mb-2">🍽</div>
-                  <p className="font-semibold text-slate-900 dark:text-white">Food</p>
+                  <span className="text-3xl">🍽</span>
+                  <span>Food</span>
                 </button>
 
-                {/* Donation Card */}
+                {/* Donation Button */}
                 <button
                   type="button"
                   onClick={() => handleRegistrationTypeChange("DONATION")}
-                  className={`p-4 rounded-lg border-2 transition-all ${
+                  className={`p-6 rounded-lg border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isDonationSelected
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
-                      : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-500"
+                      ? "border-[#C41E3A] bg-[#FEF5F5] dark:bg-[#2A1A1A] text-[#C41E3A]"
+                      : "border-[#E8E8E5] dark:border-[#2A2A28] bg-white dark:bg-[#0F0F0D] text-[#1A1A18] dark:text-[#FAFAF8] hover:border-[#C41E3A] dark:hover:border-[#C41E3A]"
                   }`}
                 >
-                  <div className="text-2xl mb-2">❤️</div>
-                  <p className="font-semibold text-slate-900 dark:text-white">Donation</p>
+                  <span className="text-3xl">❤️</span>
+                  <span>Donation</span>
                 </button>
               </div>
             </div>
 
-            {/* Conditional Sections */}
-            {isFoodSelected && <FoodSection form={form} />}
-            {isDonationSelected && <DonationSection form={form} />}
+            {/* Conditional Sections with fade transition */}
+            {isFoodSelected && (
+              <div className="animate-fade-in space-y-6 pt-4">
+                <FoodSection form={form} />
+              </div>
+            )}
+            {isDonationSelected && (
+              <div className="animate-fade-in space-y-6 pt-4">
+                <DonationSection form={form} />
+              </div>
+            )}
 
             {/* Error Message */}
             {form.formState.errors.root && (
-              <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg">
-                <p className="text-sm text-red-700 dark:text-red-400">{form.formState.errors.root.message}</p>
+              <div className="p-4 bg-[#FEF5F5] dark:bg-[#2A1A1A] border border-[#C41E3A] rounded-lg">
+                <p className="text-sm text-[#C41E3A]">{form.formState.errors.root.message}</p>
               </div>
             )}
 
             {/* Submit Button */}
-            <Button
+            <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#C41E3A] hover:bg-[#A01830] dark:hover:bg-[#D42940] text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <span>
-                  {isFoodSelected ? "Registering..." : "Redirecting to Stripe..."}
+                  {isFoodSelected ? "registering..." : "redirecting to stripe..."}
                 </span>
               ) : (
                 <span>{isFoodSelected ? "Register" : "Donate with Stripe"}</span>
               )}
-            </Button>
+            </button>
           </form>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        .animate-fade-in {
+          animation: fadeIn 0.2s ease-in-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-fade-in {
+            animation: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }
