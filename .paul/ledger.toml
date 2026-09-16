@@ -16,3 +16,12 @@ verdict = "conditionally_acceptable"
 must_have_applied = 5
 strongly_recommended_applied = 5
 deferred = 5
+
+[[entry]]
+action = "apply"
+phase = 1
+plan = "01-01"
+at = "2026-09-16T06:05:00Z"
+tasks_completed = 4
+tasks_total = 5
+paused_at = "checkpoint:human-action"

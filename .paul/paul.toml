@@ -17,11 +17,11 @@ phases = 5
 [phase]
 number = 1
 name = "Foundation"
-status = "planning"
+status = "applying"
 plans_completed = 0
 
 [loop]
-position = "PLAN"
+position = "APPLY"
 plan = "01-01"
 plan_path = "phases/01-foundation/01-01-PLAN.md"
 
@@ -31,4 +31,4 @@ groom = true
 [stats]
 total_plans = 0
 total_phases = 5
-last_activity = "2026-09-16T05:48:00Z"
+last_activity = "2026-09-16T06:05:00Z"
