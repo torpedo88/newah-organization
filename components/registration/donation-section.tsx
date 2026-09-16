@@ -33,8 +33,8 @@ export default function DonationSection({ form }: DonationSectionProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-base font-semibold text-[#1A1A18] dark:text-[#FAFAF8] mb-4">
-          donation amount *
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-[#666666] dark:text-[#B0B0B0] mb-4">
+          Donation Amount *
         </h2>
 
         {/* Predefined Amounts Grid */}
@@ -44,10 +44,10 @@ export default function DonationSection({ form }: DonationSectionProps) {
               key={amount}
               type="button"
               onClick={() => handlePredefinedAmount(amount)}
-              className={`p-3 rounded-lg border-2 font-semibold transition-all ${
+              className={`p-3 rounded-lg border font-semibold transition-all ${
                 selectedAmount === amount
-                  ? "border-[#C41E3A] bg-[#C41E3A] text-white dark:bg-[#C41E3A]"
-                  : "border-[#E8E8E5] dark:border-[#2A2A28] bg-white dark:bg-[#0F0F0D] text-[#1A1A18] dark:text-[#FAFAF8] hover:border-[#C41E3A]"
+                  ? "border-[#9D4EDD] bg-[#9D4EDD] text-white dark:bg-[#9D4EDD]"
+                  : "border-[#E5E5E7] dark:border-[#2A2E4E] bg-white dark:bg-[#161B35] text-[#0A0E27] dark:text-white hover:border-[#9D4EDD]"
               }`}
             >
               ${amount}
@@ -57,11 +57,11 @@ export default function DonationSection({ form }: DonationSectionProps) {
 
         {/* Custom Amount Input */}
         <div>
-          <label className="block text-sm font-semibold lowercase text-[#8B8B85] dark:text-[#A0A09A] mb-2">
-            other amount
+          <label className="block text-xs font-semibold uppercase tracking-wide text-[#999999] dark:text-[#808090] mb-3">
+            Other Amount
           </label>
           <div className="flex items-center gap-2">
-            <span className="text-[#1A1A18] dark:text-[#FAFAF8] font-medium">$</span>
+            <span className="text-[#0A0E27] dark:text-white font-medium">$</span>
             <input
               type="number"
               value={customAmount}
@@ -70,20 +70,20 @@ export default function DonationSection({ form }: DonationSectionProps) {
               min="1"
               max="10000"
               step="0.01"
-              className="flex-1 px-0 py-3 border-b-2 border-[#E8E8E5] dark:border-[#2A2A28] bg-transparent text-[#1A1A18] dark:text-[#FAFAF8] placeholder-[#C0C0B8] dark:placeholder-[#666660] focus:outline-none focus:border-b-2 focus:border-[#C41E3A] dark:focus:border-[#C41E3A] transition-colors"
+              className="flex-1 px-0 py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E] bg-transparent text-[#0A0E27] dark:text-white placeholder-[#D0D0D5] dark:placeholder-[#808090] focus:outline-none focus:border-b-2 focus:border-[#9D4EDD] dark:focus:border-[#9D4EDD] transition-colors"
             />
           </div>
         </div>
 
         {donationError && (
-          <p className="mt-2 text-sm text-[#C41E3A]">{donationError.message}</p>
+          <p className="mt-2 text-sm text-[#FF3B30] dark:text-[#FF453A]">{donationError.message}</p>
         )}
       </div>
 
       {/* Summary */}
       {selectedAmount && (
-        <div className="p-4 bg-[#2D5016] bg-opacity-10 dark:bg-opacity-20 border border-[#2D5016] rounded-lg">
-          <p className="text-sm text-[#2D5016] dark:text-[#7FD876]">
+        <div className="p-4 bg-[#F5EFFF] dark:bg-[#2A1E4E] border border-[#9D4EDD] rounded-lg">
+          <p className="text-sm text-[#0A0E27] dark:text-white">
             You are donating <span className="font-semibold">${selectedAmount.toFixed(2)}</span> to support Newah Organization.
           </p>
         </div>

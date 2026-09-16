@@ -16,45 +16,45 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAFAF8] to-[#F5F5F3] dark:from-[#0F0F0D] dark:to-[#1A1A18] py-8 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div className="min-h-screen bg-white dark:bg-[#0A0E27] py-8 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <div className="max-w-2xl mx-auto w-full">
-        <div className="bg-white dark:bg-[#1A1A18] rounded-lg shadow-sm border border-[#E8E8E5] dark:border-[#2A2A28] p-8 text-center">
+        <div className="bg-white dark:bg-[#161B35] rounded-xl shadow-sm border border-[#E5E5E7] dark:border-[#2A2E4E] p-8 text-center">
           {type === "FOOD" ? (
             <>
               {/* Success Icon */}
               <div className="text-5xl mb-4">✓</div>
-              <h1 className="text-3xl font-bold text-[#2D5016] dark:text-[#7FD876] mb-2">
+              <h1 className="text-3xl font-bold text-[#9D4EDD] mb-2">
                 Registration successful
               </h1>
-              <p className="text-lg text-[#8B8B85] dark:text-[#A0A09A] mb-8">
+              <p className="text-lg text-[#666666] dark:text-[#B0B0B0] mb-8">
                 Thank you for registering with Newah Organization.
               </p>
 
               {/* Registration Code */}
-              <div className="bg-[#FAFAF8] dark:bg-[#0F0F0D] rounded-lg p-6 mb-8 border border-[#E8E8E5] dark:border-[#2A2A28]">
-                <p className="text-sm text-[#8B8B85] dark:text-[#A0A09A] mb-2 lowercase">registration number</p>
-                <p className="text-3xl font-bold text-[#1A1A18] dark:text-[#FAFAF8] font-mono">{code}</p>
+              <div className="bg-[#F5F5F7] dark:bg-[#0A0E27] rounded-lg p-6 mb-8 border border-[#E5E5E7] dark:border-[#2A2E4E]">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#999999] dark:text-[#808090] mb-2">registration number</p>
+                <p className="text-3xl font-bold text-[#0A0E27] dark:text-white font-mono">{code}</p>
               </div>
 
               {/* Registration Details */}
               <div className="space-y-4 text-left max-w-md mx-auto mb-8">
-                <div className="flex justify-between py-2 border-b border-[#E8E8E5] dark:border-[#2A2A28]">
-                  <span className="text-[#8B8B85] dark:text-[#A0A09A]">name</span>
-                  <span className="font-medium text-[#1A1A18] dark:text-[#FAFAF8]">{data.fullName}</span>
+                <div className="flex justify-between py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E]">
+                  <span className="text-[#999999] dark:text-[#808090]">name</span>
+                  <span className="font-medium text-[#0A0E27] dark:text-white">{data.fullName}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-[#E8E8E5] dark:border-[#2A2A28]">
-                  <span className="text-[#8B8B85] dark:text-[#A0A09A]">registration</span>
-                  <span className="font-medium text-[#1A1A18] dark:text-[#FAFAF8]">food</span>
+                <div className="flex justify-between py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E]">
+                  <span className="text-[#999999] dark:text-[#808090]">registration</span>
+                  <span className="font-medium text-[#0A0E27] dark:text-white">food</span>
                 </div>
                 <div className="flex justify-between py-2">
-                  <span className="text-[#8B8B85] dark:text-[#A0A09A]">food selection</span>
-                  <span className="font-medium text-[#1A1A18] dark:text-[#FAFAF8]">
+                  <span className="text-[#999999] dark:text-[#808090]">food selection</span>
+                  <span className="font-medium text-[#0A0E27] dark:text-white">
                     {getFoodLabel((data as any).foodOption)}
                   </span>
                 </div>
               </div>
 
-              <p className="text-sm text-[#8B8B85] dark:text-[#A0A09A] mb-8">
+              <p className="text-sm text-[#666666] dark:text-[#B0B0B0] mb-8">
                 confirmation has been sent to your email.
               </p>
             </>
@@ -62,34 +62,34 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
             <>
               {/* Donation Success Icon */}
               <div className="text-5xl mb-4">❤️</div>
-              <h1 className="text-3xl font-bold text-[#C41E3A] mb-2">
+              <h1 className="text-3xl font-bold text-[#9D4EDD] mb-2">
                 Thank you
               </h1>
-              <p className="text-lg text-[#8B8B85] dark:text-[#A0A09A] mb-8">
+              <p className="text-lg text-[#666666] dark:text-[#B0B0B0] mb-8">
                 Thank you for supporting Newah Organization.
               </p>
 
               {/* Registration Code */}
-              <div className="bg-[#FAFAF8] dark:bg-[#0F0F0D] rounded-lg p-6 mb-8 border border-[#E8E8E5] dark:border-[#2A2A28]">
-                <p className="text-sm text-[#8B8B85] dark:text-[#A0A09A] mb-2 lowercase">registration number</p>
-                <p className="text-3xl font-bold text-[#1A1A18] dark:text-[#FAFAF8] font-mono">{code}</p>
+              <div className="bg-[#F5F5F7] dark:bg-[#0A0E27] rounded-lg p-6 mb-8 border border-[#E5E5E7] dark:border-[#2A2E4E]">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#999999] dark:text-[#808090] mb-2">registration number</p>
+                <p className="text-3xl font-bold text-[#0A0E27] dark:text-white font-mono">{code}</p>
               </div>
 
               {/* Donation Details */}
               <div className="space-y-4 text-left max-w-md mx-auto mb-8">
-                <div className="flex justify-between py-2 border-b border-[#E8E8E5] dark:border-[#2A2A28]">
-                  <span className="text-[#8B8B85] dark:text-[#A0A09A]">donation</span>
-                  <span className="font-medium text-[#1A1A18] dark:text-[#FAFAF8]">
+                <div className="flex justify-between py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E]">
+                  <span className="text-[#999999] dark:text-[#808090]">donation</span>
+                  <span className="font-medium text-[#0A0E27] dark:text-white">
                     ${((data as any).donationAmount as number).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between py-2">
-                  <span className="text-[#8B8B85] dark:text-[#A0A09A]">payment status</span>
-                  <span className="font-medium text-[#2D5016] dark:text-[#7FD876]">✓ paid</span>
+                  <span className="text-[#999999] dark:text-[#808090]">payment status</span>
+                  <span className="font-medium text-[#2D9D1F] dark:text-[#30DB40]">✓ paid</span>
                 </div>
               </div>
 
-              <p className="text-sm text-[#8B8B85] dark:text-[#A0A09A] mb-8">
+              <p className="text-sm text-[#666666] dark:text-[#B0B0B0] mb-8">
                 confirmation has been sent to your email.
               </p>
             </>
@@ -98,7 +98,7 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
           {/* Done Button */}
           <Link
             href="/"
-            className="inline-block bg-[#C41E3A] hover:bg-[#A01830] dark:hover:bg-[#D42940] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block bg-[#9D4EDD] hover:bg-[#8B3FCC] dark:hover:bg-[#AE5FFF] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             Done
           </Link>
