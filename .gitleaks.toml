@@ -1,0 +1,10 @@
+# gitleaks configuration
+# Extends the bundled default ruleset; we only add an allowlist for the
+# placeholder env template, which contains variable names and nothing else.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Env template holds empty placeholders only"
+paths = ['''^\.env\.example$''']
