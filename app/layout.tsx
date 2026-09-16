@@ -1,4 +1,9 @@
 import type { Metadata } from "next";
+
+// Validates required public config at app boot. Importing it here means a
+// missing Supabase variable fails the build instead of surfacing later as a
+// confusing runtime error on a page that queries data.
+import "@/lib/env";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
