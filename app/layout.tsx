@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "Events, news, and membership for the Northern California chapter of the Newah Organization of America.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
