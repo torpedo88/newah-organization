@@ -20,7 +20,7 @@ export default function RegistrationForm() {
 
   const form = useForm<Registration>({
     resolver: zodResolver(registrationSchema),
-    mode: "onBlur",
+    mode: "onSubmit",
     defaultValues: {
       fullName: "",
       phone: "",
