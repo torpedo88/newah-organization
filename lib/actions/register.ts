@@ -2,6 +2,10 @@
 
 import { registrationSchema, FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
 import { supabase } from "@/lib/supabase/client";
+import { Resend } from "resend";
+import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function registerFood(input: FoodRegistration): Promise<{
   success: boolean;
@@ -35,6 +39,23 @@ export async function registerFood(input: FoodRegistration): Promise<{
         throw new Error("Database not initialized. Run SQL migration in Supabase dashboard.");
       }
       throw new Error(`Failed to save registration: ${error.message}`);
+    }
+
+    // Send confirmation email
+    try {
+      await resend.emails.send({
+        from: "Newah Organization <noreply@resend.dev>",
+        to: input.email,
+        subject: "Registration Confirmed - Newah Organization",
+        react: RegistrationConfirmationEmail({
+          name: input.fullName,
+          registrationCode,
+          registrationType: "FOOD",
+        }),
+      });
+    } catch (emailError) {
+      console.error("Email send error:", emailError);
+      // Don't fail registration if email fails
     }
 
     return {
@@ -83,6 +104,23 @@ export async function registerDonation(
         throw new Error("Database not initialized. Run SQL migration in Supabase dashboard.");
       }
       throw new Error(`Failed to save registration: ${error.message}`);
+    }
+
+    // Send confirmation email
+    try {
+      await resend.emails.send({
+        from: "Newah Organization <noreply@resend.dev>",
+        to: input.email,
+        subject: "Donation Registered - Newah Organization",
+        react: RegistrationConfirmationEmail({
+          name: input.fullName,
+          registrationCode,
+          registrationType: "DONATION",
+        }),
+      });
+    } catch (emailError) {
+      console.error("Email send error:", emailError);
+      // Don't fail registration if email fails
     }
 
     // TODO: Create Stripe checkout session
