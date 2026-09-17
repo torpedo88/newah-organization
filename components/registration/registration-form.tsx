@@ -83,87 +83,87 @@ export default function RegistrationForm() {
   const canSubmit = form.formState.isValid && !isSubmitting;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0A0E27] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0A0E27] to-[#1A1E3F] py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md">
         {/* Header with Logo */}
         <div className="mb-12 text-center">
-          <div className="mb-6 flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FF7A45] to-[#FF6B35] flex items-center justify-center shadow-lg">
+          <div className="mb-8 flex justify-center">
+            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#FF7A45] to-[#FF9A6A] flex items-center justify-center shadow-2xl">
               <img
                 src="/images/newah-logo.png"
                 alt="Newah Organization Logo"
-                className="h-16 w-auto"
+                className="h-20 w-auto"
               />
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#0A0E27] dark:text-white mb-2">
-            Registration
+          <h1 className="text-4xl font-bold text-white mb-2">
+            Register
           </h1>
-          <p className="text-base text-[#666666] dark:text-[#B0B0B0]">
-            Register for food or make a donation
+          <p className="text-base text-[rgba(255,255,255,0.7)]">
+            Join Newah Community
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-transparent p-0">
+        <div className="bg-[rgba(255,255,255,0.08)] backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-3xl p-8 md:p-10">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {/* Basic Information Section */}
             <div className="space-y-4">
-              <h2 className="text-sm font-semibold text-[#0A0E27] dark:text-white">
+              <h2 className="text-sm font-semibold text-white">
                 Your Information
               </h2>
 
               {/* Full Name */}
               <div>
-                <label className="block text-sm font-semibold text-[#0A0E27] dark:text-white mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Name
                 </label>
                 <input
                   type="text"
                   {...form.register("fullName")}
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 rounded-lg bg-[#E8F0F7] dark:bg-[#1a2a3a] border border-[#E8F0F7] dark:border-[#2a3a4a] text-[#0A0E27] dark:text-white placeholder-[#7a8a9a] dark:placeholder-[#8a9aaa] focus:outline-none focus:border-[#FF7A45] transition-colors"
+                  placeholder="Your name"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
                 />
                 {form.formState.errors.fullName && (
-                  <p className="mt-1 text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.fullName.message}</p>
+                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.fullName.message}</p>
                 )}
               </div>
 
               {/* Phone Number */}
               <div>
-                <label className="block text-sm font-semibold text-[#0A0E27] dark:text-white mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Phone Number
                 </label>
                 <input
                   type="tel"
                   {...form.register("phone")}
                   placeholder="(555) 123-4567"
-                  className="w-full px-4 py-3 rounded-lg bg-[#E8F0F7] dark:bg-[#1a2a3a] border border-[#E8F0F7] dark:border-[#2a3a4a] text-[#0A0E27] dark:text-white placeholder-[#7a8a9a] dark:placeholder-[#8a9aaa] focus:outline-none focus:border-[#FF7A45] transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
                 />
                 {form.formState.errors.phone && (
-                  <p className="mt-1 text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.phone.message}</p>
+                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.phone.message}</p>
                 )}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-semibold text-[#0A0E27] dark:text-white mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Email
                 </label>
                 <input
                   type="email"
                   {...form.register("email")}
                   placeholder="you@example.com"
-                  className="w-full px-4 py-3 rounded-lg bg-[#E8F0F7] dark:bg-[#1a2a3a] border border-[#E8F0F7] dark:border-[#2a3a4a] text-[#0A0E27] dark:text-white placeholder-[#7a8a9a] dark:placeholder-[#8a9aaa] focus:outline-none focus:border-[#FF7A45] transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
                 />
                 {form.formState.errors.email && (
-                  <p className="mt-1 text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.email.message}</p>
+                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.email.message}</p>
                 )}
               </div>
 
               {/* Number of Guests */}
               <div>
-                <label className="block text-sm font-semibold text-[#0A0E27] dark:text-white mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Number of Guests
                 </label>
                 <input
@@ -172,28 +172,28 @@ export default function RegistrationForm() {
                   placeholder="1"
                   min="1"
                   max="100"
-                  className="w-full px-4 py-3 rounded-lg bg-[#E8F0F7] dark:bg-[#1a2a3a] border border-[#E8F0F7] dark:border-[#2a3a4a] text-[#0A0E27] dark:text-white placeholder-[#7a8a9a] dark:placeholder-[#8a9aaa] focus:outline-none focus:border-[#FF7A45] transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
                 />
                 {form.formState.errors.numberOfGuests && (
-                  <p className="mt-1 text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.numberOfGuests.message}</p>
+                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.numberOfGuests.message}</p>
                 )}
               </div>
             </div>
 
             {/* Registration Type Section */}
             <div className="space-y-4 pt-6">
-              <h2 className="text-sm font-semibold text-[#0A0E27] dark:text-white">
-                How Would You Like to Help?
+              <h2 className="text-sm font-semibold text-white">
+                How would you like to help?
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Food Button */}
                 <button
                   type="button"
                   onClick={() => handleRegistrationTypeChange("FOOD")}
-                  className={`p-6 rounded-lg border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
+                  className={`p-6 rounded-2xl border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isFoodSelected
-                      ? "border-[#FF7A45] bg-[#FFF3ED] dark:bg-[#3a2820] text-[#FF7A45]"
-                      : "border-[#E5E5E7] dark:border-[#2A2E4E] bg-white dark:bg-[#0A0E27] text-[#0A0E27] dark:text-white hover:border-[#FF7A45] dark:hover:border-[#FF7A45]"
+                      ? "border-[#FF7A45] bg-[rgba(255,122,69,0.15)] text-white"
+                      : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-white hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.08)]"
                   }`}
                 >
                   <span className="text-3xl">🍽</span>
@@ -204,10 +204,10 @@ export default function RegistrationForm() {
                 <button
                   type="button"
                   onClick={() => handleRegistrationTypeChange("DONATION")}
-                  className={`p-6 rounded-lg border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
+                  className={`p-6 rounded-2xl border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isDonationSelected
-                      ? "border-[#FF7A45] bg-[#FFF3ED] dark:bg-[#3a2820] text-[#FF7A45]"
-                      : "border-[#E5E5E7] dark:border-[#2A2E4E] bg-white dark:bg-[#0A0E27] text-[#0A0E27] dark:text-white hover:border-[#FF7A45] dark:hover:border-[#FF7A45]"
+                      ? "border-[#FF7A45] bg-[rgba(255,122,69,0.15)] text-white"
+                      : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-white hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.08)]"
                   }`}
                 >
                   <span className="text-3xl">❤️</span>
@@ -230,8 +230,8 @@ export default function RegistrationForm() {
 
             {/* Error Message */}
             {form.formState.errors.root && (
-              <div className="p-4 bg-[#FFF0F0] dark:bg-[#3E1F1F] border border-[#FF3B30] dark:border-[#FF453A] rounded-lg">
-                <p className="text-sm text-[#FF3B30] dark:text-[#FF453A]">{form.formState.errors.root.message}</p>
+              <div className="p-4 bg-[rgba(255,59,48,0.1)] border border-[#FF3B30] rounded-lg">
+                <p className="text-sm text-[#FF3B30]">{form.formState.errors.root.message}</p>
               </div>
             )}
 
@@ -239,7 +239,7 @@ export default function RegistrationForm() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-[#FF7A45] hover:bg-[#FF6B35] dark:hover:bg-[#FF8555] text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-[#FF7A45] to-[#FF9A6A] hover:shadow-[0_12px_32px_rgba(255,122,69,0.4)] text-white font-bold py-4 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_12px_32px_rgba(255,122,69,0.4)] hover:shadow-[0_16px_48px_rgba(255,122,69,0.5)]"
             >
               {isSubmitting ? (
                 <span>
