@@ -12,7 +12,7 @@ export default function FoodSection({ form }: FoodSectionProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-sm font-semibold text-[#0A0E27] dark:text-white">
+      <h2 className="text-sm font-semibold text-white">
         What is your Food?
       </h2>
 
@@ -21,12 +21,12 @@ export default function FoodSection({ form }: FoodSectionProps) {
           type="text"
           {...form.register("foodOption", { shouldUnregister: true })}
           placeholder="e.g., Dal Bhat, Chicken Curry, Vegetarian Special"
-          className="w-full px-4 py-3 rounded-lg bg-[#E8F0F7] dark:bg-[#1a2a3a] border border-[#E8F0F7] dark:border-[#2a3a4a] text-[#0A0E27] dark:text-white placeholder-[#7a8a9a] dark:placeholder-[#8a9aaa] focus:outline-none focus:border-[#FF7A45] transition-colors"
+          className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
         />
       </div>
 
       {foodError && (
-        <p className="text-sm text-[#FF3B30] dark:text-[#FF453A]">{foodError.message}</p>
+        <p className="mt-1 text-sm text-[#FF3B30]">{foodError.message}</p>
       )}
     </div>
   );
