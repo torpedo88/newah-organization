@@ -25,9 +25,9 @@ export async function registerFood(input: FoodRegistration): Promise<{
     const { error } = await supabase.from("registrations").insert({
       registration_code: registrationCode,
       registration_type: "food",
-      full_name: input.fullName,
-      phone: input.phone,
-      email: input.email,
+      full_name: input.fullName || "",
+      phone: input.phone || "",
+      email: input.email || "",
       number_of_guests: input.numberOfGuests,
       food_option: input.foodOption,
       created_at: new Date().toISOString(),
@@ -45,10 +45,10 @@ export async function registerFood(input: FoodRegistration): Promise<{
     try {
       await resend.emails.send({
         from: "Newah Organization <noreply@resend.dev>",
-        to: input.email,
+        to: input.email || "",
         subject: "Registration Confirmed - Newah Organization",
         react: RegistrationConfirmationEmail({
-          name: input.fullName,
+          name: input.fullName || "",
           registrationCode,
           registrationType: "FOOD",
         }),
@@ -91,9 +91,9 @@ export async function registerDonation(
     const { error } = await supabase.from("registrations").insert({
       registration_code: registrationCode,
       registration_type: "donation",
-      full_name: input.fullName,
-      phone: input.phone,
-      email: input.email,
+      full_name: input.fullName || "",
+      phone: input.phone || "",
+      email: input.email || "",
       donation_amount: input.donationAmount,
       created_at: new Date().toISOString(),
     });
@@ -110,10 +110,10 @@ export async function registerDonation(
     try {
       await resend.emails.send({
         from: "Newah Organization <noreply@resend.dev>",
-        to: input.email,
+        to: input.email || "",
         subject: "Donation Registered - Newah Organization",
         react: RegistrationConfirmationEmail({
-          name: input.fullName,
+          name: input.fullName || "",
           registrationCode,
           registrationType: "DONATION",
         }),
