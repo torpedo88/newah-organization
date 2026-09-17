@@ -85,16 +85,14 @@ export default function RegistrationForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A0E27] to-[#1A1E3F] py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md">
-        {/* Header with Logo */}
+        {/* Header with Full Logo */}
         <div className="mb-12 text-center">
           <div className="mb-8 flex justify-center">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#FF7A45] to-[#FF9A6A] flex items-center justify-center shadow-2xl">
-              <img
-                src="/images/newah-logo.png"
-                alt="Newah Organization Logo"
-                className="h-20 w-auto"
-              />
-            </div>
+            <img
+              src="/images/newah-full-logo.png"
+              alt="Newah Organization of America"
+              className="h-48 w-auto max-w-full"
+            />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">
             Register
