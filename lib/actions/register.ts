@@ -31,7 +31,10 @@ export async function registerFood(input: FoodRegistration): Promise<{
 
     if (error) {
       console.error("Supabase error:", error);
-      throw new Error("Failed to save registration");
+      if (error.code === "PGRST205") {
+        throw new Error("Database not initialized. Run SQL migration in Supabase dashboard.");
+      }
+      throw new Error(`Failed to save registration: ${error.message}`);
     }
 
     return {
@@ -76,7 +79,10 @@ export async function registerDonation(
 
     if (error) {
       console.error("Supabase error:", error);
-      throw new Error("Failed to save registration");
+      if (error.code === "PGRST205") {
+        throw new Error("Database not initialized. Run SQL migration in Supabase dashboard.");
+      }
+      throw new Error(`Failed to save registration: ${error.message}`);
     }
 
     // TODO: Create Stripe checkout session
