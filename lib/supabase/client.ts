@@ -1,17 +1,10 @@
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 
-import { env } from "@/lib/env";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-/**
- * Supabase client for browser/client components.
- *
- * Uses the anon key only. Every query made through this client is subject to
- * Row Level Security — that is the point. Never introduce the service role key
- * here; it bypasses RLS and would be readable by any visitor.
- */
-export function createClient() {
-  return createBrowserClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Missing Supabase environment variables");
 }
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
