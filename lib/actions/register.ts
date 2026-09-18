@@ -3,6 +3,7 @@
 import { registrationSchema, FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
 import { supabase } from "@/lib/supabase/client";
 import { Resend } from "resend";
+import { render } from "@react-email/render";
 import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -48,11 +49,11 @@ export async function registerFood(input: FoodRegistration): Promise<{
         from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Registration Confirmed - Newah Organization",
-        react: RegistrationConfirmationEmail({
+        html: render(RegistrationConfirmationEmail({
           name: input.fullName || "",
           registrationCode,
           registrationType: "FOOD",
-        }),
+        })),
       });
       console.log("Email sent successfully. ID:", emailResponse.id);
     } catch (emailError) {
@@ -115,11 +116,11 @@ export async function registerDonation(
         from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Donation Registered - Newah Organization",
-        react: RegistrationConfirmationEmail({
+        html: render(RegistrationConfirmationEmail({
           name: input.fullName || "",
           registrationCode,
           registrationType: "DONATION",
-        }),
+        })),
       });
       console.log("Email sent successfully. ID:", emailResponse.id);
     } catch (emailError) {
