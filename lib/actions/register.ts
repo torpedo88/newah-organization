@@ -45,15 +45,16 @@ export async function registerFood(input: FoodRegistration): Promise<{
     // Send confirmation email
     try {
       console.log("Sending email to:", input.email);
+      const htmlContent = await render(RegistrationConfirmationEmail({
+        name: input.fullName || "",
+        registrationCode,
+        registrationType: "FOOD",
+      }));
       const emailResponse = await resend.emails.send({
         from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Registration Confirmed - Newah Organization",
-        html: render(RegistrationConfirmationEmail({
-          name: input.fullName || "",
-          registrationCode,
-          registrationType: "FOOD",
-        })),
+        html: htmlContent,
       });
       console.log("Email sent successfully. ID:", emailResponse.id);
     } catch (emailError) {
@@ -112,15 +113,16 @@ export async function registerDonation(
     // Send confirmation email
     try {
       console.log("Sending email to:", input.email);
+      const htmlContent = await render(RegistrationConfirmationEmail({
+        name: input.fullName || "",
+        registrationCode,
+        registrationType: "DONATION",
+      }));
       const emailResponse = await resend.emails.send({
         from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Donation Registered - Newah Organization",
-        html: render(RegistrationConfirmationEmail({
-          name: input.fullName || "",
-          registrationCode,
-          registrationType: "DONATION",
-        })),
+        html: htmlContent,
       });
       console.log("Email sent successfully. ID:", emailResponse.id);
     } catch (emailError) {
