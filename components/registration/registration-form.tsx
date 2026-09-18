@@ -25,7 +25,7 @@ export default function RegistrationForm() {
       fullName: "",
       phone: "",
       email: "",
-      numberOfGuests: undefined,
+      numberOfGuests: 1,
       registrationType: undefined,
       foodOption: "",
       donationAmount: undefined,
@@ -166,10 +166,14 @@ export default function RegistrationForm() {
                 </label>
                 <input
                   type="number"
-                  {...form.register("numberOfGuests", { valueAsNumber: true })}
+                  {...form.register("numberOfGuests", {
+                    valueAsNumber: true,
+                    setValueAs: (val) => (val === "" || val === null ? 1 : Number(val)),
+                  })}
                   placeholder="1"
                   min="1"
                   max="100"
+                  defaultValue={1}
                   className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
                 />
                 {form.formState.errors.numberOfGuests && (
