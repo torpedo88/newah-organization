@@ -51,7 +51,7 @@ export async function registerFood(input: FoodRegistration): Promise<{
         registrationType: "FOOD",
       }));
       const emailResponse = await resend.emails.send({
-        from: "Newah Organization <newahnorcal@gmail.com>",
+        from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Registration Confirmed - Newah Organization",
         html: htmlContent,
@@ -119,7 +119,7 @@ export async function registerDonation(
         registrationType: "DONATION",
       }));
       const emailResponse = await resend.emails.send({
-        from: "Newah Organization <newahnorcal@gmail.com>",
+        from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Donation Registered - Newah Organization",
         html: htmlContent,
