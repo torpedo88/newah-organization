@@ -44,7 +44,6 @@ export async function registerFood(input: FoodRegistration): Promise<{
 
     // Send confirmation email
     try {
-      console.log("Sending email to:", input.email);
       const htmlContent = await render(RegistrationConfirmationEmail({
         name: input.fullName || "",
         registrationCode,
@@ -56,7 +55,9 @@ export async function registerFood(input: FoodRegistration): Promise<{
         subject: "Registration Confirmed - Newah Organization",
         html: htmlContent,
       });
-      console.log("Email sent successfully. ID:", emailResponse.id);
+      if (emailResponse.error) {
+        console.error("Resend rejected the email:", emailResponse.error.message);
+      }
     } catch (emailError) {
       console.error("Email send error:", emailError);
       console.error("Email error details:", JSON.stringify(emailError, null, 2));
@@ -112,7 +113,6 @@ export async function registerDonation(
 
     // Send confirmation email
     try {
-      console.log("Sending email to:", input.email);
       const htmlContent = await render(RegistrationConfirmationEmail({
         name: input.fullName || "",
         registrationCode,
@@ -124,7 +124,9 @@ export async function registerDonation(
         subject: "Donation Registered - Newah Organization",
         html: htmlContent,
       });
-      console.log("Email sent successfully. ID:", emailResponse.id);
+      if (emailResponse.error) {
+        console.error("Resend rejected the email:", emailResponse.error.message);
+      }
     } catch (emailError) {
       console.error("Email send error:", emailError);
       console.error("Email error details:", JSON.stringify(emailError, null, 2));
