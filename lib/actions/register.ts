@@ -3,6 +3,7 @@
 import { registrationSchema, FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
 import { supabase } from "@/lib/supabase/client";
 import { Resend } from "resend";
+import { render } from "@react-email/render";
 import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -43,19 +44,22 @@ export async function registerFood(input: FoodRegistration): Promise<{
 
     // Send confirmation email
     try {
-      await resend.emails.send({
+      console.log("Sending email to:", input.email);
+      const htmlContent = await render(RegistrationConfirmationEmail({
+        name: input.fullName || "",
+        registrationCode,
+        registrationType: "FOOD",
+      }));
+      const emailResponse = await resend.emails.send({
         from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Registration Confirmed - Newah Organization",
-        react: RegistrationConfirmationEmail({
-          name: input.fullName || "",
-          registrationCode,
-          registrationType: "FOOD",
-        }),
+        html: htmlContent,
       });
+      console.log("Email sent successfully. ID:", emailResponse.id);
     } catch (emailError) {
       console.error("Email send error:", emailError);
-      // Don't fail registration if email fails
+      console.error("Email error details:", JSON.stringify(emailError, null, 2));
     }
 
     return {
@@ -108,19 +112,22 @@ export async function registerDonation(
 
     // Send confirmation email
     try {
-      await resend.emails.send({
+      console.log("Sending email to:", input.email);
+      const htmlContent = await render(RegistrationConfirmationEmail({
+        name: input.fullName || "",
+        registrationCode,
+        registrationType: "DONATION",
+      }));
+      const emailResponse = await resend.emails.send({
         from: "Newah Organization <noreply@resend.dev>",
         to: input.email || "",
         subject: "Donation Registered - Newah Organization",
-        react: RegistrationConfirmationEmail({
-          name: input.fullName || "",
-          registrationCode,
-          registrationType: "DONATION",
-        }),
+        html: htmlContent,
       });
+      console.log("Email sent successfully. ID:", emailResponse.id);
     } catch (emailError) {
       console.error("Email send error:", emailError);
-      // Don't fail registration if email fails
+      console.error("Email error details:", JSON.stringify(emailError, null, 2));
     }
 
     // TODO: Create Stripe checkout session
