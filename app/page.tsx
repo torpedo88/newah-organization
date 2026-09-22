@@ -3,6 +3,7 @@ import { LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
+import { EVENT } from "@/lib/constants/event";
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Button asChild>
-            <Link href="/register">Register</Link>
+            <Link href="/register">Register for {EVENT.name}</Link>
           </Button>
           <Button disabled variant="secondary">
             Events coming soon

@@ -1,5 +1,8 @@
 /** The campaign this registration drive is running. */
 export const EVENT = {
+  /** The festival itself. */
+  name: "Indra Jatra",
+  /** The fundraising campaign attached to it. */
   title: "Jatra with a Cause",
   /** The fund proceeds go to, named in full deliberately. */
   fundName: "Prime Minister's Disaster Relief Fund",

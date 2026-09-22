@@ -16,6 +16,7 @@ import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
 import { ORG } from "@/lib/legal/org";
+import { EVENT } from "@/lib/constants/event";
 
 const fieldClass =
   "w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder-white/50 focus:outline-none focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all";
@@ -94,7 +95,9 @@ export default function RegistrationForm() {
               className="size-40 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
             />
           </div>
-          <h1 className="mb-2 text-4xl font-bold text-white">Register</h1>
+          <h1 className="mb-2 text-4xl font-bold text-white">
+            {EVENT.name} Registration
+          </h1>
           <p className="text-base text-white/70">Join Newah Community</p>
         </div>
 

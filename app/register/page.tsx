@@ -1,10 +1,10 @@
 import { Metadata } from "next";
+import { EVENT } from "@/lib/constants/event";
 import RegistrationForm from "@/components/registration/registration-form";
 
 export const metadata: Metadata = {
-  title: "Registration - Newah Organization",
-  description:
-    "Register with Newah Organization. Choose between food registration or make a donation.",
+  title: `${EVENT.name} Registration - Newah Organization`,
+  description: `Register for ${EVENT.name} with the Newah Organization of America, Northern California Chapter.`,
 };
 
 export default function RegisterPage() {
