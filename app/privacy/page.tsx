@@ -30,9 +30,12 @@ export default function PrivacyPage() {
         <li><strong>Your name</strong>, as entered on the registration form.</li>
         <li><strong>Your email address.</strong></li>
         <li><strong>Your telephone number.</strong></li>
-        <li><strong>Number of guests</strong> you are registering, for food registrations.</li>
-        <li><strong>Food selection</strong>, for food registrations.</li>
-        <li><strong>Donation amount</strong>, for donations.</li>
+        <li>
+          <strong>The name and email address of each additional adult</strong> attending with
+          you, so we can prepare their name tag.
+        </li>
+        <li><strong>Whether you brought food</strong>, and what you brought.</li>
+        <li><strong>Donation amount</strong>, and whether you chose to cover the card processing fee.</li>
         <li>
           <strong>A record of your consent</strong> &mdash; the exact wording you agreed
           to, the version of that wording, and the date and time you agreed.
@@ -149,10 +152,14 @@ export default function PrivacyPage() {
 
       <h2>8. Children</h2>
       <p>
-        This site is not directed at children under 13, and we do not knowingly collect
-        information from them. Registrations for children are expected to be submitted by
-        a parent or guardian. If you believe a child has given us information directly,
-        email us and we will delete it.
+        <strong>We do not collect any personal information about anyone under 18.</strong> The
+        registration form asks only for the names and email addresses of attending adults, and
+        it says so. Children are welcome at our events and need not be named here; a name tag
+        can be written for them at the registration desk.
+      </p>
+      <p>
+        If you believe details of a child have been submitted to us anyway, email us and we
+        will delete them.
       </p>
 
       <h2>9. Changes to this policy</h2>

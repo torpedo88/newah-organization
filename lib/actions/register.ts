@@ -1,13 +1,13 @@
 "use server";
 
-import { registrationSchema, Registration } from "@/lib/validation/registration";
+import { registrationSchema, Registration, filledGuests } from "@/lib/validation/registration";
 import { supabase } from "@/lib/supabase/client";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
 import { CONSENT_TEXT, CONSENT_VERSION } from "@/lib/legal/org";
 import { EVENT } from "@/lib/constants/event";
-import { grossUpCents } from "@/lib/payments/fees";
+import { settlement } from "@/lib/payments/fees";
 import { getStripe, siteUrl } from "@/lib/payments/stripe";
 
 // Constructed lazily: the Resend SDK throws "Missing API key" from its
@@ -33,6 +33,7 @@ export type RegisterResult = {
   checkoutUrl?: string;
   donationCents?: number;
   chargedCents?: number;
+  netCents?: number;
   broughtFood?: boolean;
   error?: string;
 };
@@ -51,7 +52,7 @@ async function insertRegistration(row: Record<string, unknown>) {
 
   const missingColumn =
     first.error.code === "PGRST204" ||
-    /consent_\w+|brought_food|food_description|donation_cents|charged_cents|payment_status|stripe_session_id/.test(
+    /consent_\w+|brought_food|food_description|donation_cents|charged_cents|net_cents|covers_fee|adult_guests|payment_status|stripe_session_id/.test(
       first.error.message ?? "",
     );
   if (!missingColumn) return first;
@@ -77,14 +78,16 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const code = registrationCode();
     const broughtFood = validated.broughtFood === true;
+    const guests = filledGuests(validated.adultGuests);
     const donationCents =
       validated.donationAmount && validated.donationAmount > 0
         ? Math.round(validated.donationAmount * 100)
         : null;
-    // The donor covers the processing fee on top, so the fund receives the
-    // whole donation. See lib/payments/fees.ts for why this is a gross-up
-    // rather than a simple addition.
-    const chargedCents = donationCents ? grossUpCents(donationCents) : null;
+    // Covering the fee is the donor's choice. Covered, they pay a grossed-up
+    // total and the organization receives the whole donation; declined, the
+    // processor's cut comes out of the donation instead.
+    const coversFee = validated.coversFee === true;
+    const money = donationCents ? settlement(donationCents, coversFee) : null;
 
     const { data, error } = await insertRegistration({
       registration_code: code,
@@ -92,11 +95,15 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       full_name: validated.fullName ?? "",
       phone: validated.phone ?? "",
       email: validated.email ?? "",
-      number_of_guests: validated.numberOfGuests ?? 1,
+      // The registrant plus every named adult they are bringing.
+      number_of_guests: 1 + guests.length,
+      adult_guests: guests,
       brought_food: broughtFood,
       food_description: broughtFood ? (validated.foodDescription ?? "") : null,
       donation_cents: donationCents,
-      charged_cents: chargedCents,
+      charged_cents: money?.chargedCents ?? null,
+      net_cents: money?.toOrganizationCents ?? null,
+      covers_fee: coversFee,
       payment_status: donationCents ? "pending" : "none",
       consent_given: validated.consentGiven === true,
       consent_text: CONSENT_TEXT,
@@ -115,13 +122,14 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     // A donation means a trip to Stripe. Everything else is done here.
     let checkoutUrl: string | undefined;
-    if (donationCents && chargedCents) {
+    if (donationCents && money) {
       checkoutUrl = await createCheckout({
         rowId: (data as { id: string } | null)?.id,
         code,
         email: validated.email ?? "",
         donationCents,
-        chargedCents,
+        chargedCents: money.chargedCents,
+        coversFee,
       });
     }
 
@@ -132,6 +140,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       broughtFood,
       foodDescription: validated.foodDescription ?? "",
       donationCents,
+      guestCount: guests.length,
     });
 
     return {
@@ -139,7 +148,8 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       registrationCode: code,
       checkoutUrl,
       donationCents: donationCents ?? undefined,
-      chargedCents: chargedCents ?? undefined,
+      chargedCents: money?.chargedCents,
+      netCents: money?.toOrganizationCents,
       broughtFood,
     };
   } catch (error) {
@@ -154,6 +164,7 @@ async function createCheckout(args: {
   email: string;
   donationCents: number;
   chargedCents: number;
+  coversFee: boolean;
 }): Promise<string | undefined> {
   const stripe = getStripe();
   if (!stripe) {
@@ -174,11 +185,13 @@ async function createCheckout(args: {
             currency: "usd",
             unit_amount: args.chargedCents,
             product_data: {
-              name: `Donation to the ${EVENT.fundName}`,
-              description:
-                `$${(args.donationCents / 100).toFixed(2)} to the fund, plus ` +
-                `$${((args.chargedCents - args.donationCents) / 100).toFixed(2)} card processing ` +
-                `so the fund receives the full donation.`,
+              name: `${EVENT.title} donation`,
+              description: args.coversFee
+                ? `$${(args.donationCents / 100).toFixed(2)} donation plus ` +
+                  `$${((args.chargedCents - args.donationCents) / 100).toFixed(2)} card processing, ` +
+                  `which you chose to cover so the organization receives the full amount.`
+                : `$${(args.donationCents / 100).toFixed(2)} donation. Card processing is ` +
+                  `deducted from this amount.`,
             },
           },
         },
@@ -211,6 +224,7 @@ async function sendConfirmation(args: {
   broughtFood: boolean;
   foodDescription: string;
   donationCents: number | null;
+  guestCount: number;
 }) {
   const resend = getResendClient();
   if (!resend) {
@@ -227,6 +241,7 @@ async function sendConfirmation(args: {
         broughtFood: args.broughtFood,
         foodDescription: args.foodDescription,
         donationCents: args.donationCents,
+        guestCount: args.guestCount,
       }),
     );
     const response = await resend.emails.send({

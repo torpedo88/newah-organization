@@ -3,9 +3,10 @@ import { EVENT } from "@/lib/constants/event";
 /**
  * The campaign promise.
  *
- * "100% of donations" is only true because the donor covers the card
- * processing fee on top of their gift. If that ever changes, this wording has
- * to change with it — see lib/payments/fees.ts.
+ * Deliberately makes no claim about a proportion. Event expenses come out
+ * first, and a donor who declines to cover the card processing fee has it
+ * deducted from their gift, so any "100%" or "in full" wording here would be
+ * false. See lib/payments/fees.ts.
  */
 export default function CauseBanner() {
   return (
@@ -14,8 +15,9 @@ export default function CauseBanner() {
         <p className="text-sm font-bold tracking-wide text-white uppercase">{EVENT.title}</p>
       </div>
       <p className="px-5 py-4 text-center text-sm leading-relaxed text-white">
-        <span className="font-bold">{EVENT.promise} {EVENT.fundName}.</span>{" "}
-        Every dollar you give is passed on in full.
+        <span className="font-bold">
+          {EVENT.promise} {EVENT.fundName}.
+        </span>
       </p>
     </div>
   );

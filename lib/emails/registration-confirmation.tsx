@@ -19,12 +19,14 @@ export function RegistrationConfirmationEmail({
   broughtFood,
   foodDescription,
   donationCents,
+  guestCount,
 }: {
   name: string;
   registrationCode: string;
   broughtFood: boolean;
   foodDescription: string;
   donationCents: number | null;
+  guestCount: number;
 }) {
   const donated = typeof donationCents === "number" && donationCents > 0;
 
@@ -79,9 +81,15 @@ export function RegistrationConfirmationEmail({
             When you arrive
           </p>
           <p style={{ margin: 0, color: "#333" }}>
-            Please go to the <strong>registration desk</strong> to pick up your name tag.
-            Show this code or simply give your name.
+            Please go to the <strong>registration desk</strong> to pick up
+            {guestCount > 0 ? " your name tags" : " your name tag"}. Show this code or simply
+            give your name.
           </p>
+          {guestCount > 0 && (
+            <p style={{ margin: "8px 0 0 0", color: "#555", fontSize: "14px" }}>
+              We have {guestCount + 1} name tags ready for your party.
+            </p>
+          )}
         </div>
 
         {broughtFood && (
@@ -109,8 +117,8 @@ export function RegistrationConfirmationEmail({
               Thank you for your donation of ${(donationCents / 100).toFixed(2)}.
             </p>
             <p style={{ margin: 0, color: "#555", fontSize: "14px" }}>
-              100% of it goes to the {EVENT.fundName}. You covered the card processing fee
-              separately, which is what makes that possible.
+              After the event&rsquo;s expenses are covered, all remaining proceeds are donated to
+              the {EVENT.fundName}.
             </p>
           </div>
         )}
