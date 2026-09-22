@@ -25,6 +25,8 @@ type RegistrationRow = {
   phone: string;
   email: string;
   number_of_guests: number | null;
+  /** Every other attending adult, by name, email and phone, for their name tags. */
+  adult_guests: { name?: string; email?: string; phone?: string }[] | null;
   brought_food: boolean | null;
   food_description: string | null;
   donation_cents: number | null;
@@ -136,7 +138,7 @@ export default async function AdminPage(props: {
   const { data, error: queryError } = await supabase
     .from("registrations")
     .select(
-      "id, registration_code, full_name, phone, email, number_of_guests, brought_food, " +
+      "id, registration_code, full_name, phone, email, number_of_guests, adult_guests, brought_food, " +
         "food_description, donation_cents, charged_cents, net_cents, covers_fee, payment_status, consent_given, " +
         "consent_at, created_at",
     )
@@ -231,7 +233,22 @@ export default async function AdminPage(props: {
                           <div>{row.email}</div>
                           <div className="text-white/50">{row.phone}</div>
                         </td>
-                        <td className="py-3 pr-4 text-white/70">{row.number_of_guests ?? 1}</td>
+                        <td className="py-3 pr-4 align-top text-white/70">
+                          <div>{row.number_of_guests ?? 1}</div>
+                          {/* The names are the reason the field exists: the desk
+                              cannot write the additional name tags from a count. */}
+                          {(row.adult_guests ?? []).length > 0 && (
+                            <ul className="mt-1 space-y-1">
+                              {(row.adult_guests ?? []).map((guest, index) => (
+                                <li key={index} className="text-xs leading-tight text-white/55">
+                                  <span className="text-white/75">{guest.name}</span>
+                                  {guest.email ? <> · {guest.email}</> : null}
+                                  {guest.phone ? <> · {guest.phone}</> : null}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </td>
                         <td className="py-3 pr-4 text-white/70">
                           {row.brought_food ? row.food_description || "Yes" : "—"}
                         </td>

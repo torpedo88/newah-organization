@@ -72,6 +72,7 @@ export default function RegistrationForm() {
         ).length,
         // A donation with no checkout URL means Stripe is not configured.
         paymentPending: Boolean(result.donationCents),
+        emailSent: result.emailSent === true,
       });
     } finally {
       setIsSubmitting(false);

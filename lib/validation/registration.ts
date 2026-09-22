@@ -86,7 +86,18 @@ export const registrationSchema = z
         fail(["donationAmount"], "Please choose or enter an amount");
       } else if (amount < MIN_DONATION || amount > MAX_DONATION) {
         fail(["donationAmount"], `Please enter between $${MIN_DONATION} and $${MAX_DONATION}`);
+      } else if (Math.abs(amount * 100 - Math.round(amount * 100)) > 1e-9) {
+        // A donation is a sum of money, so it has whole cents. Accepting
+        // $1.001 and silently rounding it charges a figure nobody chose.
+        fail(["donationAmount"], "Please enter an amount in whole cents");
       }
+    }
+
+    // Declining and naming an amount contradict each other. The form clears
+    // the amount when No donation is picked, but the form is not the only way
+    // this action is reached, and the amount is what the charge is built from.
+    if (data.donationChoice === "none" && typeof data.donationAmount === "number" && data.donationAmount > 0) {
+      fail(["donationAmount"], "Choose an amount, or No donation \u2014 not both");
     }
 
     // No submission without an affirmative tick. Never default this to true.

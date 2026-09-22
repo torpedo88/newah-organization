@@ -17,6 +17,8 @@ export type SuccessData = {
   guestCount: number;
   /** A donation exists but was never charged, because Stripe is unconfigured. */
   paymentPending: boolean;
+  /** Whether a confirmation email actually went out. */
+  emailSent: boolean;
 };
 
 export default function SuccessScreen({ data }: { data: SuccessData }) {
@@ -92,7 +94,9 @@ export default function SuccessScreen({ data }: { data: SuccessData }) {
           )}
 
           <p className="mb-8 text-sm text-white/65">
-            A confirmation has been sent to your email.
+            {data.emailSent
+              ? "A confirmation has been sent to your email."
+              : "Please keep a note of your registration number \u2014 we were not able to send a confirmation email."}
           </p>
 
           <LiquidButton asChild size="xl" className="text-white">

@@ -24,6 +24,9 @@ ALTER TABLE registrations ENABLE ROW LEVEL SECURITY;
 -- Keep anonymous INSERT so the public form still submits.
 -- Recreated idempotently so this file is safe to re-run.
 DROP POLICY IF EXISTS "Allow insert registrations" ON registrations;
+-- Dropped too: without this, replaying the file fails with 42710 once the
+-- policy exists, despite the note above claiming it is safe to rerun.
+DROP POLICY IF EXISTS "anon_insert_registrations" ON registrations;
 CREATE POLICY "anon_insert_registrations"
   ON registrations
   FOR INSERT
