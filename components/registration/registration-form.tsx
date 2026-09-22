@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, Registration, FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
 import { registerFood, registerDonation } from "@/lib/actions/register";
@@ -12,6 +12,8 @@ import SuccessScreen from "./success-screen";
 import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { UtensilsCrossed, HeartHandshake, LoaderCircle } from "lucide-react";
+import Link from "next/link";
+import { ORG } from "@/lib/legal/org";
 
 export default function RegistrationForm() {
   const [registrationType, setRegistrationType] = useState<"FOOD" | "DONATION" | null>(null);
@@ -33,8 +35,14 @@ export default function RegistrationForm() {
       registrationType: undefined,
       foodOption: "",
       donationAmount: undefined,
+      // Never pre-ticked: consent has to be an affirmative act.
+      consentGiven: false,
     },
   });
+
+  // Above the early return below: hooks must run in the same order every render.
+  const consentGiven =
+    useWatch({ control: form.control, name: "consentGiven" }) === true;
 
   const handleRegistrationTypeChange = (type: "FOOD" | "DONATION") => {
     setRegistrationType(type);
@@ -246,6 +254,39 @@ export default function RegistrationForm() {
             )}
 
             {/* Submit Button */}
+            {/* Consent gate. The wording lives in lib/legal/org.ts and is stored
+                verbatim with the registration, so the organization can show
+                exactly what was agreed to and when. */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  {...form.register("consentGiven")}
+                  className="mt-1 size-5 shrink-0 cursor-pointer accent-[#FF7A45]"
+                />
+                <span className="text-sm leading-relaxed text-white/80">
+                  I agree to the{" "}
+                  <Link href="/terms" target="_blank" className="font-semibold text-white underline underline-offset-2">
+                    Terms and Conditions
+                  </Link>{" "}
+                  and the{" "}
+                  <Link href="/privacy" target="_blank" className="font-semibold text-white underline underline-offset-2">
+                    Privacy Policy
+                  </Link>
+                  , and I consent to {ORG.name} using the information I provide to contact
+                  me about requests for support, membership drives, upcoming and future
+                  events, and other communications from the organization. I understand I
+                  can withdraw this consent at any time by emailing{" "}
+                  <span className="font-semibold text-white">{ORG.contactEmail}</span>.
+                </span>
+              </label>
+              {!consentGiven && form.formState.isSubmitted && (
+                <p className="mt-2 text-sm text-[#FF3B30]">
+                  Please agree before submitting.
+                </p>
+              )}
+            </div>
+
             <LiquidButton type="submit" disabled={!canSubmit} size="xxl" className="w-full text-white">
               {isSubmitting ? (
                 <>
@@ -265,7 +306,16 @@ export default function RegistrationForm() {
           </form>
         </div>
 
-        <FestivalPhotoCredit className="mt-8 text-center text-xs text-white/40" />
+        <nav className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/50">
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-white/80">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="underline underline-offset-2 hover:text-white/80">
+            Terms and Conditions
+          </Link>
+        </nav>
+
+        <FestivalPhotoCredit className="mt-4 text-center text-xs text-white/40" />
       </div>
 
       <style jsx>{`

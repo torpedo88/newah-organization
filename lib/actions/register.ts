@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
+import { CONSENT_TEXT, CONSENT_VERSION } from "@/lib/legal/org";
 
 // Constructed lazily: the Resend SDK throws "Missing API key" from its
 // constructor, and at module scope that would take down the whole server
@@ -16,6 +17,38 @@ function getResendClient(): Resend | null {
   if (!key) return null;
   resendClient ??= new Resend(key);
   return resendClient;
+}
+
+
+/**
+ * Insert a registration, tolerating a database that has not had migration 0004
+ * applied yet.
+ *
+ * The consent columns are new. If they are missing PostgREST rejects the whole
+ * insert with PGRST204, which would take registration down completely — the
+ * same class of failure as the Resend key. So a missing-column rejection falls
+ * back to inserting without them and logs loudly, rather than losing the
+ * registration. Consent is still enforced in the form and the schema; only the
+ * stored proof of it is deferred until the migration lands.
+ */
+async function insertRegistration(row: Record<string, unknown>) {
+  const first = await supabase.from("registrations").insert(row);
+  if (!first.error) return first;
+
+  const missingColumn =
+    first.error.code === "PGRST204" || /consent_\w+/.test(first.error.message ?? "");
+  if (!missingColumn) return first;
+
+  console.error(
+    "registrations is missing the consent columns; apply supabase/migrations/" +
+      "0004_registration_consent.sql. Saving without proof of consent for now.",
+  );
+  const { consent_given, consent_text, consent_version, consent_at, ...withoutConsent } = row;
+  void consent_given;
+  void consent_text;
+  void consent_version;
+  void consent_at;
+  return supabase.from("registrations").insert(withoutConsent);
 }
 
 export async function registerFood(input: FoodRegistration): Promise<{
@@ -33,7 +66,7 @@ export async function registerFood(input: FoodRegistration): Promise<{
 
     const registrationCode = `NEWAH-2026-${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
 
-    const { error } = await supabase.from("registrations").insert({
+    const { error } = await insertRegistration({
       registration_code: registrationCode,
       registration_type: "food",
       full_name: input.fullName || "",
@@ -41,6 +74,10 @@ export async function registerFood(input: FoodRegistration): Promise<{
       email: input.email || "",
       number_of_guests: input.numberOfGuests,
       food_option: input.foodOption,
+      consent_given: input.consentGiven === true,
+      consent_text: CONSENT_TEXT,
+      consent_version: CONSENT_VERSION,
+      consent_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
     });
 
@@ -108,13 +145,17 @@ export async function registerDonation(
 
     const registrationCode = `NEWAH-2026-${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
 
-    const { error } = await supabase.from("registrations").insert({
+    const { error } = await insertRegistration({
       registration_code: registrationCode,
       registration_type: "donation",
       full_name: input.fullName || "",
       phone: input.phone || "",
       email: input.email || "",
       donation_amount: input.donationAmount,
+      consent_given: input.consentGiven === true,
+      consent_text: CONSENT_TEXT,
+      consent_version: CONSENT_VERSION,
+      consent_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
     });
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import { ORG } from "@/lib/legal/org";
 
 export default function Home() {
   return (
@@ -27,13 +28,29 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t px-6 py-6 text-center">
-        <LiquidButton asChild size="sm">
-          <Link href="/admin" aria-label="Board sign-in">
-            <LockKeyhole className="size-4" aria-hidden />
-            Board sign-in
+      <footer className="border-t px-6 py-6">
+        <nav className="mb-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <Link href="/privacy" className="underline-offset-4 hover:underline hover:text-foreground">
+            Privacy Policy
           </Link>
-        </LiquidButton>
+          <Link href="/terms" className="underline-offset-4 hover:underline hover:text-foreground">
+            Terms and Conditions
+          </Link>
+          <a
+            href={`mailto:${ORG.contactEmail}`}
+            className="underline-offset-4 hover:underline hover:text-foreground"
+          >
+            {ORG.contactEmail}
+          </a>
+        </nav>
+        <div className="text-center">
+          <LiquidButton asChild size="sm">
+            <Link href="/admin" aria-label="Board sign-in">
+              <LockKeyhole className="size-4" aria-hidden />
+              Board sign-in
+            </Link>
+          </LiquidButton>
+        </div>
       </footer>
     </>
   );
