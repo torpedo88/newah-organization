@@ -127,6 +127,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const { error } = await insertRegistration({
       registration_code: code,
+      registration_type: "event",
       full_name: validated.fullName ?? "",
       phone: validated.phone ?? "",
       email: validated.email ?? "",
