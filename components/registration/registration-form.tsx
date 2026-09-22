@@ -101,7 +101,7 @@ export default function RegistrationForm() {
         <CauseBanner />
 
         <PatasiFrame>
-          <div className="bg-haku/94 p-8 backdrop-blur-xl md:p-10">
+          <div className="bg-haku/35 p-8 backdrop-blur-[3px] md:p-10">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-4">
               <h2 className="text-sm font-semibold text-white">Your Information</h2>

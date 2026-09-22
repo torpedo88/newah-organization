@@ -1,12 +1,14 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The patasi border.
+ * Border frame for the form: a thin black lining with a thick gold band
+ * outside it, and nothing at all behind the content.
  *
- * On the garment the black sari is edged with a deep red band carrying a fine
- * woven pattern. Here that band frames the card: a red gradient border with
- * repeating hairlines standing in for the weave, and a thin gold line where
- * the band meets the cloth, which is how the real border reads up close.
+ * The bands are a border plus spread box-shadows rather than nested padded
+ * divs on purpose. A filled parent sits *behind* its child, so a translucent
+ * form would have sampled the frame's own colour and rendered as a solid
+ * panel — which is exactly what nested wrappers did here. A border and a
+ * shadow occupy only the edge, so the photograph shows through the middle.
  *
  * Purely decorative — it adds no semantics and is not announced.
  */
@@ -20,17 +22,14 @@ export default function PatasiFrame({
   return (
     <div
       className={cn(
-        "relative rounded-[28px] p-[10px]",
-        // the band itself, woven with repeating hairlines
-        "bg-[repeating-linear-gradient(135deg,#C0102B_0px,#C0102B_6px,#9E0C22_6px,#9E0C22_9px,#E23B50_9px,#E23B50_10px)]",
-        "shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)]",
+        // the margin gives the outer gold band room; box-shadow does not
+        // reserve layout space of its own
+        "m-[15px] overflow-hidden rounded-[20px] border-4 border-haku",
+        "shadow-[0_0_0_15px_#C9A227,0_0_0_16px_#8C6D12,0_28px_64px_-24px_rgba(0,0,0,0.9)]",
         className,
       )}
     >
-      {/* the gold thread where the border meets the cloth */}
-      <div className="rounded-[20px] p-px bg-lun/70">
-        <div className="overflow-hidden rounded-[19px]">{children}</div>
-      </div>
+      {children}
     </div>
   );
 }
