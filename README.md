@@ -44,3 +44,9 @@ _Recorded after the first production deploy._
 
 This project uses the PAUL framework. See `.paul/` for the roadmap, phase plans, and
 current state.
+
+## Printed QR codes
+
+Physical QR codes point at `https://newah-organization.vercel.app/register`.
+**Do not rename, delete or transfer the Vercel project** — it changes that hostname
+and kills every printed code. See [docs/PRINTED-QR.md](docs/PRINTED-QR.md).
