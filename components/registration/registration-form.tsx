@@ -14,6 +14,7 @@ import DonationFields from "./donation-fields";
 import AdultGuestsFields from "./adult-guests-fields";
 import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import PatasiFrame from "@/components/ui/patasi-frame";
 import { ORG } from "@/lib/legal/org";
 
 const fieldClass =
@@ -35,6 +36,7 @@ export default function RegistrationForm() {
       broughtFood: false,
       foodDescription: "",
       donationAmount: undefined,
+      donationChoice: undefined,
       // Never pre-ticked: consent has to be an affirmative act.
       consentGiven: false,
     },
@@ -98,7 +100,8 @@ export default function RegistrationForm() {
 
         <CauseBanner />
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.08] p-8 backdrop-blur-xl md:p-10">
+        <PatasiFrame>
+          <div className="bg-haku/94 p-8 backdrop-blur-xl md:p-10">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-4">
               <h2 className="text-sm font-semibold text-white">Your Information</h2>
@@ -217,7 +220,8 @@ export default function RegistrationForm() {
               )}
             </LiquidButton>
           </form>
-        </div>
+          </div>
+        </PatasiFrame>
 
         <nav className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/50">
           <Link href="/privacy" className="underline underline-offset-2 hover:text-white/80">Privacy Policy</Link>

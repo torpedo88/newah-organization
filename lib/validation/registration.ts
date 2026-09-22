@@ -10,6 +10,7 @@ import { MAX_ADULT_GUESTS, MAX_DONATION, MIN_DONATION } from "@/lib/constants/ev
 export const adultGuestSchema = z.object({
   name: z.string().max(100, "Name must be less than 100 characters").trim().optional(),
   email: z.string().trim().toLowerCase().optional(),
+  phone: z.string().trim().optional(),
 });
 
 export type AdultGuest = z.infer<typeof adultGuestSchema>;
@@ -38,6 +39,12 @@ export const registrationSchema = z
     foodDescription: z.string().max(300, "Please keep this under 300 characters").trim().optional(),
 
     donationAmount: z.number().optional(),
+    /**
+     * An explicit choice, so nobody submits having simply not noticed the
+     * donation section. "none" is a decision; undefined is an unanswered
+     * question and is rejected.
+     */
+    donationChoice: z.enum(["none", "amount"]).optional(),
     /** Whether the donor pays the card processing fee on top. */
     coversFee: z.boolean().optional(),
 
@@ -56,9 +63,11 @@ export const registrationSchema = z
     (data.adultGuests ?? []).forEach((guest, index) => {
       const name = guest.name?.trim() ?? "";
       const email = guest.email?.trim() ?? "";
-      if (!name && !email) return; // an untouched row is simply ignored
+      const phone = guest.phone?.trim() ?? "";
+      if (!name && !email && !phone) return; // an untouched row is simply ignored
       if (name.length < 2) fail(["adultGuests", index, "name"], "Please enter this guest's name");
       if (!EMAIL.test(email)) fail(["adultGuests", index, "email"], "Please enter a valid email");
+      if (!/^\d{10}$/.test(phone)) fail(["adultGuests", index, "phone"], "Phone must be 10 digits");
     });
 
     if (data.broughtFood === true) {
@@ -67,8 +76,15 @@ export const registrationSchema = z
       }
     }
 
-    if (data.donationAmount !== undefined && data.donationAmount !== null) {
-      if (data.donationAmount < MIN_DONATION || data.donationAmount > MAX_DONATION) {
+    // Either they declined, or they chose an amount. Silence is not an answer.
+    if (data.donationChoice !== "none" && data.donationChoice !== "amount") {
+      fail(["donationChoice"], "Please choose a donation amount, or select No donation");
+    }
+    if (data.donationChoice === "amount") {
+      const amount = data.donationAmount;
+      if (amount === undefined || amount === null) {
+        fail(["donationAmount"], "Please choose or enter an amount");
+      } else if (amount < MIN_DONATION || amount > MAX_DONATION) {
         fail(["donationAmount"], `Please enter between $${MIN_DONATION} and $${MAX_DONATION}`);
       }
     }
@@ -82,6 +98,10 @@ export type Registration = z.infer<typeof registrationSchema>;
 /** Rows the registrant actually filled in. */
 export function filledGuests(guests: AdultGuest[] | undefined): Required<AdultGuest>[] {
   return (guests ?? [])
-    .map((guest) => ({ name: guest.name?.trim() ?? "", email: guest.email?.trim() ?? "" }))
-    .filter((guest) => guest.name !== "" && guest.email !== "");
+    .map((guest) => ({
+      name: guest.name?.trim() ?? "",
+      email: guest.email?.trim() ?? "",
+      phone: guest.phone?.trim() ?? "",
+    }))
+    .filter((guest) => guest.name !== "" && guest.email !== "" && guest.phone !== "");
 }
