@@ -1,7 +1,10 @@
 -- Constrain what an anonymous caller may insert.
 --
--- The anon key ships in the browser bundle, so "the form validates it" is not
--- a control: anyone holding that key can POST a row straight to PostgREST.
+-- The publishable key is public by design, and this project's was committed to
+-- a public repository, so "the form validates it" is not a control: anyone
+-- holding that key can POST a row straight to PostgREST. (In this app the key
+-- is used only server-side, but that limits who discovers it, not what it can
+-- do once known.)
 -- Until now the INSERT policy was `with check (true)`, which accepted a row
 -- claiming payment_status 'paid', a $10,000,000 donation and asserted consent.
 -- The admin totals trust those columns, so the policy — not the form — has to
