@@ -8,7 +8,7 @@ interface FoodSectionProps {
 }
 
 export default function FoodSection({ form }: FoodSectionProps) {
-  const foodError = (form.formState.errors as any).foodOption;
+  const foodError = form.formState.errors.foodOption;
 
   return (
     <div className="space-y-4">
