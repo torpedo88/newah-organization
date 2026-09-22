@@ -21,7 +21,7 @@ sonarqube:
   project_key: newah-organization
 ```
 
-> Requires a reachable SonarQube server plus scanner CLI. Neither is installed — scans no-op until configured. AEGIS can install both via its tool setup.
+> Requires a reachable SonarQube server and its MCP server. Not verified at init — scans will no-op until the server is configured.
 
 ### Enterprise Plan Audit
 
@@ -30,18 +30,7 @@ enterprise_plan_audit:
   enabled: true
 ```
 
-> Adds an architectural review step between PLAN and APPLY. On the prior attempt this caught three real defects before any code ran.
-
-### AEGIS
-
-```yaml
-aegis:
-  installed: true
-  commands: /aegis:init, /aegis:audit, /aegis:transform
-  tools_installed: none of 7
-```
-
-> Multi-domain codebase audit; `/aegis:transform` emits PAUL-ready remediation plans. Scanner tools (semgrep, trivy, gitleaks, checkov, syft, grype, sonar-scanner) not yet installed — audits run with reduced signal until they are.
+> Adds an architectural review step between PLAN and APPLY.
 
 ## Preferences
 

@@ -1,0 +1,35 @@
+import type { Metadata } from "next";
+
+// Validates required public config at app boot. Importing it here means a
+// missing Supabase variable fails the build instead of surfacing later as a
+// confusing runtime error on a page that queries data.
+import "@/lib/env";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Newah Organization of America — Northern California",
+  description:
+    "Events, news, and membership for the Northern California chapter of the Newah Organization of America.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}

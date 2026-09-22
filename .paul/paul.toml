@@ -17,13 +17,13 @@ phases = 5
 [phase]
 number = 1
 name = "Foundation"
-status = "planned"
+status = "applying"
 plans_completed = 0
 
 [loop]
-position = "PLAN"
-plan = "01-02"
-plan_path = "phases/01-foundation/01-02-PLAN.md"
+position = "APPLY"
+plan = "01-01"
+plan_path = "phases/01-foundation/01-01-PLAN.md"
 
 [satellite]
 groom = true

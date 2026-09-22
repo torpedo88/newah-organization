@@ -1,5 +1,5 @@
 ---
-description: "One canonical home for Northern California Newah community info, events with registration, and membership"
+description: "Central place for all Newah community organization of Northern California info, events, and data collection"
 type: Project
 about: "newah-organization"
 ---
@@ -8,11 +8,11 @@ about: "newah-organization"
 
 ## What This Is
 
-A website giving the Northern California Newah community one canonical home for org information, an events calendar with email-only registration, and member signup — replacing scattered social posts and attendee spreadsheets. It grows into a board-facing admin surface that doubles as a lightweight CRM.
+A website for the Newah Organization of America, Northern California chapter. It carries org information, an events calendar with registration, and member signup — giving the chapter one canonical home instead of scattered social posts and spreadsheets. Longer term it grows a board-facing admin portal that doubles as a lightweight CRM for members and event attendees.
 
 ## Core Value
 
-The Newah community of Northern California can find out what's happening and sign up for it in one place, while the chapter owns its own community data.
+Central place for all Newah community org of Northern California info and events, and for collecting member/attendee data.
 
 ## Current State
 
@@ -23,17 +23,17 @@ The Newah community of Northern California can find out what's happening and sig
 | Status | Initializing |
 | Last Updated | 2026-09-15 |
 
-**Production URLs:** Domain TBD (Phase 5).
+**Production URLs:** Domain TBD.
 
 ## Requirements
 
 ### Core Features
 
-- Public org info pages (home, about, board, mission, culture, contact)
-- Events calendar + event detail pages, driven by real data
-- Event registration — email-only, no account required
-- Member signup and membership records (post-v0.1)
-- Board admin surface: registration list, CSV export, growing into a light CRM
+- Public org info pages (about, board, mission, Newah culture)
+- Events calendar + event detail pages
+- Event registration portal — email-only, no account required
+- Member signup form (+ dues via Stripe when introduced)
+- Admin/board portal: view and manage collected data, CSV export, light CRM
 
 ### Validated (Shipped)
 
@@ -45,107 +45,89 @@ None yet.
 
 ### Planned (Next)
 
-v0.1 milestone, five phases: Foundation → Public Site → Events → Registration → Launch.
+**MVP slice (first milestone):** public pages + event list + event registration portal.
 
-Post-v0.1, not scheduled:
-- [ ] Memberships + Stripe dues
-- [ ] Full admin CRM
-- [ ] SMS and email marketing with consent capture and unsubscribe handling
+Deferred to later phases:
+- [ ] Member signup + membership records
+- [ ] Stripe payments (dues, paid events)
+- [ ] Admin portal / CRM views + export
+- [ ] SMS and email marketing
 
 ### Out of Scope
 
-- Accounts or logins for event registrants — email-only by design, to remove friction for a community audience where most people register once
-- A public HTTP API — the website is the only client, so an API would be surface area with no consumer
-- Paid events at launch — all free; Stripe arrives with dues
+- Accounts/logins for event registrants — email-only registration, chosen to minimize friction for a community audience
+- Paid events at launch — all events free for now; Stripe arrives with dues/paid events
 - Public access to member or attendee data — board admins only
-- Bilingual content — English only; no translated columns, no locale routing, revisit only if the board asks for Nepal Bhasa
 
 ## Target Users
 
 **Primary:** Newah community members in Northern California
-- Mixed technical comfort; most arrive on a phone from a social media link
-- Goal: find out what's happening and sign up
+- Mixed technical comfort; many will arrive on mobile from a social media link
+- Main goal: find out what events are happening and sign up for one
 
-**Secondary:** Chapter board members
-- Need to see who registered, manage events, export data
-- Non-technical — admin surfaces must not require a deploy
+**Secondary:** Chapter board members and admins
+- Need to see who registered, manage events, and export data
+- Non-technical — admin surfaces must not require a deploy to use
 
 ## Context
 
 **Business Context:**
-Volunteer-run cultural chapter of a national organization. No budget, no staff, one technical maintainer. Success is community reach and event turnout, not revenue. Off-the-shelf options were rejected deliberately: Meetup and Eventbrite own the member relationship and charge per event; a Facebook group is not indexable or archival and excludes people who avoid the platform; a site builder handles pages but not queryable registration data. Owning the community's own data is the point.
+Volunteer-run cultural community chapter of a national organization. No dedicated budget or staff assumed. Success is measured in community reach and turnout, not revenue.
 
 **Technical Context:**
-Greenfield. A prior scaffold attempt is preserved on branch `phase-01/foundation-scaffold` — Next.js 16 + Supabase scaffold, CI workflow, and an enterprise plan audit worth re-reading before Phase 1 re-execution.
+Greenfield — repository is empty at init. Single maintainer (project owner) handles development and operations after launch.
 
 ## Constraints
 
 ### Technical Constraints
 
 - Hosting on Vercel; backend on Supabase (Postgres, Auth, Storage)
-- Registration must work without registrant accounts
-- No public API — reads via Server Components, writes via Server Actions
-- Admin surfaces gated by Supabase Auth with role on `profiles`
-- Single maintainer — favor managed services over custom infrastructure
-- Node 22 pinned across local, CI, and Vercel
+- Event registration must work without registrant accounts (email-only)
+- Admin surfaces gated by Supabase Auth with role-based access
+- Single maintainer — favor managed services and low operational burden over custom infrastructure
 
 ### Business Constraints
 
-- Domain not chosen — required before launch
-- Volunteer-run; free/low tiers preferred
-- No hard deadline; the first real chapter event is the forcing function
-- Org copy, photos, and board details depend on the board, not on code
+- Domain not yet chosen — required before launch
+- Volunteer-run; assume minimal budget, free/low tiers preferred
+- No hard launch deadline stated; first real chapter event is the natural forcing function
 
 ### Compliance Constraints
 
-- Member and attendee PII visible to board admins only — enforced by Supabase Row Level Security, not UI checks
-- The Supabase anon key is public by design; RLS is the only real access boundary
-- No service role key in the codebase until a phase genuinely needs it — it bypasses RLS
-- A volunteer nonprofit chapter does not meet CCPA's for-profit thresholds, so it almost certainly does not bind; a plain-language privacy notice is still required before launch
-- SMS and email marketing require opt-in consent capture and unsubscribe handling before that feature ships
+- Member and attendee PII (names, emails, phone numbers, addresses) is visible to board admins only — enforced with Supabase Row Level Security, not just UI gating
+- Stripe integration must not store raw card data; use hosted Checkout/Elements
+- SMS and email marketing require opt-in consent capture and unsubscribe handling before launch of that feature
 
 ## Key Decisions
 
 | Decision | Rationale | Date | Status |
 |----------|-----------|------|--------|
-| `people` as the spine — one row per human, keyed by email | Registrations and memberships both reference it; retrofitting identity after hundreds of registrations is a data-cleanup project, adding it now costs one table and an upsert | 2026-09-15 | Active |
-| Email-only registration, no accounts | Removes signup friction for a community audience; accepts that someone can register another person's email, with the confirmation email as mitigation | 2026-09-15 | Active |
-| No public API; Server Actions only | The website is the only client | 2026-09-15 | Active |
-| RLS as the access boundary, INSERT-without-SELECT on `people` and `registrations` | The anon key is public, so the database is the only place enforcement is real; this split is what prevents dumping the attendee list | 2026-09-15 | Active |
-| No service role key until a phase needs it | It bypasses RLS; an unused copy is a standing risk with zero benefit | 2026-09-15 | Active |
-| Vercel + Supabase, both managed | A single volunteer maintainer cannot carry infrastructure operations | 2026-09-15 | Active |
-| English only | No translated columns, no locale routing | 2026-09-15 | Active |
-| Free events at launch; Stripe deferred | Nothing to charge for yet | 2026-09-15 | Active |
-| Node 22 pinned across local, CI, and Vercel | Node 23 is not an LTS and not a Vercel runtime; unpinned toolchains break volunteer projects years later | 2026-09-15 | Active |
-| Noindex until launch | Production Vercel deploys are crawlable; an unfinished page indexed under the org's name is slow to undo | 2026-09-15 | Active |
+| Vercel + Supabase stack | Managed, free/low tier, minimal ops for a single volunteer maintainer | 2026-09-15 | Active |
+| Email-only event registration (no accounts) | Removes signup friction for a community audience where many attendees register once | 2026-09-15 | Active |
+| Free events at launch; Stripe deferred | Nothing to charge for yet — avoids payment surface before it earns its keep | 2026-09-15 | Active |
+| Board-admins-only access to PII, enforced via RLS | Community trust depends on member data not leaking; database-level enforcement survives UI mistakes | 2026-09-15 | Active |
+| MVP = public pages + event list + registration portal | Smallest slice that replaces the spreadsheet and proves the concept | 2026-09-15 | Active |
 
 ## Success Metrics
 
 | Metric | Target | Current | Status |
 |--------|--------|---------|--------|
-| Site live on real domain | Board can share the link | - | Not started |
+| Site live on real domain | Reachable, board can share the link | - | Not started |
 | Upcoming event listed publicly | ≥1 event with detail page | - | Not started |
-| Registrations captured without a spreadsheet | All registrations land in Supabase | - | Not started |
-| Board can export the attendee list | CSV export works, auth-gated | - | Not started |
-| anon role cannot read `people` or `registrations` | Verified by policy test | - | Not started |
-| Mobile performance | LCP < 2.5s on 4G | - | Not started |
+| Registrations captured without a spreadsheet | All registrations for next event land in Supabase | - | Not started |
+| Admin can view/export registration list | CSV export works for board | - | Not started |
 
 ## Tech Stack / Tools
 
 | Layer | Technology | Notes |
 |-------|------------|-------|
-| Framework | Next.js 16 (App Router) + TypeScript | Server Components keep data access server-side by default |
-| Backend | Next.js Server Actions | No separate API — website is the only client |
-| Database | Supabase (Postgres) | `people`, `events`, `registrations`, `memberships`, `profiles` |
-| Auth | Supabase Auth | Board/admin only; registrants never authenticate |
+| Framework | Next.js (App Router) | Assumed at init — confirm during /paul:plan |
+| Hosting | Vercel | Preview deploys, free tier |
+| Database | Supabase (Postgres) | Events, registrations, members |
+| Auth | Supabase Auth | Board/admin only; registrants need no account |
 | Storage | Supabase Storage | Event images, org media |
-| Cache | None | Small, bursty traffic; static generation covers it |
-| Styling | Tailwind v4 + shadcn/ui | Accessible primitives without building a design system |
-| Hosting | Vercel | Preview deploy per PR |
-| CI | GitHub Actions | lint, typecheck, build, gitleaks — placeholder env values only |
-| Package manager | pnpm 10 / Node 22 | Current LTS, supported Vercel runtime |
-| Email | TBD | Resend vs Supabase SMTP vs Postmark — needed by Phase 4 |
-| Payments | Stripe | Post-v0.1 |
+| Payments | Stripe | Deferred — dues and paid events |
+| Messaging | TBD (email + SMS) | Provider not chosen; needed for confirmations and later marketing |
 
 ## Specialized Flows
 
@@ -157,18 +139,17 @@ Quick Reference:
 - /design-review → Visual QA
 - /browse → Live-site QA
 - /vercel:nextjs, /vercel:deploy → Next.js & deployment
-- /engineering-skills:senior-security → Schema, RLS, auth, PII
+- /engineering-skills:senior-security → Supabase schema, RLS, auth, PII
 - /code-review → Pre-merge review
-- /aegis:audit → Multi-domain codebase audit (post-phase)
 - /obsidian-sync → End-of-session notes sync
 
 ## Links
 
 | Resource | URL |
 |----------|-----|
-| Repository | github.com/torpedo88/newah-organization |
-| Ideation | PLANNING.md (SEED, application type) |
+| Repository | (local: newah-organization) |
 | Production | TBD |
+| Documentation | TBD |
 
 ---
 *PROJECT.md — Updated when requirements or context change*
