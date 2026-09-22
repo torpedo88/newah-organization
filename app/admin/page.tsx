@@ -63,7 +63,7 @@ export default async function AdminPage(props: {
       <Shell>
         <Panel>
           <div className="mx-auto max-w-lg text-center text-white">
-            <TriangleAlert className="mx-auto mb-4 size-10 text-[#FF9A6A]" strokeWidth={1.5} aria-hidden />
+            <TriangleAlert className="mx-auto mb-4 size-10 text-lun" strokeWidth={1.5} aria-hidden />
             <h1 className="mb-2 text-2xl font-bold">Admin is not configured</h1>
             <p className="text-white/70">
               Set <code className="rounded bg-white/10 px-1.5 py-0.5">ADMIN_PASSWORD</code> and{" "}
@@ -85,7 +85,7 @@ export default async function AdminPage(props: {
         <div className="mx-auto max-w-sm">
           <Panel>
             <div className="mb-6 text-center text-white">
-              <LockKeyhole className="mx-auto mb-3 size-9 text-[#FF9A6A]" strokeWidth={1.5} aria-hidden />
+              <LockKeyhole className="mx-auto mb-3 size-9 text-lun" strokeWidth={1.5} aria-hidden />
               <h1 className="text-2xl font-bold">Board access</h1>
               <p className="mt-1 text-sm text-white/70">
                 This page lists registrants&rsquo; contact details.
@@ -101,10 +101,10 @@ export default async function AdminPage(props: {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="w-full rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-[#FF7A45] focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] focus:outline-none"
+                className="w-full rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] focus:outline-none"
               />
               {error && (
-                <p className="text-sm text-[#FF3B30]">That password was not correct.</p>
+                <p className="text-sm text-alert">That password was not correct.</p>
               )}
               <LiquidButton type="submit" size="xl" className="w-full text-white">
                 Sign in
@@ -122,7 +122,7 @@ export default async function AdminPage(props: {
       <Shell>
         <Panel>
           <div className="mx-auto max-w-lg text-center text-white">
-            <TriangleAlert className="mx-auto mb-4 size-10 text-[#FF9A6A]" strokeWidth={1.5} aria-hidden />
+            <TriangleAlert className="mx-auto mb-4 size-10 text-lun" strokeWidth={1.5} aria-hidden />
             <h1 className="mb-2 text-2xl font-bold">Cannot read registrations</h1>
             <p className="text-white/70">
               <code className="rounded bg-white/10 px-1.5 py-0.5">SUPABASE_SERVICE_ROLE_KEY</code> is
@@ -168,7 +168,7 @@ export default async function AdminPage(props: {
       {queryError ? (
         <Panel>
           <div className="text-center text-white">
-            <TriangleAlert className="mx-auto mb-4 size-10 text-[#FF3B30]" strokeWidth={1.5} aria-hidden />
+            <TriangleAlert className="mx-auto mb-4 size-10 text-alert" strokeWidth={1.5} aria-hidden />
             <h2 className="mb-2 text-xl font-bold">Could not load registrations</h2>
             <p className="text-white/70">{queryError.message}</p>
           </div>
@@ -189,7 +189,7 @@ export default async function AdminPage(props: {
                 key={stat.label}
                 className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl"
               >
-                <stat.icon className="mb-3 size-6 text-[#FF9A6A]" strokeWidth={1.5} aria-hidden />
+                <stat.icon className="mb-3 size-6 text-lun" strokeWidth={1.5} aria-hidden />
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
                 <p className="text-sm text-white/60">{stat.label}</p>
               </div>

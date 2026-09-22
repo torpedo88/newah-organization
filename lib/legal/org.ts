@@ -7,10 +7,10 @@
  * VERIFIED — published by the organization itself:
  *   - name, chapter, contactEmail, website, facebook
  *
- * UNCONFIRMED — sourced from a third-party IRS-derived record (CauseIQ) and
- * NOT yet confirmed by the board. `ein` and `mailingAddress` belong to the
- * national organization registered in Maryland; whether the Northern
- * California chapter operates under that same entity has not been verified.
+ * UNCONFIRMED — `ein` came from a third-party IRS-derived record (CauseIQ) and
+ * has NOT been confirmed by the board. The mailing address is now the one the
+ * organization publishes itself, but it is the Maryland address for the whole
+ * organization rather than a Northern California one.
  * Claiming tax-deductibility under an EIN that turns out to be wrong is a real
  * liability, so `showTaxDeductibility` stays false until the board confirms.
  */
@@ -20,15 +20,23 @@ export const ORG = {
   chapter: "Northern California Chapter",
   legalName: "Newah Organization of America, Inc.",
 
-  contactEmail: "info@newah.org",
+  /** The chapter address published on newah.org/noa-northern-california. */
+  contactEmail: "newah2001@gmail.com",
+  /** The national organization's address, for reference. */
+  nationalEmail: "info@newah.org",
   website: "https://www.newah.org",
   facebook: "https://www.facebook.com/newahnorcal",
 
   /** UNCONFIRMED — see note above. */
   ein: "02-0630839",
-  /** UNCONFIRMED — national organization's registered address. */
+  /**
+   * Published by the organization on its own chapter page as the address for
+   * mailing checks. The page lists it "C/O" a named board member; the person's
+   * name is deliberately NOT reproduced here, because a privacy policy should
+   * not publish an individual's name against a residential address.
+   */
   mailingAddress: {
-    street: "19020 Steeple Pl",
+    street: "19043 Steeple Place",
     city: "Germantown",
     state: "MD",
     zip: "20874",

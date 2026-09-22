@@ -21,12 +21,12 @@ export default function FoodSection({ form }: FoodSectionProps) {
           type="text"
           {...form.register("foodOption", { shouldUnregister: true })}
           placeholder="e.g., Dal Bhat, Chicken Curry, Vegetarian Special"
-          className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
+          className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-patasi focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all"
         />
       </div>
 
       {foodError && (
-        <p className="mt-1 text-sm text-[#FF3B30]">{foodError.message}</p>
+        <p className="mt-1 text-sm text-alert">{foodError.message}</p>
       )}
     </div>
   );
