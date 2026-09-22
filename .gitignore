@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Playwright MCP screenshots and snapshots
 .playwright-mcp/
+
+# /brag video output (large binaries, regenerate on demand)
+brag-output*/

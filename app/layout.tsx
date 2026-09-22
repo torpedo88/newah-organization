@@ -31,7 +31,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: TITLE,
   description: DESCRIPTION,
+  alternates: { canonical: "/" },
   openGraph: {
+    // Facebook expects a canonical URL on the card; without og:url the scraper
+    // has nothing to attribute the preview to.
+    url: siteUrl(),
     title: TITLE,
     description: DESCRIPTION,
     siteName: ORG.name,
