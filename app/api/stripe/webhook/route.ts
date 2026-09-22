@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { getStripe, webhookSecret } from "@/lib/payments/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { intendedStatus } from "@/lib/payments/webhook-status";
 
 /**
  * Stripe webhook: the only thing permitted to mark a donation paid.
@@ -25,7 +27,7 @@ export async function POST(request: NextRequest) {
   // Must be the raw body: any reserialization invalidates the signature.
   const payload = await request.text();
 
-  let event;
+  let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(payload, signature, secret);
   } catch (error) {
@@ -33,17 +35,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid signature" }, { status: 400 });
   }
 
-  const status =
-    event.type === "checkout.session.completed"
-      ? "paid"
-      : event.type === "checkout.session.expired" ||
-          event.type === "checkout.session.async_payment_failed"
-        ? "failed"
-        : null;
+  const session = event.data.object as Stripe.Checkout.Session;
+  const status = intendedStatus(event.type, session.payment_status);
+  if (!status) return NextResponse.json({ received: true, ignored: event.type });
 
-  if (!status) return NextResponse.json({ received: true });
-
-  const session = event.data.object as { id: string };
   const supabase = createAdminClient();
   if (!supabase) {
     // Returning 500 makes Stripe retry, which is what we want: the payment
@@ -51,6 +46,43 @@ export async function POST(request: NextRequest) {
     console.error("Stripe webhook could not reach the database; SUPABASE_SERVICE_ROLE_KEY is not set");
     return NextResponse.json({ error: "database unavailable" }, { status: 500 });
   }
+
+  const { data: rows, error: readError } = await supabase
+    .from("registrations")
+    .select("id, payment_status")
+    .eq("stripe_session_id", session.id);
+
+  if (readError) {
+    console.error("Stripe webhook could not read the registration:", readError.message);
+    return NextResponse.json({ error: "read failed" }, { status: 500 });
+  }
+
+  // A payment we cannot attribute is the worst case here: money has moved and
+  // no row records it. Acknowledging that with 200 loses it silently, so fail
+  // instead — Stripe retries, and a failing endpoint is visible in its
+  // dashboard rather than sitting unnoticed in a log.
+  if (!rows || rows.length === 0) {
+    console.error(
+      `Stripe webhook ${event.type} for session ${session.id} matched no registration. ` +
+        "The payment is unattributed and needs reconciling by hand.",
+    );
+    return NextResponse.json({ error: "no matching registration" }, { status: 500 });
+  }
+
+  const current = rows[0].payment_status as string | null;
+
+  // Never walk a paid donation backwards. Stripe can deliver events out of
+  // order, and an expiry arriving after a success must not unpay it.
+  if (status === "failed" && current === "paid") {
+    console.warn(
+      `Stripe webhook ${event.type} for session ${session.id} would downgrade a paid ` +
+        "registration; ignoring.",
+    );
+    return NextResponse.json({ received: true, ignored: "already paid" });
+  }
+
+  // Redelivery is normal and must be a no-op.
+  if (current === status) return NextResponse.json({ received: true, unchanged: true });
 
   const { error } = await supabase
     .from("registrations")
@@ -62,5 +94,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "update failed" }, { status: 500 });
   }
 
-  return NextResponse.json({ received: true });
+  return NextResponse.json({ received: true, payment_status: status });
 }

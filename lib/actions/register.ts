@@ -51,41 +51,29 @@ export type RegisterResult = {
   chargedCents?: number;
   netCents?: number;
   broughtFood?: boolean;
+  /** Whether a confirmation actually went out, so the screen can stop promising one. */
+  emailSent?: boolean;
   error?: string;
 };
 
 /**
- * Insert a registration, tolerating a database that has not had the newer
- * migrations applied yet.
+ * Insert a registration.
  *
- * A missing column makes PostgREST reject the whole insert, which would take
- * registration down completely. Columns added by 0004 and 0005 are therefore
- * dropped and retried rather than losing the registration outright.
+ * There is deliberately no `.select()` here. Reading the new row back needs a
+ * SELECT policy, and this table holds registrant names, phones and emails, so
+ * no such policy exists — the Stripe session id is written with the row rather
+ * than updated onto it afterwards.
+ *
+ * There is also deliberately no reduced-row fallback. One used to drop the
+ * consent columns and retry when PostgREST rejected the insert, which is how
+ * three real registrations were saved with consent_given false: the retry
+ * succeeded, so nothing looked wrong. A registration whose consent was not
+ * recorded is not a lesser record of the same thing, it is a different and
+ * unusable one. If a column is missing, this now fails loudly and the migration
+ * gets applied.
  */
 async function insertRegistration(row: Record<string, unknown>) {
-  const first = await supabase.from("registrations").insert(row);
-  if (!first.error) return first;
-
-  const missingColumn =
-    first.error.code === "PGRST204" ||
-    /consent_\w+|brought_food|food_description|donation_cents|charged_cents|net_cents|covers_fee|adult_guests|payment_status|stripe_session_id/.test(
-      first.error.message ?? "",
-    );
-  if (!missingColumn) return first;
-
-  console.error(
-    "registrations is missing newer columns; apply supabase/migrations/0004 and 0005. " +
-      "Saving a reduced row for now.",
-  );
-  const reduced: Record<string, unknown> = {
-    registration_code: row.registration_code,
-    full_name: row.full_name,
-    phone: row.phone,
-    email: row.email,
-    number_of_guests: row.number_of_guests,
-    created_at: row.created_at,
-  };
-  return supabase.from("registrations").insert(reduced);
+  return supabase.from("registrations").insert(row);
 }
 
 export async function registerAttendee(input: Registration): Promise<RegisterResult> {
@@ -95,8 +83,13 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
     const code = registrationCode();
     const broughtFood = validated.broughtFood === true;
     const guests = filledGuests(validated.adultGuests);
+    // Only an explicit "amount" choice produces a charge. Deriving this from
+    // donationAmount alone would let a caller decline the donation and still
+    // name a figure, and the figure is what the charge is built from.
     const donationCents =
-      validated.donationAmount && validated.donationAmount > 0
+      validated.donationChoice === "amount" &&
+      validated.donationAmount &&
+      validated.donationAmount > 0
         ? Math.round(validated.donationAmount * 100)
         : null;
     // Covering the fee is the donor's choice. Covered, they pay a grossed-up
@@ -157,7 +150,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       return { success: false, error: `Failed to save registration: ${error.message}` };
     }
 
-    await sendConfirmation({
+    const emailSent = await sendConfirmation({
       name: validated.fullName ?? "",
       email: validated.email ?? "",
       code,
@@ -175,6 +168,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       chargedCents: money?.chargedCents,
       netCents: money?.toOrganizationCents,
       broughtFood,
+      emailSent,
     };
   } catch (error) {
     console.error("Registration error:", error);
@@ -242,19 +236,23 @@ async function sendConfirmation(args: {
   foodDescription: string;
   donationCents: number | null;
   guestCount: number;
-}) {
+}): Promise<boolean> {
   const resend = getResendClient();
   if (!resend) {
     console.error("RESEND_API_KEY is not configured; confirmation email not sent");
-    return;
+    return false;
   }
-  if (!args.email) return;
+  if (!args.email) return false;
   if (usingTestSender()) {
+    // Resend's test domain delivers only to the account holder, so the
+    // registrant gets nothing. Reporting this as sent would put a promise on
+    // the confirmation screen that no email keeps.
     console.error(
       "Sending from Resend's test domain, which only delivers to the account holder. " +
         "Set RESEND_FROM to an address on a domain verified in Resend, or registrants " +
         "will not receive their confirmation.",
     );
+    return false;
   }
 
   try {
@@ -276,8 +274,11 @@ async function sendConfirmation(args: {
     });
     if (response.error) {
       console.error("Resend rejected the email:", response.error.message);
+      return false;
     }
+    return true;
   } catch (error) {
     console.error("Email send error:", error);
+    return false;
   }
 }
