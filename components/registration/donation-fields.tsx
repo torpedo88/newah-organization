@@ -11,12 +11,24 @@ import { Registration } from "@/lib/validation/registration";
  */
 export default function DonationFields({ form }: { form: UseFormReturn<Registration> }) {
   const amount = useWatch({ control: form.control, name: "donationAmount" });
+  const choice = useWatch({ control: form.control, name: "donationChoice" });
   const coversFee = useWatch({ control: form.control, name: "coversFee" }) === true;
   const selected = typeof amount === "number" ? amount : undefined;
   const isPreset = selected !== undefined && DONATION_PRESETS.includes(selected as never);
 
-  const setAmount = (value: number | undefined) =>
+  // Choosing an amount and declining are both explicit acts; picking one
+  // always clears the other so the two can never disagree.
+  const setAmount = (value: number | undefined) => {
     form.setValue("donationAmount", value, { shouldValidate: true, shouldDirty: true });
+    form.setValue("donationChoice", value === undefined ? undefined : "amount", {
+      shouldValidate: true,
+    });
+  };
+
+  const declineDonation = () => {
+    form.setValue("donationAmount", undefined, { shouldDirty: true });
+    form.setValue("donationChoice", "none", { shouldValidate: true, shouldDirty: true });
+  };
 
   const cents = selected && selected > 0 ? Math.round(selected * 100) : 0;
   const { chargedCents, toOrganizationCents, feeCents } = settlement(cents, coversFee);
@@ -30,6 +42,19 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
           covered, all remaining proceeds go to the {EVENT.fundName}.
         </p>
       </div>
+
+      <button
+        type="button"
+        onClick={declineDonation}
+        aria-pressed={choice === "none"}
+        className={`w-full rounded-xl border-2 py-3 font-semibold transition-all ${
+          choice === "none"
+            ? "border-patasi bg-patasi/35 text-white shadow-[0_12px_32px_-16px_rgba(192,16,43,0.95)]"
+            : "border-white/12 bg-white/5 text-white/80 backdrop-blur-sm hover:border-white/30 hover:bg-white/10"
+        }`}
+      >
+        No donation
+      </button>
 
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {DONATION_PRESETS.map((preset) => (
@@ -84,9 +109,12 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
         {form.formState.errors.donationAmount && (
           <p className="mt-1 text-sm text-alert">{form.formState.errors.donationAmount.message}</p>
         )}
+        {form.formState.errors.donationChoice && (
+          <p className="mt-2 text-sm text-alert">{form.formState.errors.donationChoice.message}</p>
+        )}
       </div>
 
-      {cents > 0 && (
+      {choice === "amount" && cents > 0 && (
         <>
           {/* The choice, and its consequence, stated before they reach the card page. */}
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/12 bg-white/[0.04] p-4">

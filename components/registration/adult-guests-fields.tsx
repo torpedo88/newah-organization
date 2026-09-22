@@ -25,8 +25,8 @@ export default function AdultGuestsFields({ form }: { form: UseFormReturn<Regist
       <div>
         <h2 className="text-sm font-semibold text-white">Other adults attending</h2>
         <p className="mt-1 text-sm text-white/60">
-          We make name tags in advance, so we need the name and email of every adult
-          ({ADULT_AGE}+) coming with you.{" "}
+          We make name tags in advance, so we need the name, email and phone number of
+          every adult ({ADULT_AGE}+) coming with you.{" "}
           <span className="font-semibold text-white">
             Please do not enter details for anyone under {ADULT_AGE}
           </span>{" "}
@@ -69,6 +69,17 @@ export default function AdultGuestsFields({ form }: { form: UseFormReturn<Regist
                 <p className="mt-1 text-sm text-alert">{errors[index]?.email?.message}</p>
               )}
             </div>
+            <div>
+              <input
+                {...form.register(`adultGuests.${index}.phone`)}
+                type="tel"
+                placeholder="Phone number"
+                className={fieldClass}
+              />
+              {errors?.[index]?.phone && (
+                <p className="mt-1 text-sm text-alert">{errors[index]?.phone?.message}</p>
+              )}
+            </div>
           </div>
         </div>
       ))}
@@ -76,7 +87,7 @@ export default function AdultGuestsFields({ form }: { form: UseFormReturn<Regist
       {fields.length < MAX_ADULT_GUESTS && (
         <button
           type="button"
-          onClick={() => append({ name: "", email: "" })}
+          onClick={() => append({ name: "", email: "", phone: "" })}
           className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/20 py-3 text-sm font-semibold text-white/80 transition-colors hover:border-patasi/60 hover:bg-patasi/10 hover:text-white"
         >
           <Plus className="size-4" aria-hidden />

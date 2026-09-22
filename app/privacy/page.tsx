@@ -31,8 +31,8 @@ export default function PrivacyPage() {
         <li><strong>Your email address.</strong></li>
         <li><strong>Your telephone number.</strong></li>
         <li>
-          <strong>The name and email address of each additional adult</strong> attending with
-          you, so we can prepare their name tag.
+          <strong>The name, email address and telephone number of each additional adult</strong>{" "}
+          attending with you, so we can prepare their name tag and reach them about the event.
         </li>
         <li><strong>Whether you brought food</strong>, and what you brought.</li>
         <li><strong>Donation amount</strong>, and whether you chose to cover the card processing fee.</li>
