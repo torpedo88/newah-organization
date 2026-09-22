@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, Registration, FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
@@ -8,6 +9,9 @@ import { registerFood, registerDonation } from "@/lib/actions/register";
 import FoodSection from "./food-section";
 import DonationSection from "./donation-section";
 import SuccessScreen from "./success-screen";
+import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
+import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import { UtensilsCrossed, HeartHandshake, LoaderCircle } from "lucide-react";
 
 export default function RegistrationForm() {
   const [registrationType, setRegistrationType] = useState<"FOOD" | "DONATION" | null>(null);
@@ -83,15 +87,19 @@ export default function RegistrationForm() {
   const canSubmit = form.formState.isValid && !isSubmitting;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A0E27] to-[#1A1E3F] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-md">
+    <div className="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <FestivalBackdrop />
+      <div className="relative mx-auto max-w-md">
         {/* Header with Full Logo */}
         <div className="mb-12 text-center">
           <div className="mb-8 flex justify-center">
-            <img
-              src="/images/newah-full-logo.png"
+            <Image
+              src="/images/newah-full-logo-transparent.png"
               alt="Newah Organization of America"
-              className="h-48 w-auto max-w-full"
+              width={1024}
+              height={1024}
+              priority
+              className="size-44 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
             />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">
@@ -194,11 +202,11 @@ export default function RegistrationForm() {
                   onClick={() => handleRegistrationTypeChange("FOOD")}
                   className={`p-6 rounded-2xl border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isFoodSelected
-                      ? "border-[#FF7A45] bg-[rgba(255,122,69,0.15)] text-white"
-                      : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-white hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.08)]"
+                      ? "border-[#FF7A45] bg-[linear-gradient(140deg,rgba(242,85,28,0.4),rgba(255,168,106,0.16))] text-white shadow-[0_14px_36px_-16px_rgba(255,122,69,0.95)]"
+                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white backdrop-blur-sm hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.1)]"
                   }`}
                 >
-                  <span className="text-3xl">🍽</span>
+                  <UtensilsCrossed className="size-8" strokeWidth={1.5} aria-hidden />
                   <span>Food</span>
                 </button>
 
@@ -208,11 +216,11 @@ export default function RegistrationForm() {
                   onClick={() => handleRegistrationTypeChange("DONATION")}
                   className={`p-6 rounded-2xl border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isDonationSelected
-                      ? "border-[#FF7A45] bg-[rgba(255,122,69,0.15)] text-white"
-                      : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-white hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.08)]"
+                      ? "border-[#FF7A45] bg-[linear-gradient(140deg,rgba(242,85,28,0.4),rgba(255,168,106,0.16))] text-white shadow-[0_14px_36px_-16px_rgba(255,122,69,0.95)]"
+                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white backdrop-blur-sm hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.1)]"
                   }`}
                 >
-                  <span className="text-3xl">❤️</span>
+                  <HeartHandshake className="size-8" strokeWidth={1.5} aria-hidden />
                   <span>Donation</span>
                 </button>
               </div>
@@ -238,21 +246,26 @@ export default function RegistrationForm() {
             )}
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="w-full bg-gradient-to-r from-[#FF7A45] to-[#FF9A6A] hover:shadow-[0_12px_32px_rgba(255,122,69,0.4)] text-white font-bold py-4 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_12px_32px_rgba(255,122,69,0.4)] hover:shadow-[0_16px_48px_rgba(255,122,69,0.5)]"
-            >
+            <LiquidButton type="submit" disabled={!canSubmit} size="xxl" className="w-full text-white">
               {isSubmitting ? (
-                <span>
-                  {isFoodSelected ? "registering..." : isDonationSelected ? "redirecting to stripe..." : "register"}
-                </span>
+                <>
+                  <LoaderCircle className="size-5 animate-spin" aria-hidden />
+                  <span>
+                    {isFoodSelected
+                      ? "Registering\u2026"
+                      : isDonationSelected
+                        ? "Redirecting to Stripe\u2026"
+                        : "Working\u2026"}
+                  </span>
+                </>
               ) : (
                 <span>{isDonationSelected ? "Donate with Stripe" : "Register"}</span>
               )}
-            </button>
+            </LiquidButton>
           </form>
         </div>
+
+        <FestivalPhotoCredit className="mt-8 text-center text-xs text-white/40" />
       </div>
 
       <style jsx>{`
