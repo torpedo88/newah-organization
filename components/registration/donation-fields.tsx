@@ -19,15 +19,15 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
   // Choosing an amount and declining are both explicit acts; picking one
   // always clears the other so the two can never disagree.
   const setAmount = (value: number | undefined) => {
-    form.setValue("donationAmount", value, { shouldValidate: true, shouldDirty: true });
+    form.setValue("donationAmount", value, { shouldDirty: true });
     form.setValue("donationChoice", value === undefined ? undefined : "amount", {
-      shouldValidate: true,
+      shouldDirty: true,
     });
   };
 
   const declineDonation = () => {
     form.setValue("donationAmount", undefined, { shouldDirty: true });
-    form.setValue("donationChoice", "none", { shouldValidate: true, shouldDirty: true });
+    form.setValue("donationChoice", "none", { shouldDirty: true });
   };
 
   const cents = selected && selected > 0 ? Math.round(selected * 100) : 0;
