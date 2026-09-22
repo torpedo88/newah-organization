@@ -22,6 +22,22 @@ function getResendClient(): Resend | null {
   return resendClient;
 }
 
+/**
+ * Who confirmation emails come from.
+ *
+ * The default is Resend's shared test domain, which only delivers to the
+ * account holder's own address — every registrant's confirmation would be
+ * rejected. Set RESEND_FROM to an address on a domain verified in Resend
+ * before relying on these emails reaching anyone.
+ */
+function senderAddress(): string {
+  return process.env.RESEND_FROM || "Newah Organization <noreply@resend.dev>";
+}
+
+function usingTestSender(): boolean {
+  return senderAddress().includes("resend.dev");
+}
+
 function registrationCode(): string {
   return `NOA-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 }
@@ -232,6 +248,13 @@ async function sendConfirmation(args: {
     return;
   }
   if (!args.email) return;
+  if (usingTestSender()) {
+    console.error(
+      "Sending from Resend's test domain, which only delivers to the account holder. " +
+        "Set RESEND_FROM to an address on a domain verified in Resend, or registrants " +
+        "will not receive their confirmation.",
+    );
+  }
 
   try {
     const html = await render(
@@ -245,7 +268,7 @@ async function sendConfirmation(args: {
       }),
     );
     const response = await resend.emails.send({
-      from: "Newah Organization <noreply@resend.dev>",
+      from: senderAddress(),
       to: args.email,
       subject: `You're registered - ${EVENT.title}`,
       html,
