@@ -1,114 +1,92 @@
 "use client";
 
 import Link from "next/link";
-import { FOOD_OPTIONS } from "@/lib/constants/food";
-import { FoodRegistration, DonationRegistration } from "@/lib/validation/registration";
 import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import { CircleCheckBig, HeartHandshake, BadgeCheck } from "lucide-react";
+import { EVENT } from "@/lib/constants/event";
+import { ORG } from "@/lib/legal/org";
+import { toDollars } from "@/lib/payments/fees";
 
-interface SuccessScreenProps {
-  type: "FOOD" | "DONATION";
+export type SuccessData = {
   code: string;
-  data: FoodRegistration | DonationRegistration;
-}
+  name: string;
+  broughtFood: boolean;
+  foodDescription: string;
+  donationCents: number | null;
+  /** A donation exists but was never charged, because Stripe is unconfigured. */
+  paymentPending: boolean;
+};
 
-export default function SuccessScreen({ code, data }: SuccessScreenProps) {
-  const getFoodLabel = (id: string) => {
-    return FOOD_OPTIONS.find((opt) => opt.id === id)?.label || id;
-  };
+export default function SuccessScreen({ data }: { data: SuccessData }) {
+  const donated = typeof data.donationCents === "number" && data.donationCents > 0;
 
   return (
-    <div className="relative min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div className="relative flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
       <FestivalBackdrop />
-      <div className="relative max-w-2xl mx-auto w-full">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)] p-8 text-center">
-          {data.registrationType === "FOOD" ? (
-            <>
-              {/* Success Icon */}
-              <CircleCheckBig className="mx-auto mb-4 size-14 text-lun" strokeWidth={1.5} aria-hidden />
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Registration successful
-              </h1>
-              <p className="text-lg text-white/70 mb-8">
-                Thank you for registering with Newah Organization.
-              </p>
+      <div className="relative mx-auto w-full max-w-2xl">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-8 text-center backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)]">
+          <h1 className="mb-2 text-3xl font-bold text-white">You&rsquo;re registered</h1>
+          <p className="mb-8 text-lg text-white/70">
+            Thank you{data.name ? `, ${data.name}` : ""}. We look forward to seeing you.
+          </p>
 
-              {/* Registration Code */}
-              <div className="bg-white/[0.06] rounded-lg p-6 mb-8 border border-white/10">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white/55 mb-2">registration number</p>
-                <p className="text-3xl font-bold text-white font-mono">{code}</p>
-              </div>
+          <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.06] p-6">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/55">
+              Registration number
+            </p>
+            <p className="font-mono text-3xl font-bold text-white">{data.code}</p>
+          </div>
 
-              {/* Registration Details */}
-              <div className="space-y-4 text-left max-w-md mx-auto mb-8">
-                <div className="flex justify-between py-2 border-b border-white/10">
-                  <span className="text-white/55">name</span>
-                  <span className="font-medium text-white">{data.fullName}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-white/10">
-                  <span className="text-white/55">registration</span>
-                  <span className="font-medium text-white">food</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-white/10">
-                  <span className="text-white/55">food selection</span>
-                  <span className="font-medium text-white">
-                    {getFoodLabel(data.foodOption)}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-white/55">number of guests</span>
-                  <span className="font-medium text-white">
-                    {data.numberOfGuests}
-                  </span>
-                </div>
-              </div>
+          {/* The instruction everyone needs, given the most weight on the page. */}
+          <div className="mb-8 rounded-2xl border-2 border-patasi bg-patasi/15 p-6 text-left">
+            <p className="mb-1 font-bold text-white">When you arrive</p>
+            <p className="text-white/85">
+              Please go to the <strong className="text-white">registration desk</strong> to pick up
+              your name tag. Show this registration number or simply give your name.
+            </p>
+          </div>
 
-              <p className="text-sm text-white/70 mb-8">
-                confirmation has been sent to your email.
-              </p>
-            </>
-          ) : (
-            <>
-              {/* Donation Success Icon */}
-              <HeartHandshake className="mx-auto mb-4 size-14 text-lun" strokeWidth={1.5} aria-hidden />
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Thank you
-              </h1>
-              <p className="text-lg text-white/70 mb-8">
-                Thank you for supporting Newah Organization.
-              </p>
-
-              {/* Registration Code */}
-              <div className="bg-white/[0.06] rounded-lg p-6 mb-8 border border-white/10">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white/55 mb-2">registration number</p>
-                <p className="text-3xl font-bold text-white font-mono">{code}</p>
-              </div>
-
-              {/* Donation Details */}
-              <div className="space-y-4 text-left max-w-md mx-auto mb-8">
-                <div className="flex justify-between py-2 border-b border-white/10">
-                  <span className="text-white/55">donation</span>
-                  <span className="font-medium text-white">
-                    ${data.donationAmount.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-white/55">payment status</span>
-                  <span className="inline-flex items-center gap-1.5 font-medium text-[#4ADE80]">
-                    <BadgeCheck className="size-4" aria-hidden />
-                    paid
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-sm text-white/70 mb-8">
-                confirmation has been sent to your email.
-              </p>
-            </>
+          {data.broughtFood && (
+            <p className="mb-6 text-white/80">
+              Thank you for bringing food
+              {data.foodDescription ? (
+                <>
+                  {" "}&mdash; <span className="font-semibold text-white">{data.foodDescription}</span>
+                </>
+              ) : null}
+              . Let the registration desk know when you arrive so we can set it out.
+            </p>
           )}
 
-          {/* Done Button */}
+          {donated && !data.paymentPending && (
+            <div className="mb-6 rounded-2xl border border-lun/50 bg-lun/10 p-5 text-left">
+              <p className="font-bold text-white">
+                Thank you for your donation of ${toDollars(data.donationCents!)}.
+              </p>
+              <p className="mt-1 text-sm text-white/75">
+                100% of it goes to the {EVENT.fundName}. You covered the card processing fee
+                separately, which is what makes that possible.
+              </p>
+            </div>
+          )}
+
+          {donated && data.paymentPending && (
+            <div className="mb-6 rounded-2xl border border-lun/50 bg-lun/10 p-5 text-left">
+              <p className="font-bold text-white">
+                Your donation of ${toDollars(data.donationCents!)} is recorded but not yet paid.
+              </p>
+              <p className="mt-1 text-sm text-white/75">
+                Online payment is not available at the moment. Your registration is confirmed, and
+                the organization will be in touch at {ORG.contactEmail} about completing the
+                donation.
+              </p>
+            </div>
+          )}
+
+          <p className="mb-8 text-sm text-white/65">
+            A confirmation has been sent to your email.
+          </p>
+
           <LiquidButton asChild size="xl" className="text-white">
             <Link href="/">Done</Link>
           </LiquidButton>
