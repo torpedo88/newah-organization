@@ -19,6 +19,10 @@ export const baseSchema = z.object({
   registrationType: registrationTypeSchema.optional(),
   foodOption: z.string().optional(),
   donationAmount: z.number().optional(),
+  // Consent to the Terms, the Privacy Policy and to being contacted. Optional
+  // in the shape, required by the refine below, so it follows the same
+  // all-optional-then-validate pattern as every other field here.
+  consentGiven: z.boolean().optional(),
 });
 
 export const registrationSchema = baseSchema.refine(
@@ -32,6 +36,8 @@ export const registrationSchema = baseSchema.refine(
       if (data.numberOfGuests === undefined || data.numberOfGuests === null || data.numberOfGuests < 1) return false;
     }
     if (data.registrationType === "DONATION" && (!data.donationAmount || data.donationAmount < 1 || data.donationAmount > 10000)) return false;
+    // No submission without an affirmative tick. Never default this to true.
+    if (data.consentGiven !== true) return false;
     return true;
   },
   { message: "Please fill all required fields correctly" }
