@@ -23,7 +23,7 @@ export default function FestivalBackdrop() {
         fill
         priority
         sizes="100vw"
-        className="scale-105 object-cover object-[42%_45%] brightness-[0.92]"
+        className="scale-105 object-cover object-[47%_30%] brightness-[0.92] sm:object-[72%_45%]"
       />
       <div className="absolute inset-0 bg-haku/52" />
       <div className="absolute inset-0 bg-gradient-to-b from-haku/88 via-haku/34 to-haku/94" />
