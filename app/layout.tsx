@@ -5,6 +5,9 @@ import type { Metadata } from "next";
 // confusing runtime error on a page that queries data.
 import "@/lib/env";
 import { Geist, Geist_Mono } from "next/font/google";
+import { siteUrl } from "@/lib/site";
+import { ORG } from "@/lib/legal/org";
+import { EVENT } from "@/lib/constants/event";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,10 +20,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const TITLE = `${ORG.name} \u2014 ${ORG.chapter}`;
+const DESCRIPTION =
+  `Register for ${EVENT.name} with the ${ORG.chapter} of the ${ORG.name}. ` +
+  `${EVENT.promise} ${EVENT.fundName}.`;
+
 export const metadata: Metadata = {
-  title: "Newah Organization of America — Northern California",
-  description:
-    "Events, news, and membership for the Northern California chapter of the Newah Organization of America.",
+  // Without this, the Open Graph image resolves relative and link previews
+  // silently fall back to no image at all.
+  metadataBase: new URL(siteUrl()),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    siteName: ORG.name,
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
