@@ -17,9 +17,9 @@ See: .paul/PROJECT.md (updated 2026-09-15)
 
 Milestone: v0.1 Initial Release
 Phase: 1 of 5 (Foundation) — Applying
-Plan: 01-01 executing — Tasks 1-4 of 5 complete, paused at human-action checkpoint
-Status: APPLY in progress, blocked on checkpoint (Supabase + Vercel projects)
-Last activity: 2026-09-15 — Tasks 1-4 executed and committed; awaiting checkpoint
+Plan: 01-01 executing — Tasks 1-4 of 5 complete, paused at human-action checkpoint; 01-02 created and audited, queued to apply after 01-01
+Status: Phase 1 fully planned (01-01 and 01-02 audited, HANDOFF.md written); 01-01 in APPLY, blocked on checkpoint (Supabase + Vercel projects)
+Last activity: 2026-09-16 — Tasks 1-4 of 01-01 executed and committed (06:05); 01-01 re-audited, 01-02 created and audited, HANDOFF.md written (07:15)
 
 Progress:
 - Milestone: [░░░░░░░░░░] 0%
@@ -30,7 +30,7 @@ Progress:
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ◉        ○     [Applying — paused at checkpoint]
+  ✓        ◉        ○     [01-01 and 01-02 planned + audited; 01-01 applying, paused at checkpoint]
 ```
 
 ## Performance Metrics
@@ -75,14 +75,20 @@ PLAN ──▶ APPLY ──▶ UNIFY
 | Issue | Origin | Effort | Revisit |
 |-------|--------|--------|---------|
 | Domain not chosen | Init | S | Phase 5 (Launch) |
-| Email/SMS provider not chosen | Init | M | Phase 4 (Registration) |
+| Email/SMS provider not chosen (transactional email + SMS) | Init | M | Phase 4 (Registration) |
 | Admin portal / CRM scope undefined | Init | L | After v0.1 ships |
+| Board content (copy, photos, leadership) | Ideation | M | Phase 2 — depends on people, not code |
 | Bot/abuse mitigation for unauthenticated registration form | Phase 1 planning | M | Phase 4 (Registration) |
 | Logging/observability baseline | Phase 1 audit | M | Phase 4 (Registration) |
 | Privacy notice for collected PII | Phase 1 audit | S | Phase 5 (Launch) |
 | Accessibility baseline in layout | Phase 1 audit | M | Phase 2 (Public Site) |
 | Supabase backup / disaster recovery | Phase 1 audit | M | Plan 01-02 (schema) |
+| Automated RLS regression tests — probes are manual, so a future migration can widen access unnoticed | 01-02 audit | M | Phase 4 |
+| Supabase Storage bucket policies — separate system from table RLS | 01-02 audit | M | Phase 3 |
 | Credential handover — sole maintainer holds all account access | Phase 1 audit | S | Before launch |
+| Supabase/Vercel account ownership must be organizational, not personal | 01-01 audit | S | Phase 1 checkpoint |
+| Git credential `workflow` scope is repo-local and does not survive a clone | This session | S | Every fresh clone |
+| Local Node is 23.1.0; no version manager installed | Prior session | S | Before Phase 1 APPLY |
 
 **Resolved:** Framework assumed as Next.js App Router — confirmed at Phase 1 planning.
 
@@ -109,9 +115,11 @@ From plan 01-01:
 ## Session Continuity
 
 Last session: 2026-09-15
-Stopped at: Plan 01-01 Tasks 1-4 committed (c3c2e70, f16815d, 720c309, 5c19640); blocked at human-action checkpoint
-Next action: Create Supabase + Vercel projects, populate .env.local, then resume APPLY at Task 5
-Resume file: .paul/phases/01-foundation/01-01-PLAN.md
+Stopped at: Plan 01-01 Tasks 1-4 committed (c3c2e70, f16815d, 720c309, 5c19640), blocked at human-action checkpoint; in parallel, Phase 1 planning completed — 01-01 re-audited and 01-02 written and audited, HANDOFF.md prepared
+Next action: Create Supabase + Vercel projects, populate .env.local, then resume APPLY at Task 5 of 01-01; apply 01-02 afterward
+Resume file: .paul/phases/01-foundation/01-01-PLAN.md (resume APPLY at the checkpoint); HANDOFF.md has full planning context; .paul/phases/01-foundation/01-02-PLAN.md is queued to follow
+
+**Audit findings applied:** 01-01 — 3 must-have (stale branch base, account ownership unspecified, git credential scope undocumented). 01-02 — 3 must-have (anon could insert registrations against draft events; write-denial never probed; untestable AC-1).
 
 ---
 *STATE.md — Updated after every significant action*
