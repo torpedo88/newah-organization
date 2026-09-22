@@ -55,17 +55,23 @@ export const ORG = {
  * registration so the organization can show exactly what a given person
  * agreed to, which is the part that matters if consent is ever disputed.
  */
-export const CONSENT_VERSION = "2026-09-22.1";
+export const CONSENT_VERSION = "2026-09-22.2";
 
 export const POLICY_EFFECTIVE_DATE = "September 22, 2026";
 
-/** The exact sentence shown beside the checkbox. Stored verbatim per registration. */
+/**
+ * The exact sentence shown beside the checkbox, stored verbatim per
+ * registration.
+ *
+ * Kept short at the board's request — the detail now lives behind the links
+ * rather than in front of the checkbox. It still names the purpose of the
+ * contact, because consent to be contacted has to say what it is consent to;
+ * a bare "I agree to the terms" would not be a record of that.
+ */
 export const CONSENT_TEXT =
-  "I agree to the Terms and Conditions and the Privacy Policy, and I consent to " +
-  "Newah Organization of America using the information I provide to contact me about " +
-  "requests for support, membership drives, upcoming and future events, and other " +
-  "communications from the organization. I understand I can withdraw this consent at " +
-  "any time by emailing " + ORG.contactEmail + ".";
+  "I confirm I have read the Terms and Conditions and the Privacy Policy, and I agree " +
+  "that Newah Organization of America may contact me about the organization, its events " +
+  "and its membership. I can withdraw this at any time by emailing " + ORG.contactEmail + ".";
 
 export function formattedAddress(): string {
   const a = ORG.mailingAddress;

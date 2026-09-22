@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import LegalPage from "@/components/legal/legal-page";
 import { ORG, formattedAddress } from "@/lib/legal/org";
+import { EVENT } from "@/lib/constants/event";
 
 export const metadata: Metadata = {
   title: "Terms and Conditions - Newah Organization of America",
@@ -84,6 +85,18 @@ export default function TermsPage() {
           You are responsible for the accuracy of the payment details you enter and for
           ensuring you are authorized to use the payment method.
         </li>
+        <li>
+          <strong>Card processing fees.</strong> At checkout you may choose to add the card
+          processing fee on top of your donation, in which case the organization receives the
+          full amount you chose. If you do not, the processing fee is deducted from your
+          donation and the organization receives the remainder. The amounts are shown to you
+          before you are asked to pay.
+        </li>
+        <li>
+          <strong>How proceeds are used.</strong> After the expenses of the event are covered,
+          all remaining proceeds are donated to the {EVENT.fundName}. We do not represent that
+          any particular donation, or any fixed proportion of it, reaches that fund.
+        </li>
         {ORG.showTaxDeductibility ? (
           <li>
             {ORG.legalName} is recognized as tax-exempt under section 501(c)(3) of the
@@ -105,6 +118,16 @@ export default function TermsPage() {
         When you tick the consent box on our forms, you agree that we may use the contact
         details you provide to send you communications about requests for support,
         membership drives, upcoming and future events, and other organizational news.
+      </p>
+      <h3>Details of other attendees</h3>
+      <p>
+        Where you give us the name and email address of another adult attending with you, you
+        confirm you are authorized to do so and that they are aware of it. We use those
+        details to prepare name tags and to contact them about the event.{" "}
+        <strong>
+          Do not provide details for anyone under 18. We do not collect information about
+          children, and children are welcome at our events without it.
+        </strong>
       </p>
       <p>
         <strong>You may opt out at any time</strong> by using the unsubscribe link in any

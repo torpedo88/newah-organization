@@ -2,15 +2,16 @@
 
 import { UseFormReturn, useWatch } from "react-hook-form";
 import { DONATION_PRESETS, EVENT, MAX_DONATION } from "@/lib/constants/event";
-import { grossUpCents, processingFeeCents, toDollars } from "@/lib/payments/fees";
+import { settlement, toDollars } from "@/lib/payments/fees";
 import { Registration } from "@/lib/validation/registration";
 
 /**
- * Donation is independent of everything else on the form: someone may bring
- * food, give money, both, or neither.
+ * Donation is independent of everything else: someone may bring food, give
+ * money, both, or neither.
  */
 export default function DonationFields({ form }: { form: UseFormReturn<Registration> }) {
   const amount = useWatch({ control: form.control, name: "donationAmount" });
+  const coversFee = useWatch({ control: form.control, name: "coversFee" }) === true;
   const selected = typeof amount === "number" ? amount : undefined;
   const isPreset = selected !== undefined && DONATION_PRESETS.includes(selected as never);
 
@@ -18,15 +19,15 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
     form.setValue("donationAmount", value, { shouldValidate: true, shouldDirty: true });
 
   const cents = selected && selected > 0 ? Math.round(selected * 100) : 0;
-  const fee = cents ? processingFeeCents(cents) : 0;
-  const total = cents ? grossUpCents(cents) : 0;
+  const { chargedCents, toOrganizationCents, feeCents } = settlement(cents, coversFee);
 
   return (
     <div className="space-y-4 border-t border-white/10 pt-6">
       <div>
         <h2 className="text-sm font-semibold text-white">Make a donation</h2>
         <p className="mt-1 text-sm text-white/60">
-          Optional, and separate from bringing food. 100% goes to the {EVENT.fundName}.
+          Optional, and separate from bringing food. After the event&rsquo;s expenses are
+          covered, all remaining proceeds go to the {EVENT.fundName}.
         </p>
       </div>
 
@@ -85,25 +86,44 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
         )}
       </div>
 
-      {/* The donor sees the fee before they are sent to the card page. */}
       {cents > 0 && (
-        <div className="rounded-xl border border-patasi/40 bg-patasi/12 p-4 text-sm text-white">
-          <div className="flex justify-between">
-            <span>To the fund</span>
-            <span className="font-semibold">${toDollars(cents)}</span>
+        <>
+          {/* The choice, and its consequence, stated before they reach the card page. */}
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/12 bg-white/[0.04] p-4">
+            <input
+              type="checkbox"
+              {...form.register("coversFee")}
+              className="mt-0.5 size-5 shrink-0 cursor-pointer accent-patasi"
+            />
+            <span className="text-sm leading-relaxed text-white/80">
+              Add the card processing fee so the organization receives my full donation.
+              <span className="mt-1 block text-white/60">
+                If you leave this unticked the fee is taken out of your donation instead.
+              </span>
+            </span>
+          </label>
+
+          <div className="rounded-xl border border-patasi/40 bg-patasi/12 p-4 text-sm text-white">
+            <div className="flex justify-between">
+              <span>Your donation</span>
+              <span className="font-semibold">${toDollars(cents)}</span>
+            </div>
+            <div className="mt-1 flex justify-between text-white/70">
+              <span>{coversFee ? "Processing fee you add" : "Processing fee deducted"}</span>
+              <span>
+                {coversFee ? "+" : "−"}${toDollars(feeCents)}
+              </span>
+            </div>
+            <div className="mt-2 flex justify-between border-t border-white/15 pt-2 font-semibold">
+              <span>You will be charged</span>
+              <span>${toDollars(chargedCents)}</span>
+            </div>
+            <div className="mt-1 flex justify-between text-white/70">
+              <span>The organization receives</span>
+              <span>${toDollars(toOrganizationCents)}</span>
+            </div>
           </div>
-          <div className="mt-1 flex justify-between text-white/70">
-            <span>Card processing you cover</span>
-            <span>${toDollars(fee)}</span>
-          </div>
-          <div className="mt-2 flex justify-between border-t border-white/15 pt-2 font-semibold">
-            <span>You will be charged</span>
-            <span>${toDollars(total)}</span>
-          </div>
-          <p className="mt-2 text-xs text-white/60">
-            Covering the fee is what lets the full ${toDollars(cents)} reach the fund.
-          </p>
-        </div>
+        </>
       )}
     </div>
   );

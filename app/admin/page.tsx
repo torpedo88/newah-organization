@@ -29,6 +29,8 @@ type RegistrationRow = {
   food_description: string | null;
   donation_cents: number | null;
   charged_cents: number | null;
+  net_cents: number | null;
+  covers_fee: boolean | null;
   payment_status: string | null;
   consent_given: boolean | null;
   consent_at: string | null;
@@ -135,7 +137,7 @@ export default async function AdminPage(props: {
     .from("registrations")
     .select(
       "id, registration_code, full_name, phone, email, number_of_guests, brought_food, " +
-        "food_description, donation_cents, charged_cents, payment_status, consent_given, " +
+        "food_description, donation_cents, charged_cents, net_cents, covers_fee, payment_status, consent_given, " +
         "consent_at, created_at",
     )
     .order("created_at", { ascending: false });
@@ -145,9 +147,11 @@ export default async function AdminPage(props: {
   const guests = rows.reduce((total, row) => total + (row.number_of_guests ?? 0), 0);
   const bringingFood = rows.filter((row) => row.brought_food === true).length;
   // Only Stripe-confirmed payments count toward what the fund actually receives.
+  // What the organization actually receives, which is less than the donation
+  // wherever the donor declined to cover the processing fee.
   const paidCents = donations
     .filter((row) => row.payment_status === "paid")
-    .reduce((total, row) => total + (row.donation_cents ?? 0), 0);
+    .reduce((total, row) => total + (row.net_cents ?? row.donation_cents ?? 0), 0);
   const pendingCents = donations
     .filter((row) => row.payment_status === "pending")
     .reduce((total, row) => total + (row.donation_cents ?? 0), 0);
@@ -156,7 +160,7 @@ export default async function AdminPage(props: {
     { label: "Registrations", value: String(rows.length) },
     { label: "Guests expected", value: String(guests) },
     { label: "Bringing food", value: String(bringingFood) },
-    { label: `Confirmed for the fund`, value: `$${toDollars(paidCents)}` },
+    { label: "Received (after fees)", value: `$${toDollars(paidCents)}` },
     { label: "Awaiting payment", value: `$${toDollars(pendingCents)}` },
   ];
 
@@ -237,6 +241,12 @@ export default async function AdminPage(props: {
                               <span className="font-medium text-white">
                                 ${toDollars(row.donation_cents ?? 0)}
                               </span>
+                              {row.net_cents !== null &&
+                                row.net_cents !== (row.donation_cents ?? 0) && (
+                                  <span className="ml-1 text-white/50">
+                                    (net ${toDollars(row.net_cents)})
+                                  </span>
+                                )}
                               <span
                                 className={
                                   row.payment_status === "paid"

@@ -11,6 +11,7 @@ import { registerAttendee } from "@/lib/actions/register";
 import SuccessScreen, { SuccessData } from "./success-screen";
 import CauseBanner from "./cause-banner";
 import DonationFields from "./donation-fields";
+import AdultGuestsFields from "./adult-guests-fields";
 import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
@@ -29,7 +30,8 @@ export default function RegistrationForm() {
       fullName: "",
       phone: "",
       email: "",
-      numberOfGuests: 1,
+      adultGuests: [],
+      coversFee: true,
       broughtFood: false,
       foodDescription: "",
       donationAmount: undefined,
@@ -62,6 +64,9 @@ export default function RegistrationForm() {
         broughtFood: result.broughtFood === true,
         foodDescription: data.foodDescription ?? "",
         donationCents: result.donationCents ?? null,
+        guestCount: (data.adultGuests ?? []).filter(
+          (guest) => (guest.name ?? "").trim() && (guest.email ?? "").trim(),
+        ).length,
         // A donation with no checkout URL means Stripe is not configured.
         paymentPending: Boolean(result.donationCents),
       });
@@ -122,24 +127,6 @@ export default function RegistrationForm() {
                 )}
               </div>
 
-              <div>
-                <label htmlFor="numberOfGuests" className="mb-2 block text-sm font-semibold text-white">Number of Guests</label>
-                <input
-                  id="numberOfGuests"
-                  type="number"
-                  min="1"
-                  max="100"
-                  defaultValue={1}
-                  {...form.register("numberOfGuests", {
-                    valueAsNumber: true,
-                    setValueAs: (value) => (value === "" || value === null ? 1 : Number(value)),
-                  })}
-                  className={fieldClass}
-                />
-                {form.formState.errors.numberOfGuests && (
-                  <p className="mt-1 text-sm text-alert">{form.formState.errors.numberOfGuests.message}</p>
-                )}
-              </div>
             </div>
 
             {/* Food: a question, not a category of registration. */}
@@ -190,6 +177,8 @@ export default function RegistrationForm() {
               )}
             </div>
 
+            <AdultGuestsFields form={form} />
+
             <DonationFields form={form} />
 
             {/* Consent gate. The wording lives in lib/legal/org.ts and is stored
@@ -198,14 +187,12 @@ export default function RegistrationForm() {
               <label className="flex cursor-pointer items-start gap-3">
                 <input type="checkbox" {...form.register("consentGiven")} className="mt-1 size-5 shrink-0 cursor-pointer accent-patasi" />
                 <span className="text-sm leading-relaxed text-white/80">
-                  I agree to the{" "}
+                  I have read and agree to the{" "}
                   <Link href="/terms" target="_blank" className="font-semibold text-white underline underline-offset-2">Terms and Conditions</Link>{" "}
                   and the{" "}
                   <Link href="/privacy" target="_blank" className="font-semibold text-white underline underline-offset-2">Privacy Policy</Link>
-                  , and I consent to {ORG.name} using the information I provide to contact me about
-                  requests for support, membership drives, upcoming and future events, and other
-                  communications from the organization. I understand I can withdraw this consent at
-                  any time by emailing <span className="font-semibold text-white">{ORG.contactEmail}</span>.
+                  , and agree that {ORG.name} may contact me about the organization, its events and
+                  its membership.
                 </span>
               </label>
               {!consentGiven && form.formState.isSubmitted && (

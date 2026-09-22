@@ -13,6 +13,8 @@ export type SuccessData = {
   broughtFood: boolean;
   foodDescription: string;
   donationCents: number | null;
+  /** Number of additional adults whose name tags are also waiting. */
+  guestCount: number;
   /** A donation exists but was never charged, because Stripe is unconfigured. */
   paymentPending: boolean;
 };
@@ -42,8 +44,14 @@ export default function SuccessScreen({ data }: { data: SuccessData }) {
             <p className="mb-1 font-bold text-white">When you arrive</p>
             <p className="text-white/85">
               Please go to the <strong className="text-white">registration desk</strong> to pick up
-              your name tag. Show this registration number or simply give your name.
+              {data.guestCount > 0 ? " your name tags" : " your name tag"}. Show this registration
+              number or simply give your name.
             </p>
+            {data.guestCount > 0 && (
+              <p className="mt-2 text-sm text-white/70">
+                {data.guestCount + 1} name tags will be ready for your party.
+              </p>
+            )}
           </div>
 
           {data.broughtFood && (
@@ -64,8 +72,8 @@ export default function SuccessScreen({ data }: { data: SuccessData }) {
                 Thank you for your donation of ${toDollars(data.donationCents!)}.
               </p>
               <p className="mt-1 text-sm text-white/75">
-                100% of it goes to the {EVENT.fundName}. You covered the card processing fee
-                separately, which is what makes that possible.
+                After the event&rsquo;s expenses are covered, all remaining proceeds are donated to
+                the {EVENT.fundName}.
               </p>
             </div>
           )}

@@ -1,23 +1,29 @@
 /** The campaign this registration drive is running. */
 export const EVENT = {
-  /** Banner headline. */
   title: "Jatra with a Cause",
-  /** The fund every dollar of donation goes to, named in full deliberately. */
+  /** The fund proceeds go to, named in full deliberately. */
   fundName: "Prime Minister's Disaster Relief Fund",
   /**
-   * The promise on the banner. It is only true because the donor covers the
-   * card processing fee on top of their gift — see lib/payments/fees.ts. If the
-   * fee model ever changes so that fees come out of the donation, THIS LINE
-   * MUST CHANGE TOO, because it would then be false.
+   * The public promise.
+   *
+   * This deliberately does NOT say "100%". Event expenses come out first, and
+   * a donor who declines to cover the card processing fee has it deducted from
+   * their gift. Both make a 100% claim false. If the economics ever change,
+   * change this line with them — it is a statement to donors about where their
+   * money goes.
    */
-  promise: "100% of donations go to the",
+  promise:
+    "After covering the expenses of the event, all remaining proceeds are donated to the",
 } as const;
 
-/**
- * Preset donation amounts: common note denominations through to typical
- * giving tiers, plus a free-text amount.
- */
+/** Preset donation amounts: note denominations through to typical giving tiers. */
 export const DONATION_PRESETS = [5, 10, 20, 50, 100, 250, 500] as const;
 
 export const MIN_DONATION = 1;
 export const MAX_DONATION = 10000;
+
+/** Nobody under this age has any details collected by this site. */
+export const ADULT_AGE = 18;
+
+/** Guard against a single registration carrying an unreasonable party. */
+export const MAX_ADULT_GUESTS = 20;

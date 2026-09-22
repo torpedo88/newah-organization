@@ -33,3 +33,32 @@ export function processorCutCents(totalCents: number): number {
 export function toDollars(cents: number): string {
   return (cents / 100).toFixed(2);
 }
+
+/**
+ * What the organization actually receives from a donation, given whether the
+ * donor chose to cover the card processing fee.
+ *
+ * Covered:     donor is charged the grossed-up total, the org receives the
+ *              whole donation.
+ * Not covered: donor is charged exactly what they chose, and the processor's
+ *              cut comes out of it, so the org receives less.
+ */
+export function settlement(donationCents: number, donorCoversFee: boolean) {
+  if (donationCents <= 0) {
+    return { chargedCents: 0, toOrganizationCents: 0, feeCents: 0 };
+  }
+  if (donorCoversFee) {
+    const chargedCents = grossUpCents(donationCents);
+    return {
+      chargedCents,
+      toOrganizationCents: donationCents,
+      feeCents: chargedCents - donationCents,
+    };
+  }
+  const feeCents = processorCutCents(donationCents);
+  return {
+    chargedCents: donationCents,
+    toOrganizationCents: donationCents - feeCents,
+    feeCents,
+  };
+}
