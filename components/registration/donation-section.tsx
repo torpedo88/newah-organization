@@ -46,8 +46,8 @@ export default function DonationSection({ form }: DonationSectionProps) {
               onClick={() => handlePredefinedAmount(amount)}
               className={`p-3 rounded-xl border-2 font-semibold transition-all ${
                 selectedAmount === amount
-                  ? "border-[#FF7A45] bg-[rgba(255,122,69,0.15)] text-white"
-                  : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-white hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.08)]"
+                  ? "border-patasi bg-[rgba(255,122,69,0.15)] text-white"
+                  : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-white hover:border-[rgba(192,16,43,0.6)] hover:bg-[rgba(192,16,43,0.12)]"
               }`}
             >
               ${amount}
@@ -70,19 +70,19 @@ export default function DonationSection({ form }: DonationSectionProps) {
               min="1"
               max="10000"
               step="0.01"
-              className="flex-1 px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
+              className="flex-1 px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-patasi focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all"
             />
           </div>
         </div>
 
         {donationError && (
-          <p className="mt-1 text-sm text-[#FF3B30]">{donationError.message}</p>
+          <p className="mt-1 text-sm text-alert">{donationError.message}</p>
         )}
       </div>
 
       {/* Summary */}
       {selectedAmount && (
-        <div className="p-4 bg-[rgba(255,122,69,0.1)] border border-[rgba(255,122,69,0.3)] rounded-xl">
+        <div className="p-4 bg-[rgba(192,16,43,0.14)] border border-[rgba(255,122,69,0.3)] rounded-xl">
           <p className="text-sm text-white">
             You are donating <span className="font-semibold">${selectedAmount.toFixed(2)}</span> to support Newah Organization.
           </p>

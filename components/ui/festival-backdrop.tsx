@@ -16,7 +16,7 @@ import Image from "next/image";
  */
 export default function FestivalBackdrop() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#0A0E27]">
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-haku">
       <Image
         src="/images/indra-jatra-durbar-square.webp"
         alt=""
@@ -25,9 +25,9 @@ export default function FestivalBackdrop() {
         sizes="100vw"
         className="scale-105 object-cover object-[42%_45%] brightness-[0.92]"
       />
-      <div className="absolute inset-0 bg-[#0A0E27]/52" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E27]/88 via-[#0A0E27]/34 to-[#0A0E27]/94" />
-      <div className="absolute inset-0 bg-[radial-gradient(65%_45%_at_50%_35%,rgba(255,122,69,0.14),transparent_70%)]" />
+      <div className="absolute inset-0 bg-haku/52" />
+      <div className="absolute inset-0 bg-gradient-to-b from-haku/88 via-haku/34 to-haku/94" />
+      <div className="absolute inset-0 bg-[radial-gradient(65%_45%_at_50%_35%,rgba(192,16,43,0.20),transparent_70%)]" />
     </div>
   );
 }

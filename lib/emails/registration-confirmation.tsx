@@ -9,7 +9,7 @@ export function RegistrationConfirmationEmail({
 }) {
   return (
     <div style={{ fontFamily: "Arial, sans-serif", maxWidth: "600px" }}>
-      <div style={{ background: "linear-gradient(135deg, #0A0E27 0%, #1A1E3F 100%)", padding: "40px", textAlign: "center", color: "white", borderRadius: "12px" }}>
+      <div style={{ background: "linear-gradient(135deg, #0E0E11 0%, #1A1015 100%)", padding: "40px", textAlign: "center", color: "white", borderRadius: "12px" }}>
         <h1 style={{ margin: "0 0 10px 0" }}>Registration Successful</h1>
         <p style={{ margin: "0", opacity: 0.8 }}>Newah Organization</p>
       </div>
@@ -20,7 +20,7 @@ export function RegistrationConfirmationEmail({
 
         <div style={{ background: "#F5F5F5", padding: "20px", borderRadius: "8px", margin: "20px 0", textAlign: "center" }}>
           <p style={{ fontSize: "12px", color: "#666", margin: "0 0 10px 0", textTransform: "uppercase" }}>Registration Code</p>
-          <p style={{ fontSize: "24px", fontWeight: "bold", margin: "0", fontFamily: "monospace", color: "#FF7A45" }}>{registrationCode}</p>
+          <p style={{ fontSize: "24px", fontWeight: "bold", margin: "0", fontFamily: "monospace", color: "#C0102B" }}>{registrationCode}</p>
         </div>
 
         <p>

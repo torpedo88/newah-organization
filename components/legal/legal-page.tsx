@@ -29,7 +29,7 @@ export default function LegalPage({
           Back to home
         </Link>
 
-        <article className="rounded-3xl border border-white/10 bg-[#0A0E27]/80 p-8 backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)] sm:p-10">
+        <article className="rounded-3xl border border-white/10 bg-haku/80 p-8 backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)] sm:p-10">
           <header className="mb-8 border-b border-white/15 pb-6">
             <h1 className="text-3xl font-bold text-white sm:text-4xl">{title}</h1>
             <p className="mt-2 text-sm text-white/60">

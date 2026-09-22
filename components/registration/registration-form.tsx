@@ -136,10 +136,10 @@ export default function RegistrationForm() {
                   type="text"
                   {...form.register("fullName")}
                   placeholder="Your name"
-                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-patasi focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all"
                 />
                 {form.formState.errors.fullName && (
-                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.fullName.message}</p>
+                  <p className="mt-1 text-sm text-alert">{form.formState.errors.fullName.message}</p>
                 )}
               </div>
 
@@ -152,10 +152,10 @@ export default function RegistrationForm() {
                   type="tel"
                   {...form.register("phone")}
                   placeholder="(555) 123-4567"
-                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-patasi focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all"
                 />
                 {form.formState.errors.phone && (
-                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.phone.message}</p>
+                  <p className="mt-1 text-sm text-alert">{form.formState.errors.phone.message}</p>
                 )}
               </div>
 
@@ -168,10 +168,10 @@ export default function RegistrationForm() {
                   type="email"
                   {...form.register("email")}
                   placeholder="you@example.com"
-                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-patasi focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all"
                 />
                 {form.formState.errors.email && (
-                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.email.message}</p>
+                  <p className="mt-1 text-sm text-alert">{form.formState.errors.email.message}</p>
                 )}
               </div>
 
@@ -190,10 +190,10 @@ export default function RegistrationForm() {
                   min="1"
                   max="100"
                   defaultValue={1}
-                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#FF7A45] focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(255,122,69,0.2)] transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-patasi focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all"
                 />
                 {form.formState.errors.numberOfGuests && (
-                  <p className="mt-1 text-sm text-[#FF3B30]">{form.formState.errors.numberOfGuests.message}</p>
+                  <p className="mt-1 text-sm text-alert">{form.formState.errors.numberOfGuests.message}</p>
                 )}
               </div>
             </div>
@@ -210,8 +210,8 @@ export default function RegistrationForm() {
                   onClick={() => handleRegistrationTypeChange("FOOD")}
                   className={`p-6 rounded-2xl border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isFoodSelected
-                      ? "border-[#FF7A45] bg-[linear-gradient(140deg,rgba(242,85,28,0.4),rgba(255,168,106,0.16))] text-white shadow-[0_14px_36px_-16px_rgba(255,122,69,0.95)]"
-                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white backdrop-blur-sm hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.1)]"
+                      ? "border-patasi bg-[linear-gradient(140deg,rgba(192,16,43,0.55),rgba(226,59,80,0.22))] text-white shadow-[0_14px_36px_-16px_rgba(192,16,43,0.95)]"
+                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white backdrop-blur-sm hover:border-[rgba(192,16,43,0.6)] hover:bg-[rgba(192,16,43,0.14)]"
                   }`}
                 >
                   <UtensilsCrossed className="size-8" strokeWidth={1.5} aria-hidden />
@@ -224,8 +224,8 @@ export default function RegistrationForm() {
                   onClick={() => handleRegistrationTypeChange("DONATION")}
                   className={`p-6 rounded-2xl border-2 font-semibold text-lg transition-all min-h-[120px] flex flex-col items-center justify-center gap-2 ${
                     isDonationSelected
-                      ? "border-[#FF7A45] bg-[linear-gradient(140deg,rgba(242,85,28,0.4),rgba(255,168,106,0.16))] text-white shadow-[0_14px_36px_-16px_rgba(255,122,69,0.95)]"
-                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white backdrop-blur-sm hover:border-[rgba(255,122,69,0.5)] hover:bg-[rgba(255,122,69,0.1)]"
+                      ? "border-patasi bg-[linear-gradient(140deg,rgba(192,16,43,0.55),rgba(226,59,80,0.22))] text-white shadow-[0_14px_36px_-16px_rgba(192,16,43,0.95)]"
+                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white backdrop-blur-sm hover:border-[rgba(192,16,43,0.6)] hover:bg-[rgba(192,16,43,0.14)]"
                   }`}
                 >
                   <HeartHandshake className="size-8" strokeWidth={1.5} aria-hidden />
@@ -248,8 +248,8 @@ export default function RegistrationForm() {
 
             {/* Error Message */}
             {form.formState.errors.root && (
-              <div className="p-4 bg-[rgba(255,59,48,0.1)] border border-[#FF3B30] rounded-lg">
-                <p className="text-sm text-[#FF3B30]">{form.formState.errors.root.message}</p>
+              <div className="p-4 bg-alert/10 border border-alert rounded-lg">
+                <p className="text-sm text-alert">{form.formState.errors.root.message}</p>
               </div>
             )}
 
@@ -262,7 +262,7 @@ export default function RegistrationForm() {
                 <input
                   type="checkbox"
                   {...form.register("consentGiven")}
-                  className="mt-1 size-5 shrink-0 cursor-pointer accent-[#FF7A45]"
+                  className="mt-1 size-5 shrink-0 cursor-pointer accent-patasi"
                 />
                 <span className="text-sm leading-relaxed text-white/80">
                   I agree to the{" "}
@@ -281,7 +281,7 @@ export default function RegistrationForm() {
                 </span>
               </label>
               {!consentGiven && form.formState.isSubmitted && (
-                <p className="mt-2 text-sm text-[#FF3B30]">
+                <p className="mt-2 text-sm text-alert">
                   Please agree before submitting.
                 </p>
               )}

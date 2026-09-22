@@ -26,7 +26,7 @@ export default function SuccessScreen({ code, data }: SuccessScreenProps) {
           {data.registrationType === "FOOD" ? (
             <>
               {/* Success Icon */}
-              <CircleCheckBig className="mx-auto mb-4 size-14 text-[#FF9A6A]" strokeWidth={1.5} aria-hidden />
+              <CircleCheckBig className="mx-auto mb-4 size-14 text-lun" strokeWidth={1.5} aria-hidden />
               <h1 className="text-3xl font-bold text-white mb-2">
                 Registration successful
               </h1>
@@ -71,7 +71,7 @@ export default function SuccessScreen({ code, data }: SuccessScreenProps) {
           ) : (
             <>
               {/* Donation Success Icon */}
-              <HeartHandshake className="mx-auto mb-4 size-14 text-[#FF9A6A]" strokeWidth={1.5} aria-hidden />
+              <HeartHandshake className="mx-auto mb-4 size-14 text-lun" strokeWidth={1.5} aria-hidden />
               <h1 className="text-3xl font-bold text-white mb-2">
                 Thank you
               </h1>
