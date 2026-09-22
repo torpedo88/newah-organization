@@ -28,7 +28,7 @@ export default function DonationSection({ form }: DonationSectionProps) {
     }
   };
 
-  const donationError = (form.formState.errors as any).donationAmount;
+  const donationError = form.formState.errors.donationAmount;
 
   return (
     <div className="space-y-6">

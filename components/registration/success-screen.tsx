@@ -10,7 +10,7 @@ interface SuccessScreenProps {
   data: FoodRegistration | DonationRegistration;
 }
 
-export default function SuccessScreen({ type, code, data }: SuccessScreenProps) {
+export default function SuccessScreen({ code, data }: SuccessScreenProps) {
   const getFoodLabel = (id: string) => {
     return FOOD_OPTIONS.find((opt) => opt.id === id)?.label || id;
   };
@@ -19,7 +19,7 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
     <div className="min-h-screen bg-white dark:bg-[#0A0E27] py-8 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <div className="max-w-2xl mx-auto w-full">
         <div className="bg-white dark:bg-[#161B35] rounded-xl shadow-sm border border-[#E5E5E7] dark:border-[#2A2E4E] p-8 text-center">
-          {type === "FOOD" ? (
+          {data.registrationType === "FOOD" ? (
             <>
               {/* Success Icon */}
               <div className="text-5xl mb-4">✓</div>
@@ -49,13 +49,13 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
                 <div className="flex justify-between py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E]">
                   <span className="text-[#999999] dark:text-[#808090]">food selection</span>
                   <span className="font-medium text-[#0A0E27] dark:text-white">
-                    {getFoodLabel((data as any).foodOption)}
+                    {getFoodLabel(data.foodOption)}
                   </span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-[#999999] dark:text-[#808090]">number of guests</span>
                   <span className="font-medium text-[#0A0E27] dark:text-white">
-                    {(data as any).numberOfGuests}
+                    {data.numberOfGuests}
                   </span>
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function SuccessScreen({ type, code, data }: SuccessScreenProps) 
                 <div className="flex justify-between py-2 border-b border-[#E5E5E7] dark:border-[#2A2E4E]">
                   <span className="text-[#999999] dark:text-[#808090]">donation</span>
                   <span className="font-medium text-[#0A0E27] dark:text-white">
-                    ${((data as any).donationAmount as number).toFixed(2)}
+                    ${data.donationAmount.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between py-2">
