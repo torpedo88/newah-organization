@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
+import { Slot, Slottable } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -76,9 +76,19 @@ function LiquidButton({
         style={{ backdropFilter: 'url("#container-glass")' }}
       />
 
-      <div className="pointer-events-none z-10 flex items-center gap-2">
-        {children}
-      </div>
+      {/*
+        The rim, the glass layer and the filter are siblings of the content, so
+        under asChild the Slot has four children and cannot pick one to merge
+        onto. Slottable marks the real child: Radix then clones the slotted
+        element (a next/link anchor, say) and moves these decorations inside it.
+      */}
+      {asChild ? (
+        <Slottable>{children}</Slottable>
+      ) : (
+        <div className="pointer-events-none z-10 flex items-center gap-2">
+          {children}
+        </div>
+      )}
       <GlassFilter />
     </Comp>
   )
