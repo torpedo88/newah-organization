@@ -149,7 +149,7 @@ export default function RegistrationForm() {
                       key={option.label}
                       type="button"
                       onClick={() => {
-                        form.setValue("broughtFood", option.value, { shouldValidate: true });
+                        form.setValue("broughtFood", option.value);
                         if (!option.value) form.setValue("foodDescription", "");
                       }}
                       className={`rounded-2xl border-2 py-4 text-lg font-semibold transition-all ${
