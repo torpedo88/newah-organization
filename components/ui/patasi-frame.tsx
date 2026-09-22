@@ -27,8 +27,8 @@ export default function PatasiFrame({
     <div
       className={cn(
         // the margin gives the rings room; box-shadow reserves no layout space
-        "m-[26px] overflow-hidden rounded-[20px] border-4 border-haku",
-        "shadow-[0_0_0_3px_#C9A227,0_0_0_24px_#C0102B,0_0_0_25px_#7E0A1C,0_28px_64px_-24px_rgba(0,0,0,0.9)]",
+        "m-[15px] overflow-hidden rounded-[20px] border-4 border-haku",
+        "shadow-[0_0_0_3px_#C9A227,0_0_0_13px_#C0102B,0_0_0_14px_#7E0A1C,0_28px_64px_-24px_rgba(0,0,0,0.9)]",
         className,
       )}
     >
