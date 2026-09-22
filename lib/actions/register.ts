@@ -63,7 +63,7 @@ export type RegisterResult = {
  * dropped and retried rather than losing the registration outright.
  */
 async function insertRegistration(row: Record<string, unknown>) {
-  const first = await supabase.from("registrations").insert(row).select("id").single();
+  const first = await supabase.from("registrations").insert(row);
   if (!first.error) return first;
 
   const missingColumn =
@@ -85,7 +85,7 @@ async function insertRegistration(row: Record<string, unknown>) {
     number_of_guests: row.number_of_guests,
     created_at: row.created_at,
   };
-  return supabase.from("registrations").insert(reduced).select("id").single();
+  return supabase.from("registrations").insert(reduced);
 }
 
 export async function registerAttendee(input: Registration): Promise<RegisterResult> {
@@ -105,7 +105,27 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
     const coversFee = validated.coversFee === true;
     const money = donationCents ? settlement(donationCents, coversFee) : null;
 
-    const { data, error } = await insertRegistration({
+    // The checkout session is created BEFORE the insert so its id can be
+    // written with the row. Doing it afterwards would need an UPDATE policy
+    // for anon, and reading the new row's id back would need a SELECT policy —
+    // neither of which should exist on a table holding registrant contact
+    // details. A session created for an insert that then fails is harmless: it
+    // is never handed to anyone and Stripe expires it.
+    let checkoutUrl: string | undefined;
+    let stripeSessionId: string | undefined;
+    if (donationCents && money) {
+      const session = await createCheckout({
+        code,
+        email: validated.email ?? "",
+        donationCents,
+        chargedCents: money.chargedCents,
+        coversFee,
+      });
+      checkoutUrl = session?.url;
+      stripeSessionId = session?.id;
+    }
+
+    const { error } = await insertRegistration({
       registration_code: code,
       full_name: validated.fullName ?? "",
       phone: validated.phone ?? "",
@@ -119,6 +139,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       charged_cents: money?.chargedCents ?? null,
       net_cents: money?.toOrganizationCents ?? null,
       covers_fee: coversFee,
+      stripe_session_id: stripeSessionId ?? null,
       payment_status: donationCents ? "pending" : "none",
       consent_given: validated.consentGiven === true,
       consent_text: CONSENT_TEXT,
@@ -133,19 +154,6 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
         return { success: false, error: "Database not initialized. Run the SQL migrations in Supabase." };
       }
       return { success: false, error: `Failed to save registration: ${error.message}` };
-    }
-
-    // A donation means a trip to Stripe. Everything else is done here.
-    let checkoutUrl: string | undefined;
-    if (donationCents && money) {
-      checkoutUrl = await createCheckout({
-        rowId: (data as { id: string } | null)?.id,
-        code,
-        email: validated.email ?? "",
-        donationCents,
-        chargedCents: money.chargedCents,
-        coversFee,
-      });
     }
 
     await sendConfirmation({
@@ -174,13 +182,12 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 }
 
 async function createCheckout(args: {
-  rowId?: string;
   code: string;
   email: string;
   donationCents: number;
   chargedCents: number;
   coversFee: boolean;
-}): Promise<string | undefined> {
+}): Promise<{ id: string; url?: string } | undefined> {
   const stripe = getStripe();
   if (!stripe) {
     // The registration is already saved; only the payment cannot proceed.
@@ -219,13 +226,7 @@ async function createCheckout(args: {
       cancel_url: `${base}/register?donation=cancelled&code=${encodeURIComponent(args.code)}`,
     });
 
-    if (session.id && args.rowId) {
-      await supabase
-        .from("registrations")
-        .update({ stripe_session_id: session.id })
-        .eq("id", args.rowId);
-    }
-    return session.url ?? undefined;
+    return { id: session.id, url: session.url ?? undefined };
   } catch (error) {
     console.error("Could not create Stripe checkout session:", error);
     return undefined;
