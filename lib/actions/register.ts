@@ -6,7 +6,17 @@ import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Constructed lazily: the Resend SDK throws "Missing API key" from its
+// constructor, and at module scope that would take down the whole server
+// action — a registration must still be saved when email is unconfigured.
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  resendClient ??= new Resend(key);
+  return resendClient;
+}
 
 export async function registerFood(input: FoodRegistration): Promise<{
   success: boolean;
@@ -43,24 +53,29 @@ export async function registerFood(input: FoodRegistration): Promise<{
     }
 
     // Send confirmation email
-    try {
-      const htmlContent = await render(RegistrationConfirmationEmail({
-        name: input.fullName || "",
-        registrationCode,
-        registrationType: "FOOD",
-      }));
-      const emailResponse = await resend.emails.send({
-        from: "Newah Organization <noreply@resend.dev>",
-        to: input.email || "",
-        subject: "Registration Confirmed - Newah Organization",
-        html: htmlContent,
-      });
-      if (emailResponse.error) {
-        console.error("Resend rejected the email:", emailResponse.error.message);
+    const resend = getResendClient();
+    if (!resend) {
+      console.error("RESEND_API_KEY is not configured; confirmation email not sent");
+    } else {
+      try {
+        const htmlContent = await render(RegistrationConfirmationEmail({
+          name: input.fullName || "",
+          registrationCode,
+          registrationType: "FOOD",
+        }));
+        const emailResponse = await resend.emails.send({
+          from: "Newah Organization <noreply@resend.dev>",
+          to: input.email || "",
+          subject: "Registration Confirmed - Newah Organization",
+          html: htmlContent,
+        });
+        if (emailResponse.error) {
+          console.error("Resend rejected the email:", emailResponse.error.message);
+        }
+      } catch (emailError) {
+        console.error("Email send error:", emailError);
+        console.error("Email error details:", JSON.stringify(emailError, null, 2));
       }
-    } catch (emailError) {
-      console.error("Email send error:", emailError);
-      console.error("Email error details:", JSON.stringify(emailError, null, 2));
     }
 
     return {
@@ -112,24 +127,29 @@ export async function registerDonation(
     }
 
     // Send confirmation email
-    try {
-      const htmlContent = await render(RegistrationConfirmationEmail({
-        name: input.fullName || "",
-        registrationCode,
-        registrationType: "DONATION",
-      }));
-      const emailResponse = await resend.emails.send({
-        from: "Newah Organization <noreply@resend.dev>",
-        to: input.email || "",
-        subject: "Donation Registered - Newah Organization",
-        html: htmlContent,
-      });
-      if (emailResponse.error) {
-        console.error("Resend rejected the email:", emailResponse.error.message);
+    const resend = getResendClient();
+    if (!resend) {
+      console.error("RESEND_API_KEY is not configured; confirmation email not sent");
+    } else {
+      try {
+        const htmlContent = await render(RegistrationConfirmationEmail({
+          name: input.fullName || "",
+          registrationCode,
+          registrationType: "DONATION",
+        }));
+        const emailResponse = await resend.emails.send({
+          from: "Newah Organization <noreply@resend.dev>",
+          to: input.email || "",
+          subject: "Donation Registered - Newah Organization",
+          html: htmlContent,
+        });
+        if (emailResponse.error) {
+          console.error("Resend rejected the email:", emailResponse.error.message);
+        }
+      } catch (emailError) {
+        console.error("Email send error:", emailError);
+        console.error("Email error details:", JSON.stringify(emailError, null, 2));
       }
-    } catch (emailError) {
-      console.error("Email send error:", emailError);
-      console.error("Email error details:", JSON.stringify(emailError, null, 2));
     }
 
     // TODO: Create Stripe checkout session
