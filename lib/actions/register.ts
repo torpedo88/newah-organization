@@ -5,41 +5,13 @@ import { createHash } from "node:crypto";
 import { normalizePhone } from "@/lib/validation/contact";
 import { domainAcceptsMail } from "@/lib/validation/email-domain";
 import { supabase } from "@/lib/supabase/client";
-import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { RegistrationConfirmationEmail } from "@/lib/emails/registration-confirmation";
+import { sendEmail } from "@/lib/emails/send";
 import { CONSENT_TEXT, CONSENT_VERSION } from "@/lib/legal/org";
 import { EVENT } from "@/lib/constants/event";
 import { settlement } from "@/lib/payments/fees";
 import { getStripe, siteUrl } from "@/lib/payments/stripe";
-
-// Constructed lazily: the Resend SDK throws "Missing API key" from its
-// constructor, and at module scope that would take down the whole server
-// action — a registration must still be saved when email is unconfigured.
-let resendClient: Resend | null = null;
-
-function getResendClient(): Resend | null {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return null;
-  resendClient ??= new Resend(key);
-  return resendClient;
-}
-
-/**
- * Who confirmation emails come from.
- *
- * The default is Resend's shared test domain, which only delivers to the
- * account holder's own address — every registrant's confirmation would be
- * rejected. Set RESEND_FROM to an address on a domain verified in Resend
- * before relying on these emails reaching anyone.
- */
-function senderAddress(): string {
-  return process.env.RESEND_FROM || "Newah Organization <noreply@resend.dev>";
-}
-
-function usingTestSender(): boolean {
-  return senderAddress().includes("resend.dev");
-}
 
 /**
  * The registration code.
@@ -307,50 +279,39 @@ async function sendConfirmation(args: {
   donationCents: number | null;
   guestCount: number;
 }): Promise<boolean> {
-  const resend = getResendClient();
-  if (!resend) {
-    console.error("RESEND_API_KEY is not configured; confirmation email not sent");
-    return false;
-  }
   if (!args.email) return false;
-  if (usingTestSender()) {
-    // Resend's test domain delivers only to the account holder, so the
-    // registrant gets nothing. Reporting this as sent would put a promise on
-    // the confirmation screen that no email keeps.
-    console.error(
-      "Sending from Resend's test domain, which only delivers to the account holder. " +
-        "Set RESEND_FROM to an address on a domain verified in Resend, or registrants " +
-        "will not receive their confirmation.",
-    );
-    return false;
-  }
 
-  try {
-    const html = await render(
-      RegistrationConfirmationEmail({
-        name: args.name,
-        registrationCode: args.code,
-        broughtFood: args.broughtFood,
-        foodDescription: args.foodDescription,
-        donationCents: args.donationCents,
-        guestCount: args.guestCount,
-      }),
-    );
-    const response = await resend.emails.send({
-      from: senderAddress(),
-      to: args.email,
-      subject: `You're registered - ${EVENT.title}`,
-      html,
-    });
-    if (response.error) {
-      console.error("Resend rejected the email:", response.error.message);
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error("Email send error:", error);
-    return false;
-  }
+  const html = await render(
+    RegistrationConfirmationEmail({
+      name: args.name,
+      registrationCode: args.code,
+      broughtFood: args.broughtFood,
+      foodDescription: args.foodDescription,
+      donationCents: args.donationCents,
+      guestCount: args.guestCount,
+    }),
+  );
+  // A plain-text part is not optional: some clients render only text, and its
+  // absence costs deliverability with spam filters.
+  const text = await render(
+    RegistrationConfirmationEmail({
+      name: args.name,
+      registrationCode: args.code,
+      broughtFood: args.broughtFood,
+      foodDescription: args.foodDescription,
+      donationCents: args.donationCents,
+      guestCount: args.guestCount,
+    }),
+    { plainText: true },
+  );
+
+  const result = await sendEmail({
+    to: args.email,
+    subject: `You're registered - ${EVENT.title}`,
+    html,
+    text,
+  });
+  return result.sent;
 }
 
 /**
