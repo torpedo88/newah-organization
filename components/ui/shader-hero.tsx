@@ -97,13 +97,13 @@ export default function ShaderHero() {
             priority
             className="size-16 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-20"
           />
-          <span className="hidden text-base font-semibold leading-tight text-lun sm:block">
+          <span className="hidden text-lg font-semibold leading-tight text-lun sm:block">
             {ORG.shortName}
-            <span className="block text-sm font-normal text-lun/80">Northern California</span>
+            <span className="block text-base font-normal text-lun/80">Northern California</span>
           </span>
         </Link>
 
-        <nav className="flex items-center gap-2 text-sm sm:gap-3">
+        <nav className="flex items-center gap-2 text-base sm:gap-3">
           {[
             ["Our year", "#our-year"],
             ["This year", "#this-year"],
@@ -121,7 +121,7 @@ export default function ShaderHero() {
 
         <Link
           href="/register/indrajatra"
-          className="rounded-full bg-lun px-6 py-2 text-sm font-semibold text-haku transition-colors hover:bg-lun/90"
+          className="rounded-full bg-lun px-8 py-3 text-base font-semibold text-haku transition-colors hover:bg-lun/90"
         >
           Register
         </Link>
