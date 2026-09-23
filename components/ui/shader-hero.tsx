@@ -148,7 +148,7 @@ export default function ShaderHero() {
           </motion.div>
 
           <motion.h1
-            className="mb-5 text-balance text-5xl font-bold leading-[1.05] tracking-tight text-kwa sm:text-7xl lg:text-8xl"
+            className="mb-5 text-balance text-6xl font-bold leading-[1.05] tracking-tight text-kwa sm:text-8xl lg:text-9xl"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
@@ -159,7 +159,7 @@ export default function ShaderHero() {
           </motion.h1>
 
           <motion.p
-            className="mb-8 max-w-xl text-pretty text-lg leading-relaxed text-kwa/70 sm:text-xl"
+            className="mb-8 max-w-xl text-pretty text-xl leading-relaxed text-kwa/70 sm:text-2xl"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.55 }}
