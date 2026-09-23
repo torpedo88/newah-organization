@@ -130,7 +130,6 @@ export default function ShaderHero() {
       </header>
 
       <main className="relative z-20 flex min-h-[calc(100dvh-88px)] flex-col justify-end px-5 pb-12 sm:px-8 sm:pb-16">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
         <div className="max-w-3xl">
           <motion.div
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-lun/25 bg-white/[0.06] px-4 py-2 backdrop-blur-sm"
@@ -186,24 +185,6 @@ export default function ShaderHero() {
               See our year
             </a>
           </motion.div>
-        </div>
-
-        {/* Scenic image on right */}
-        <motion.div
-          className="hidden lg:flex lg:items-center lg:justify-center"
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-        >
-          <Image
-            src="/images/home-hero-image.png"
-            alt="Temples and landmarks"
-            width={600}
-            height={400}
-            className="h-auto w-full max-w-sm rounded-2xl object-cover shadow-2xl"
-            priority
-          />
-        </motion.div>
         </div>
       </main>
 
