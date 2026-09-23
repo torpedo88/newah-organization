@@ -27,6 +27,11 @@ export const ORG = {
   website: "https://www.newah.org",
   facebook: "https://www.facebook.com/newahnorcal",
 
+  /** Where the chapter is based, as it states on its own Facebook page. */
+  basedIn: "Santa Rosa, California",
+  /** How the chapter styles its own short name there. */
+  chapterShortName: "NOANC",
+
   /** UNCONFIRMED — see note above. */
   ein: "02-0630839",
   /**
