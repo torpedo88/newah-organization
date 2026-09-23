@@ -128,7 +128,7 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-screen items-center bg-white gap-8 lg:gap-12">
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-screen items-center bg-haku gap-8 lg:gap-12">
         <div className="flex flex-col justify-center px-8 sm:px-12 pt-0 pb-16 sm:pb-20">
           <motion.div
             className="mb-6 inline-flex items-center gap-0 rounded-lg border border-white/20 bg-black/40 px-2.5 py-1 backdrop-blur-sm"
@@ -142,18 +142,18 @@ export default function ShaderHero() {
           </motion.div>
 
           <motion.h1
-            className="mb-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-haku"
+            className="mb-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <span className="block font-light text-haku/85">Our culture,</span>
+            <span className="block font-light text-white/85">Our culture,</span>
             <span className="block">tradition &amp; heritage</span>
-            <span className="block font-light italic text-patasi">our pride</span>
+            <span className="block font-light italic text-lun">our pride</span>
           </motion.h1>
 
           <motion.p
-            className="mb-8 text-lg text-haku/75"
+            className="mb-8 text-lg text-white/75"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.55 }}
@@ -176,7 +176,7 @@ export default function ShaderHero() {
             </Link>
             <Link
               href="#our-year"
-              className="inline-flex items-center gap-2 rounded-lg border-2 border-haku px-6 py-3 text-sm font-semibold text-haku transition-colors hover:bg-haku/5"
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-white px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               See our year
               <ArrowRight className="size-4" />
