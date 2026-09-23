@@ -131,12 +131,12 @@ export default function ShaderHero() {
       <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100dvh-56px)] items-center bg-white gap-8 lg:gap-12">
         <div className="flex flex-col justify-center px-8 sm:px-12 py-16 sm:py-20">
           <motion.div
-            className="mb-6 inline-flex items-center gap-0 rounded-full border border-white/20 bg-black/40 px-4 py-2 backdrop-blur-sm"
+            className="mb-6 inline-flex items-center gap-0 rounded-full border border-white/20 bg-black/40 px-3 py-1.5 backdrop-blur-sm"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            <span className="text-sm font-medium tracking-wide text-white/90">
+            <span className="text-xs font-medium tracking-wide text-white/90">
               नेपाल सम्बत् {NEPAL_SAMBAT.year} &middot; Nepal Sambat {NEPAL_SAMBAT.year}
             </span>
           </motion.div>
