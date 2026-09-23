@@ -87,7 +87,7 @@ export default function ShaderHero() {
           exactly what makes it unreliable to read against. */}
       <div className="absolute inset-0 bg-gradient-to-t from-haku via-haku/45 to-haku/70" />
 
-      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 sm:px-8 bg-gradient-to-r from-haku to-haku/80 backdrop-blur-sm border-b border-lun/20">
+      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 sm:px-8 bg-gradient-to-r from-haku to-haku/80 backdrop-blur-sm border-b-4 border-patasi">
         <Link href="/" className="flex items-center gap-3" aria-label={`${ORG.name} home`}>
           <Image
             src="/images/newah-full-logo-transparent.png"
