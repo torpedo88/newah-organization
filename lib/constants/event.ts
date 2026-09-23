@@ -55,7 +55,7 @@ export const FESTIVALS = [
     name: "Nepal Sambat",
     also: "the Newah new year",
     when: "Kachhala Thwa \u2014 autumn",
-    what: "Our own era, counted from 880 CE and still counting \u2014 a calendar kept by a people, not a state.",
+    what: "Our own era, counted from 879 AD and still counting \u2014 a calendar kept by a people, not a state.",
   },
   {
     name: "Yomari Punhi",
