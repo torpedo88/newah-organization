@@ -184,8 +184,8 @@ export default function ShaderHero() {
               See our year
             </a>
           </motion.div>
+          </div>
         </div>
-
 
         {/* Image on right - full height */}
         <motion.div
