@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { LockKeyhole, LogOut, TriangleAlert } from "lucide-react";
 import {
@@ -25,6 +26,8 @@ type RegistrationRow = {
   phone: string;
   email: string;
   number_of_guests: number | null;
+  /** Every other attending adult, by name, email and phone, for their name tags. */
+  adult_guests: { name?: string; email?: string; phone?: string }[] | null;
   brought_food: boolean | null;
   food_description: string | null;
   donation_cents: number | null;
@@ -32,6 +35,8 @@ type RegistrationRow = {
   net_cents: number | null;
   covers_fee: boolean | null;
   payment_status: string | null;
+  /** Null with a donation present means checkout never started — see the flag below. */
+  stripe_session_id: string | null;
   consent_given: boolean | null;
   consent_at: string | null;
   created_at: string;
@@ -73,9 +78,9 @@ function Code({ children }: { children: React.ReactNode }) {
 }
 
 export default async function AdminPage(props: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; locked?: string; page?: string }>;
 }) {
-  const { error } = await props.searchParams;
+  const { error, locked, page } = await props.searchParams;
 
   // Missing configuration must explain itself rather than 500 the route.
   if (!adminAuthConfigured()) {
@@ -113,6 +118,13 @@ export default async function AdminPage(props: {
                 className="w-full rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] focus:outline-none"
               />
               {error && <p className="text-sm text-alert">That password was not correct.</p>}
+              {locked && (
+                <p className="text-sm text-alert">
+                  Too many attempts. Try again in{" "}
+                  {Math.ceil(Number(locked) / 60) || 1} minute
+                  {Math.ceil(Number(locked) / 60) === 1 ? "" : "s"}.
+                </p>
+              )}
               <LiquidButton type="submit" size="xl" className="w-full text-white">
                 Sign in
               </LiquidButton>
@@ -133,35 +145,49 @@ export default async function AdminPage(props: {
     );
   }
 
+  const PAGE_SIZE = 200;
+  const currentPage = Math.max(1, Number(page) || 1);
+  const pageOffset = (currentPage - 1) * PAGE_SIZE;
+
   const { data, error: queryError } = await supabase
     .from("registrations")
     .select(
-      "id, registration_code, full_name, phone, email, number_of_guests, brought_food, " +
-        "food_description, donation_cents, charged_cents, net_cents, covers_fee, payment_status, consent_given, " +
+      "id, registration_code, full_name, phone, email, number_of_guests, adult_guests, brought_food, " +
+        "food_description, donation_cents, charged_cents, net_cents, covers_fee, payment_status, stripe_session_id, consent_given, " +
         "consent_at, created_at",
     )
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    // Explicitly paged. The list is for reading names at the desk, and an
+    // unbounded fetch silently truncates at the API's cap instead of saying so.
+    .range(pageOffset, pageOffset + PAGE_SIZE - 1);
 
   const rows = (data ?? []) as unknown as RegistrationRow[];
-  const donations = rows.filter((row) => (row.donation_cents ?? 0) > 0);
-  const guests = rows.reduce((total, row) => total + (row.number_of_guests ?? 0), 0);
-  const bringingFood = rows.filter((row) => row.brought_food === true).length;
+
+  // Totals come from the database, not from the rows on this page. Summing the
+  // fetched rows meant one unpaginated request was treated as the whole
+  // dataset: past PostgREST's response cap the counts and the money would
+  // quietly exclude the rest, understating what the fund received with nothing
+  // on the page to say so.
+  const { data: totalsRows } = await supabase.rpc("registration_totals");
+  const totals = (Array.isArray(totalsRows) ? totalsRows[0] : totalsRows) as
+    | {
+        registrations: number;
+        guests: number;
+        bringing_food: number;
+        paid_cents: number;
+        pending_cents: number;
+        needs_followup: number;
+      }
+    | undefined;
   // Only Stripe-confirmed payments count toward what the fund actually receives.
   // What the organization actually receives, which is less than the donation
   // wherever the donor declined to cover the processing fee.
-  const paidCents = donations
-    .filter((row) => row.payment_status === "paid")
-    .reduce((total, row) => total + (row.net_cents ?? row.donation_cents ?? 0), 0);
-  const pendingCents = donations
-    .filter((row) => row.payment_status === "pending")
-    .reduce((total, row) => total + (row.donation_cents ?? 0), 0);
-
   const stats = [
-    { label: "Registrations", value: String(rows.length) },
-    { label: "Guests expected", value: String(guests) },
-    { label: "Bringing food", value: String(bringingFood) },
-    { label: "Received (after fees)", value: `$${toDollars(paidCents)}` },
-    { label: "Awaiting payment", value: `$${toDollars(pendingCents)}` },
+    { label: "Registrations", value: String(totals?.registrations ?? rows.length) },
+    { label: "Guests expected", value: String(totals?.guests ?? 0) },
+    { label: "Bringing food", value: String(totals?.bringing_food ?? 0) },
+    { label: "Received (after fees)", value: `$${toDollars(totals?.paid_cents ?? 0)}` },
+    { label: "Awaiting payment", value: `$${toDollars(totals?.pending_cents ?? 0)}` },
   ];
 
   return (
@@ -231,7 +257,22 @@ export default async function AdminPage(props: {
                           <div>{row.email}</div>
                           <div className="text-white/50">{row.phone}</div>
                         </td>
-                        <td className="py-3 pr-4 text-white/70">{row.number_of_guests ?? 1}</td>
+                        <td className="py-3 pr-4 align-top text-white/70">
+                          <div>{row.number_of_guests ?? 1}</div>
+                          {/* The names are the reason the field exists: the desk
+                              cannot write the additional name tags from a count. */}
+                          {(row.adult_guests ?? []).length > 0 && (
+                            <ul className="mt-1 space-y-1">
+                              {(row.adult_guests ?? []).map((guest, index) => (
+                                <li key={index} className="text-xs leading-tight text-white/55">
+                                  <span className="text-white/75">{guest.name}</span>
+                                  {guest.email ? <> · {guest.email}</> : null}
+                                  {guest.phone ? <> · {guest.phone}</> : null}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </td>
                         <td className="py-3 pr-4 text-white/70">
                           {row.brought_food ? row.food_description || "Yes" : "—"}
                         </td>
@@ -258,6 +299,15 @@ export default async function AdminPage(props: {
                               >
                                 {row.payment_status}
                               </span>
+                              {/* A donation with no Stripe session means checkout never started:
+                                  the donor was told it was recorded but unpaid, and nothing will
+                                  ever mark it paid. Without this flag the row looks like any other
+                                  pending one and nobody follows it up. */}
+                              {row.payment_status === "pending" && !row.stripe_session_id && (
+                                <span className="ml-2 rounded bg-alert/20 px-1.5 py-0.5 text-xs font-semibold text-alert">
+                                  checkout never started &mdash; follow up
+                                </span>
+                              )}
                             </>
                           ) : (
                             "—"
@@ -277,6 +327,26 @@ export default async function AdminPage(props: {
                     ))}
                   </tbody>
                 </table>
+              {(totals?.registrations ?? 0) > PAGE_SIZE && (
+                <div className="mt-4 flex items-center justify-between text-sm text-white/70">
+                  <span>
+                    Showing {pageOffset + 1}&ndash;{pageOffset + rows.length} of{" "}
+                    {totals?.registrations ?? rows.length}
+                  </span>
+                  <span className="flex gap-3">
+                    {currentPage > 1 && (
+                      <Link href={`/admin?page=${currentPage - 1}`} className="underline underline-offset-4 hover:text-white">
+                        Previous
+                      </Link>
+                    )}
+                    {pageOffset + rows.length < (totals?.registrations ?? 0) && (
+                      <Link href={`/admin?page=${currentPage + 1}`} className="underline underline-offset-4 hover:text-white">
+                        Next
+                      </Link>
+                    )}
+                  </span>
+                </div>
+              )}
               </div>
             )}
           </Panel>

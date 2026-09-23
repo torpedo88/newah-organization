@@ -43,3 +43,9 @@ next-env.d.ts
 
 # Playwright MCP screenshots and snapshots
 .playwright-mcp/
+
+# /brag video output (large binaries, regenerate on demand)
+brag-output*/
+
+# pnpm is the package manager here; a stray npm lockfile breaks frozen-lockfile CI
+package-lock.json

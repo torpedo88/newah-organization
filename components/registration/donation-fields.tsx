@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 import { DONATION_PRESETS, EVENT, MAX_DONATION } from "@/lib/constants/event";
 import { settlement, toDollars } from "@/lib/payments/fees";
@@ -14,11 +15,22 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
   const choice = useWatch({ control: form.control, name: "donationChoice" });
   const coversFee = useWatch({ control: form.control, name: "coversFee" }) === true;
   const selected = typeof amount === "number" ? amount : undefined;
-  const isPreset = selected !== undefined && DONATION_PRESETS.includes(selected as never);
+
+  /**
+   * What the donor has typed, kept separately from the validated number.
+   *
+   * Deriving the input's value from the form state meant the field blanked
+   * itself the instant the partial number happened to equal a preset: typing
+   * 52 passed through 5, matched the $5 button, cleared, and left "2". A
+   * donor meaning $52 was charged $2, and $1000 became $0. The typed string
+   * is the donor's, and nothing but the donor edits it.
+   */
+  const [typed, setTyped] = useState("");
 
   // Choosing an amount and declining are both explicit acts; picking one
   // always clears the other so the two can never disagree.
   const setAmount = (value: number | undefined) => {
+    setTyped("");
     form.setValue("donationAmount", value, { shouldDirty: true });
     form.setValue("donationChoice", value === undefined ? undefined : "amount", {
       shouldDirty: true,
@@ -26,6 +38,7 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
   };
 
   const declineDonation = () => {
+    setTyped("");
     form.setValue("donationAmount", undefined, { shouldDirty: true });
     form.setValue("donationChoice", "none", { shouldDirty: true });
   };
@@ -86,12 +99,22 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
             min="1"
             max={MAX_DONATION}
             step="0.01"
-            value={selected !== undefined && !isPreset ? String(selected) : ""}
+            value={typed}
             onChange={(event) => {
               const raw = event.target.value;
-              if (raw === "") return setAmount(undefined);
+              setTyped(raw);
+              if (raw.trim() === "") {
+                form.setValue("donationAmount", undefined, { shouldDirty: true });
+                form.setValue("donationChoice", undefined, { shouldDirty: true });
+                return;
+              }
               const parsed = Number.parseFloat(raw);
-              setAmount(Number.isNaN(parsed) ? undefined : parsed);
+              form.setValue("donationAmount", Number.isNaN(parsed) ? undefined : parsed, {
+                shouldDirty: true,
+              });
+              form.setValue("donationChoice", Number.isNaN(parsed) ? undefined : "amount", {
+                shouldDirty: true,
+              });
             }}
             placeholder="Enter an amount"
             className="flex-1 rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] focus:outline-none"
@@ -99,7 +122,11 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
           {selected !== undefined && (
             <button
               type="button"
-              onClick={() => setAmount(undefined)}
+              onClick={() => {
+                setTyped("");
+                form.setValue("donationAmount", undefined, { shouldDirty: true });
+                form.setValue("donationChoice", undefined, { shouldDirty: true });
+              }}
               className="px-2 text-sm text-white/60 underline underline-offset-2 hover:text-white"
             >
               Clear

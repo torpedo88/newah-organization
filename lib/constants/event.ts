@@ -17,6 +17,83 @@ export const EVENT = {
    */
   promise:
     "After covering the expenses of the event, all remaining proceeds are donated to the",
+
+  /**
+   * When and where.
+   *
+   * Left empty until the board supplies them. The landing page renders these
+   * only when set, because a date invented to fill a layout is worse than a
+   * page that does not yet state one — people plan around it.
+   */
+  date: "",
+  venue: "",
+  city: "",
+} as const;
+
+/**
+ * The chapter's year, not one festival.
+ *
+ * Drawn from what NOA chapters publish as their annual programme. The
+ * organization exists all year; Indra Jatra is the event it happens to be
+ * raising money around right now, and a site that shows only that
+ * misrepresents what the chapter is.
+ */
+export const FESTIVALS = [
+  {
+    name: "Yenya Punhi",
+    also: "Indra Jatra",
+    when: "Bhadra \u2014 late summer",
+    what: "Kathmandu's own festival: the lingo raised, the chariots pulled, the city awake for days.",
+  },
+  {
+    name: "Mha Puja",
+    also: "worship of the self",
+    when: "Kachhala \u2014 with Nepal Sambat",
+    what: "The one night a year the family honours each of its own, mandala by mandala.",
+  },
+  {
+    name: "Nepal Sambat",
+    also: "the Newah new year",
+    when: "Kachhala Thwa \u2014 autumn",
+    what: "Our own era, counted from 879 AD and still counting \u2014 a calendar kept by a people, not a state.",
+  },
+  {
+    name: "Yomari Punhi",
+    also: "the harvest",
+    when: "Thinla \u2014 winter full moon",
+    what: "Steamed yomari shaped by hand, the first sweetness of the new rice.",
+  },
+  {
+    name: "Buddha Jayanti",
+    also: "Swanya Punhi",
+    when: "Bachhala \u2014 spring",
+    what: "Marked across the Valley's bahals and stupas, and by Newah communities wherever they live.",
+  },
+  {
+    name: "World Newah Day",
+    also: "Vishwa Newah Diwas",
+    when: "Last Saturday of March",
+    what: "One day the diaspora keeps together, wherever it has settled.",
+  },
+] as const;
+
+/**
+ * Nepal Sambat, the era the Newah community still counts by.
+ *
+ * Verified before use: the current year is 1146, running roughly October 2025
+ * to October 2026; 1147 begins at Mha Puja on 10 November 2026. The era was
+ * founded in 879 AD by Shankhadhar Sakhwa, who cleared the debts of everyone
+ * in the Kathmandu Valley.
+ *
+ * `year` needs updating each Mha Puja. It is a real date on a real calendar,
+ * so a stale value is a visible error to the community this page is for.
+ */
+export const NEPAL_SAMBAT = {
+  year: 1146,
+  founded: "879 AD",
+  founder: "Shankhadhar Sakhwa",
+  /** When `year` next rolls over. */
+  nextNewYear: "10 November 2026",
 } as const;
 
 /** Preset donation amounts: note denominations through to typical giving tiers. */

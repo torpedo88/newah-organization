@@ -7,6 +7,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import { registrationSchema, Registration } from "@/lib/validation/registration";
+import { formatPhoneAsTyped } from "@/lib/validation/contact";
 import { registerAttendee } from "@/lib/actions/register";
 import SuccessScreen, { SuccessData } from "./success-screen";
 import CauseBanner from "./cause-banner";
@@ -15,7 +16,7 @@ import AdultGuestsFields from "./adult-guests-fields";
 import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
-import { ORG } from "@/lib/legal/org";
+import { CONSENT_TEXT } from "@/lib/legal/org";
 import { EVENT } from "@/lib/constants/event";
 
 const fieldClass =
@@ -47,10 +48,19 @@ export default function RegistrationForm() {
   const consentGiven = useWatch({ control: form.control, name: "consentGiven" }) === true;
   const broughtFood = useWatch({ control: form.control, name: "broughtFood" }) === true;
 
+  // The stored sentence, split so the two document names can be links while
+  // every character still comes from CONSENT_TEXT.
+  const consentParts = CONSENT_TEXT.split(/(Terms and Conditions|Privacy Policy)/);
+
+  // One id per filled-in form, fixed for the life of this page. A resubmit
+  // carries the same value so the server can recognise it as the same
+  // registration rather than a second attendee.
+  const [submissionId] = useState(() => crypto.randomUUID());
+
   const onSubmit = async (data: Registration) => {
     setIsSubmitting(true);
     try {
-      const result = await registerAttendee(data);
+      const result = await registerAttendee({ ...data, submissionId });
       if (!result.success) {
         form.setError("root", { message: result.error });
         return;
@@ -72,6 +82,7 @@ export default function RegistrationForm() {
         ).length,
         // A donation with no checkout URL means Stripe is not configured.
         paymentPending: Boolean(result.donationCents),
+        emailSent: result.emailSent === true,
       });
     } finally {
       setIsSubmitting(false);
@@ -119,7 +130,22 @@ export default function RegistrationForm() {
 
               <div>
                 <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-white">Phone Number</label>
-                <input id="phone" type="tel" {...form.register("phone")} placeholder="5551234567" className={fieldClass} />
+                <input
+                  id="phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="(555) 123-4567"
+                  className={fieldClass}
+                  {...form.register("phone")}
+                  onChange={(event) => {
+                    // Formatted as it is typed, so the shape of the field
+                    // tells people what it wants instead of an error after
+                    // they submit. Punctuation is stripped before validation.
+                    event.target.value = formatPhoneAsTyped(event.target.value);
+                    form.register("phone").onChange(event);
+                  }}
+                />
                 {form.formState.errors.phone && (
                   <p className="mt-1 text-sm text-alert">{form.formState.errors.phone.message}</p>
                 )}
@@ -193,13 +219,26 @@ export default function RegistrationForm() {
               <label className="flex cursor-pointer items-start gap-3">
                 <input type="checkbox" {...form.register("consentGiven")} className="mt-1 size-5 shrink-0 cursor-pointer accent-patasi" />
                 <span className="text-sm leading-relaxed text-white/80">
-                  I have read and agree to the{" "}
-                  <Link href="/terms" target="_blank" className="font-semibold text-white underline underline-offset-2">Terms and Conditions</Link>{" "}
-                  and the{" "}
-                  <Link href="/privacy" target="_blank" className="font-semibold text-white underline underline-offset-2">Privacy Policy</Link>
-                  , and agree that {ORG.name} may contact me about the organization, its events and
-                  its membership.
-                </span>
+                    {/* Rendered FROM CONSENT_TEXT, which is what gets stored, so
+                        the record cannot drift from the wording actually shown.
+                        Previously the stored sentence opened differently and
+                        carried a withdrawal clause this checkbox never
+                        displayed. */}
+                    {consentParts.map((part, index) =>
+                      part === "Terms and Conditions" || part === "Privacy Policy" ? (
+                        <Link
+                          key={index}
+                          href={part === "Privacy Policy" ? "/privacy" : "/terms"}
+                          target="_blank"
+                          className="font-semibold text-white underline underline-offset-2"
+                        >
+                          {part}
+                        </Link>
+                      ) : (
+                        <span key={index}>{part}</span>
+                      ),
+                    )}
+                  </span>
               </label>
               {!consentGiven && form.formState.isSubmitted && (
                 <p className="mt-2 text-sm text-alert">Please agree before submitting.</p>
