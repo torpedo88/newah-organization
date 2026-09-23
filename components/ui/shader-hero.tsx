@@ -87,7 +87,7 @@ export default function ShaderHero() {
           exactly what makes it unreliable to read against. */}
       <div className="absolute inset-0 bg-gradient-to-t from-haku via-haku/45 to-haku/70" />
 
-      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 sm:px-8 bg-haku/80 backdrop-blur-sm border-b border-white/5">
+      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 sm:px-8 bg-patasi backdrop-blur-sm border-b border-patasi/30">
         <Link href="/" className="flex items-center gap-3" aria-label={`${ORG.name} home`}>
           <Image
             src="/images/newah-full-logo-transparent.png"
@@ -95,11 +95,11 @@ export default function ShaderHero() {
             width={512}
             height={512}
             priority
-            className="size-11 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-12"
+            className="size-14 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-16"
           />
-          <span className="hidden text-sm font-semibold leading-tight text-kwa sm:block">
+          <span className="hidden text-sm font-semibold leading-tight text-white sm:block">
             {ORG.shortName}
-            <span className="block text-xs font-normal text-lun">Northern California</span>
+            <span className="block text-xs font-normal text-white/80">Northern California</span>
           </span>
         </Link>
 
@@ -112,7 +112,7 @@ export default function ShaderHero() {
             <a
               key={href}
               href={href}
-              className="px-3 py-2 font-medium text-kwa/75 transition-colors hover:bg-white/10 hover:text-kwa rounded-full"
+              className="px-3 py-2 font-medium text-white/80 transition-colors hover:bg-white/20 hover:text-white rounded-full"
             >
               {label}
             </a>
@@ -121,7 +121,7 @@ export default function ShaderHero() {
 
         <Link
           href="/register/indrajatra"
-          className="rounded-full bg-kwa px-5 py-2 text-xs font-semibold text-haku transition-colors hover:bg-white"
+          className="rounded-full bg-white px-5 py-2 text-xs font-semibold text-patasi transition-colors hover:bg-white/90"
         >
           Register
         </Link>
