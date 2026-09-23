@@ -21,7 +21,7 @@ export default function Home() {
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Button asChild>
-            <Link href="/register">Register for {EVENT.name}</Link>
+            <Link href="/register/indrajatra">Register for {EVENT.name}</Link>
           </Button>
           <Button disabled variant="secondary">
             Events coming soon
