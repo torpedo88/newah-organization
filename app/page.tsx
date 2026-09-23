@@ -1,10 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { ArrowRight, CalendarDays, LockKeyhole, MapPin } from "lucide-react";
+import { ArrowRight, Heart } from "lucide-react";
 import ShaderHero from "@/components/ui/shader-hero";
-import PhotoCredits from "@/components/ui/photo-credits";
-import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
 import { EVENT, FESTIVALS } from "@/lib/constants/event";
 
@@ -15,224 +13,172 @@ export const metadata: Metadata = {
     "and continuing Newah culture, language, traditions and arts.",
 };
 
-/**
- * Chapter landing page.
- *
- * Framed around the organization, not one festival. An earlier version led
- * with Indra Jatra, which misrepresents a chapter whose purpose is the
- * continuation of a culture — the festival is what it is raising money around
- * this year, not what it is.
- *
- * Every claim is sourced: the mission from NOA's own site, the annual
- * programme from what its chapters publish, the chapter's own description from
- * how it presents itself. Nothing is asserted about officers, founding dates
- * or finances, none of which is verified.
- */
-
-function Section({
-  children,
-  className = "",
-  id,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id?: string;
-}) {
-  return (
-    <section id={id} className={`mx-auto w-full max-w-5xl px-5 sm:px-8 ${className}`}>
-      {children}
-    </section>
-  );
-}
-
-function Heading({ kicker, children }: { kicker: string; children: React.ReactNode }) {
-  return (
-    <>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-lun">{kicker}</p>
-      <h2 className="text-2xl font-bold text-white sm:text-3xl">{children}</h2>
-    </>
-  );
-}
-
 export default function Home() {
-  const hasWhen = EVENT.date !== "";
-  const hasWhere = EVENT.venue !== "" || EVENT.city !== "";
-
   return (
     <main className="bg-haku">
       <ShaderHero />
 
-        {/* Who we are ------------------------------------------------- */}
-        <Section className="py-16">
-          <Heading kicker="Who we are">A community, kept</Heading>
-          <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-white/80">
-            We are the {ORG.chapter} of the {ORG.name} &mdash; a non-profit dedicated to the
-            preservation, promotion and continuation of Newah culture, traditions, language and
-            arts, and to the unity of Newah and Nepali communities across Northern California.
+      {/* Our Culture ------------------------------------------------- */}
+      <section className="border-t border-white/10 bg-haku py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-patasi">Our Culture</div>
+          <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">A community, kept alive</h2>
+          <p className="mb-8 max-w-3xl text-lg leading-relaxed text-white/80">
+            We are the {ORG.chapter} of the {ORG.name} — preserving, promoting, and continuing Newah culture, language, traditions and arts for the Northern California community.
           </p>
-          <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-white/70">
-            {ORG.shortName} has served the Newah diaspora in the United States for a quarter of a
-            century, with chapters in Northern California, Southern California, Seattle, Florida
-            and New England. This one is based in {ORG.basedIn}.
-          </p>
-
-          <blockquote className="mt-8 max-w-2xl border-l-4 border-lun pl-5">
-            <p className="text-pretty italic leading-relaxed text-white/75">
-              &ldquo;To provide a democratic forum for the Newah community to advance in all field
-              of human activities, keeping in perspective the rich historical heritage of the Past,
-              working creatively and collectively with friends and well-wishers to resolve
-              important issues of the present and to secure the future for the coming generation
-              and our country Nepal.&rdquo;
-            </p>
-            <footer className="mt-3 text-sm text-white/50">
-              &mdash; {ORG.name},{" "}
-              <a href={ORG.website} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-white/75">
-                newah.org
-              </a>
-            </footer>
-          </blockquote>
-        </Section>
-
-        {/* Language ---------------------------------------------------- */}
-        <Section className="py-16">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <div>
-              <Heading kicker="Nepal Bhasa">A language, and a script</Heading>
-              <p className="mt-5 text-pretty leading-relaxed text-white/75">
-                Newah is not only a people. It is a language with its own literature, and a script
-                that predates the country it is spoken in. Nepal Sambat, the era the community
-                still counts by, began in 879 AD and is still running.
-              </p>
-              <p className="mt-4 text-pretty leading-relaxed text-white/75">
-                Keeping that alive outside the Valley is most of what a chapter is for &mdash; the
-                festivals are how a language gets spoken by people who do not otherwise have a
-                reason to speak it.
-              </p>
-            </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <Image
-                src="/images/patan-durbar.jpg"
-                alt="Patan Durbar Square at dusk"
-                fill
-                sizes="(max-width: 768px) 100vw, 480px"
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </Section>
-
-        {/* The year ---------------------------------------------------- */}
-        <Section className="py-16" id="our-year">
-          <Heading kicker="Our year">What the chapter keeps</Heading>
-          <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
-            The calendar the community observes, wherever it lives.
-          </p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {FESTIVALS.map((f) => (
-              <div key={f.name} className="group rounded-2xl border-2 border-white/12 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 transition-all hover:border-patasi/50 hover:bg-patasi/12">
-                <div className="flex items-start justify-between">
-                  <h3 className="font-bold text-white text-lg">{f.name}</h3>
-                  <div className="size-2 rounded-full bg-patasi opacity-0 transition-opacity group-hover:opacity-100" />
-                </div>
-                <p className="mt-1 text-sm font-medium text-patasi">{f.also}</p>
-                <p className="mt-2 text-xs uppercase tracking-wide text-white/40">{f.when}</p>
-                <p className="mt-3 text-sm leading-relaxed text-white/70">{f.what}</p>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {[
+              { title: "Language", desc: "Nepal Bhasa with its own script, predating the nation" },
+              { title: "Traditions", desc: "Festivals and celebrations that connect us" },
+              { title: "Community", desc: "Unity across Northern California" },
+            ].map((item) => (
+              <div key={item.title} className="rounded-lg border border-patasi/30 bg-patasi/10 p-6">
+                <h3 className="font-bold text-patasi text-lg">{item.title}</h3>
+                <p className="mt-2 text-sm text-white/75">{item.desc}</p>
               </div>
             ))}
           </div>
-        </Section>
+        </div>
+      </section>
 
-        {/* This year's event ------------------------------------------- */}
-        <Section className="py-16" id="this-year">
-          <div className="overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
-            <div className="grid md:grid-cols-5">
-              <div className="relative min-h-52 md:col-span-2">
-                <Image
-                  src="/images/samay-baji.jpg"
-                  alt="Samay baji, the Newah ceremonial plate"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 400px"
-                  className="object-cover"
-                />
+      {/* Festival Calendar ----------------------------------------- */}
+      <section className="py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-patasi">Our Year</div>
+          <h2 className="mb-8 text-3xl font-bold text-white sm:text-4xl">The festivals we celebrate</h2>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {FESTIVALS.map((f) => (
+              <div key={f.name} className="group rounded-xl border-2 border-white/15 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 transition-all hover:border-patasi hover:bg-patasi/15">
+                <h3 className="text-lg font-bold text-white">{f.name}</h3>
+                <p className="mt-1 text-sm text-patasi font-semibold">{f.also}</p>
+                <p className="mt-2 text-xs uppercase tracking-wide text-white/50">{f.when}</p>
+                <p className="mt-4 text-sm leading-relaxed text-white/75">{f.what}</p>
               </div>
-              <div className="p-7 sm:p-9 md:col-span-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lun-bright">
-                  This year
-                </p>
-                <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
-                  {EVENT.name}: {EVENT.title}
-                </h2>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                {(hasWhen || hasWhere) && (
-                  <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-white/85">
-                    {hasWhen && (
-                      <span className="inline-flex items-center gap-2">
-                        <CalendarDays className="size-4 shrink-0 text-lun" aria-hidden />
-                        {EVENT.date}
-                      </span>
-                    )}
-                    {hasWhere && (
-                      <span className="inline-flex items-center gap-2">
-                        <MapPin className="size-4 shrink-0 text-lun" aria-hidden />
-                        {[EVENT.venue, EVENT.city].filter(Boolean).join(", ")}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                <p className="mt-4 text-pretty leading-relaxed text-white/80">
-                  {EVENT.promise}{" "}
-                  <strong className="font-semibold text-white">{EVENT.fundName}</strong>.
-                </p>
-
-                <LiquidButton asChild size="xl" className="mt-6 text-white">
-                  <Link href="/register/indrajatra">
-                    Register
-                    <ArrowRight className="size-4" aria-hidden />
-                  </Link>
-                </LiquidButton>
-                <p className="mt-3 text-sm text-white/55">Free to attend &middot; donations optional</p>
-              </div>
+      {/* This Year Event ------------------------------------------- */}
+      <section className="border-t border-white/10 bg-gradient-to-b from-patasi/10 to-haku py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            <div className="relative aspect-square overflow-hidden rounded-xl">
+              <Image
+                src="/images/home-hero-image.png"
+                alt={EVENT.name}
+                fill
+                className="object-cover"
+              />
             </div>
-          </div>
-        </Section>
-
-        {/* Contact ------------------------------------------------------ */}
-        <Section className="py-16" id="contact">
-          <Heading kicker="Get in touch">Membership, volunteering, questions</Heading>
-          <div className="mt-6 flex flex-wrap gap-x-7 gap-y-3 text-white/85">
-            <a href={`mailto:${ORG.contactEmail}`} className="font-semibold underline underline-offset-4 hover:text-white">
-              {ORG.contactEmail}
-            </a>
-            <a href={ORG.facebook} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4 hover:text-white">
-              Facebook
-            </a>
-            <a href={ORG.website} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4 hover:text-white">
-              newah.org
-            </a>
-          </div>
-        </Section>
-
-        {/* Footer -------------------------------------------------------- */}
-        <footer className="mx-auto w-full max-w-5xl px-5 pb-14 sm:px-8">
-          <div className="border-t border-white/10 pt-7">
-            <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/55">
-              <Link href="/register/indrajatra" className="underline-offset-4 hover:text-white/85 hover:underline">Register</Link>
-              <Link href="/privacy" className="underline-offset-4 hover:text-white/85 hover:underline">Privacy Policy</Link>
-              <Link href="/terms" className="underline-offset-4 hover:text-white/85 hover:underline">Terms and Conditions</Link>
-            </nav>
-            <p className="mt-5 text-center text-xs text-white/40">
-              &copy; {new Date().getFullYear()} {ORG.name} &mdash; {ORG.chapter}
-            </p>
-            <div className="mt-4 flex justify-center">
-              <Link href="/admin" aria-label="Board sign-in" className="inline-flex items-center gap-1.5 text-xs text-white/30 underline-offset-4 hover:text-white/60 hover:underline">
-                <LockKeyhole className="size-3" aria-hidden />
-                Board sign-in
+            <div>
+              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-patasi">This Year</div>
+              <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl">{EVENT.name}</h2>
+              <p className="mb-6 text-lg text-white/85">{EVENT.title}</p>
+              <p className="mb-8 leading-relaxed text-white/75">{EVENT.promise}</p>
+              <Link
+                href="/register/indrajatra"
+                className="inline-flex items-center gap-2 rounded-lg bg-patasi px-6 py-3 font-semibold text-white transition-all hover:bg-patasi/90"
+              >
+                Register for {EVENT.name}
+                <ArrowRight className="size-4" />
               </Link>
+              <p className="mt-3 text-sm text-white/60">Free to attend • Donations optional</p>
             </div>
-            <PhotoCredits className="mt-6 text-center" />
           </div>
-        </footer>
+        </div>
+      </section>
+
+      {/* Mission & Vision ------------------------------------------ */}
+      <section className="py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-patasi">Our Purpose</div>
+          <h2 className="mb-12 text-3xl font-bold text-white sm:text-4xl">Mission & Vision</h2>
+          <div className="grid gap-10 lg:grid-cols-2">
+            <div className="rounded-xl border border-patasi/30 bg-patasi/10 p-8">
+              <h3 className="mb-4 text-xl font-bold text-patasi">Our Mission</h3>
+              <p className="leading-relaxed text-white/80">
+                To preserve, promote, and pass on the Newah language, culture, traditions, and heritage to current and future generations in Northern California.
+              </p>
+            </div>
+            <div className="rounded-xl border border-patasi/30 bg-patasi/10 p-8">
+              <h3 className="mb-4 text-xl font-bold text-patasi">Our Vision</h3>
+              <p className="leading-relaxed text-white/80">
+                To build a vibrant, united Newah community where our culture is celebrated, our identity is strong, and our traditions thrive.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Get Involved ------------------------------------------------ */}
+      <section className="border-t border-white/10 bg-gradient-to-b from-haku to-white/[0.02] py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-patasi">Ways to Connect</div>
+          <h2 className="mb-12 text-3xl font-bold text-white sm:text-4xl">Get involved</h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {[
+              { icon: "👥", title: "Membership", desc: "Join our community", href: "#" },
+              { icon: "🤝", title: "Volunteer", desc: "Share your time & skills", href: "#" },
+              { icon: Heart, title: "Donate", desc: "Support our mission", href: "/donate" },
+            ].map((item, i) => (
+              <Link
+                key={i}
+                href={typeof item.href === "string" ? item.href : "#"}
+                className="group rounded-xl border border-white/15 bg-white/[0.04] p-6 transition-all hover:border-patasi hover:bg-patasi/15"
+              >
+                {typeof item.icon === "string" ? (
+                  <div className="mb-3 text-3xl">{item.icon}</div>
+                ) : (
+                  <item.icon className="mb-3 size-6 text-patasi" />
+                )}
+                <h3 className="font-bold text-white">{item.title}</h3>
+                <p className="mt-1 text-sm text-white/70">{item.desc}</p>
+                <div className="mt-3 inline-flex items-center gap-1 text-sm text-patasi font-semibold">
+                  Learn more <ArrowRight className="size-3" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer ------------------------------------------------------ */}
+      <footer className="border-t border-white/10 bg-haku py-12 sm:py-16">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="grid gap-8 sm:grid-cols-4">
+            <div>
+              <h3 className="font-bold text-white">Quick Links</h3>
+              <ul className="mt-4 space-y-2 text-sm text-white/70">
+                <li><Link href="/register/indrajatra" className="hover:text-patasi">Register</Link></li>
+                <li><Link href="/donate" className="hover:text-patasi">Donate</Link></li>
+                <li><Link href="/" className="hover:text-patasi">Home</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-white">Legal</h3>
+              <ul className="mt-4 space-y-2 text-sm text-white/70">
+                <li><Link href="/privacy" className="hover:text-patasi">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-patasi">Terms & Conditions</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-white">Contact</h3>
+              <ul className="mt-4 space-y-2 text-sm text-white/70">
+                <li><a href={`mailto:${ORG.contactEmail}`} className="hover:text-patasi">{ORG.contactEmail}</a></li>
+                <li><a href={ORG.facebook} className="hover:text-patasi" target="_blank" rel="noreferrer">Facebook</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-white">{ORG.shortName}</h3>
+              <p className="mt-4 text-sm text-white/70">{ORG.chapter}</p>
+            </div>
+          </div>
+          <div className="mt-8 border-t border-white/10 pt-8 text-center text-sm text-white/50">
+            <p>&copy; {new Date().getFullYear()} {ORG.name}. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
