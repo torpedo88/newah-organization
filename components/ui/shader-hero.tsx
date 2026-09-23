@@ -127,7 +127,7 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-[1fr_1.7fr] min-h-[calc(100dvh-56px)]">
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-[0.9fr_2fr] min-h-[calc(100dvh-56px)]">
         <div className="flex flex-col justify-start pt-44 sm:pt-56 lg:pt-68 px-5 sm:px-8">
           <div className="max-w-3xl">
           <motion.div
