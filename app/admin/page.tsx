@@ -12,6 +12,7 @@ import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
 import { EVENT } from "@/lib/constants/event";
 import { toDollars } from "@/lib/payments/fees";
+import { formatDate, formatDateTime } from "@/lib/constants/time";
 import { logIn, logOut } from "./actions";
 
 export const metadata: Metadata = {
@@ -316,12 +317,12 @@ export default async function AdminPage(props: {
                         <td className="py-3 pr-4 text-white/60">
                           {row.consent_given
                             ? row.consent_at
-                              ? new Date(row.consent_at).toLocaleDateString()
+                              ? formatDate(row.consent_at)
                               : "yes"
                             : "—"}
                         </td>
                         <td className="py-3 text-white/55">
-                          {new Date(row.created_at).toLocaleString()}
+                          {formatDateTime(row.created_at)}
                         </td>
                       </tr>
                     ))}
