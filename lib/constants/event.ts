@@ -17,6 +17,17 @@ export const EVENT = {
    */
   promise:
     "After covering the expenses of the event, all remaining proceeds are donated to the",
+
+  /**
+   * When and where.
+   *
+   * Left empty until the board supplies them. The landing page renders these
+   * only when set, because a date invented to fill a layout is worse than a
+   * page that does not yet state one — people plan around it.
+   */
+  date: "",
+  venue: "",
+  city: "",
 } as const;
 
 /** Preset donation amounts: note denominations through to typical giving tiers. */
