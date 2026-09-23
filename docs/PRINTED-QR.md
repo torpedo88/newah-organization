@@ -1,58 +1,73 @@
 # The printed QR code — do not break this URL
 
-Physical QR codes have been printed pointing at:
+The current code encodes:
+
+```
+https://www.noancc.org/register/indrajatra
+```
+
+Version 5, error correction level **H** — roughly 30% of the code can be
+creased, stained or obscured and still scan, which is what a poster actually
+endures.
+
+**Source of truth:** `docs/qr-register-print.png` (1960×1960).
+Regenerated 2026-09-23 when the site moved to its own domain.
+
+A printed QR code cannot be updated. Once posters, flyers or signs are out,
+that URL has to keep resolving **forever**, or every printed code is dead with
+no way to fix it.
+
+## Codes printed before 2026-09-23
+
+Earlier material encodes the old address:
 
 ```
 https://newah-organization.vercel.app/register
 ```
 
-A printed code cannot be updated. Once posters, flyers or signs are out, that
-hostname has to keep resolving **forever**, or every printed code is dead with
-no way to fix it.
+**It still works**, and must continue to. Two redirects carry it:
+
+1. `newah-organization.vercel.app/*` → `www.noancc.org/*` (host redirect)
+2. `/register` → `/register/indrajatra` (path redirect)
+
+Both live in `next.config.ts`. The previous image is kept alongside as
+`qr-register-print-OLD-vercel-url.png` so anyone holding old material can
+confirm what it points at.
 
 ## What is safe
 
-- **Adding a custom domain** (e.g. noanc.org). Vercel keeps the project's
-  `.vercel.app` hostname working alongside any custom domain, so printed codes
-  keep working. New printed material should use the custom domain; old material
-  keeps working through this one.
-- Redeploying, changing the framework, editing the page — none of that touches
-  the hostname.
+- Redeploying, changing the framework, editing the page.
+- Adding further domains. Vercel keeps every attached hostname working.
+- Changing which host is canonical — **provided** the old one keeps redirecting
+  rather than being removed.
 
 ## What breaks every printed code
 
-- **Renaming the Vercel project.** The default hostname is derived from the
-  project name: rename `newah-organization` and the URL changes.
-- **Deleting the project**, or deleting that domain from the project.
-- **Transferring the project** to another account or team, which can reassign
-  the hostname if the name is already taken there.
-- Removing or redirecting away the `/register` route.
+- **Removing either redirect in `next.config.ts`.** The two above are the only
+  thing keeping pre-2026-09-23 material alive. They are not tidy-up candidates.
+- **Renaming the Vercel project.** The `.vercel.app` hostname derives from the
+  project name, so a rename changes it and the old code dies.
+- **Deleting the project**, or detaching `newah-organization.vercel.app` or
+  `www.noancc.org` from it.
+- **Letting `noancc.org` lapse.** Domain registration is now load-bearing for
+  printed material; a missed renewal kills every current code.
+- Removing or renaming the `/register/indrajatra` route without leaving a
+  redirect behind.
 
-## If a rename ever becomes unavoidable
+## Before printing a new batch
 
-Put a permanent redirect in place from the old hostname to the new one *before*
-the rename, and verify a printed code still resolves end to end. Do not rely on
-remembering — test an actual physical code with a phone.
-
-## The source of truth
-
-`brag-output-*/qr-register-print.png` — 1960x1960, QR version 6, error
-correction level H (~30% of the code can be damaged and still scan).
-
-It was verified by decoding, not by trusting the encoder: the generated file,
-the rendered video frame, and the final H.264-encoded MP4 all decode to the URL
-above.
-
-To regenerate or verify:
+Decode the actual file rather than trusting the generator, and confirm the
+decoded string resolves:
 
 ```bash
-uv run --with "qrcode[pil]" --with opencv-python-headless --with numpy python - <<'EOF'
-import qrcode, cv2
-from qrcode.constants import ERROR_CORRECT_H
-URL = "https://newah-organization.vercel.app/register"
-qr = qrcode.QRCode(error_correction=ERROR_CORRECT_H, box_size=40, border=4)
-qr.add_data(URL); qr.make(fit=True)
-qr.make_image(fill_color="black", back_color="white").convert("RGB").save("qr.png")
-print(cv2.QRCodeDetector().detectAndDecode(cv2.imread("qr.png"))[0] == URL)
-EOF
+# in a scratch dir
+npm install jsqr pngjs
+node -e '
+const fs=require("fs"),{PNG}=require("pngjs"),jsQR=require("jsqr");
+const p=PNG.sync.read(fs.readFileSync("docs/qr-register-print.png"));
+console.log(jsQR(new Uint8ClampedArray(p.data),p.width,p.height).data);
+'
 ```
+
+Then scan the printed sheet with an actual phone. A code that decodes in
+software can still fail on paper at the wrong size or contrast.
