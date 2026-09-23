@@ -20,7 +20,7 @@ import { CONSENT_TEXT } from "@/lib/legal/org";
 import { EVENT } from "@/lib/constants/event";
 
 const fieldClass =
-  "w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all";
+  "w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder-white/50 focus:outline-none focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all";
 
 export default function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,46 +92,36 @@ export default function RegistrationForm() {
   if (successData) return <SuccessScreen data={successData} />;
 
   return (
-    <div
-      className="relative min-h-screen px-4 py-8 sm:px-6 lg:px-8"
-      style={{
-        backgroundImage: 'url(/images/registration-backdrop.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
-    >
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-white/30 backdrop-blur-sm" />
-
-      <div className="relative mx-auto max-w-2xl">
-        <div className="mb-8 text-center">
-          <div className="mb-4 flex justify-center">
+    <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
+      <FestivalBackdrop />
+      <div className="relative mx-auto max-w-md">
+        <div className="mb-10 text-center">
+          <div className="mb-6 flex justify-center">
             <Image
               src="/images/newah-full-logo-transparent.png"
               alt="Newah Organization of America"
               width={1024}
               height={1024}
               priority
-              className="size-32 object-contain"
+              className="size-40 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
             />
           </div>
-          <h1 className="mb-2 text-4xl font-bold text-white drop-shadow-lg">
+          <h1 className="mb-2 text-4xl font-bold text-white">
             {EVENT.name} Registration
           </h1>
-          <p className="text-base text-white drop-shadow font-medium">Join Newah Community</p>
+          <p className="text-base text-white/70">Join Newah Community</p>
         </div>
 
         <CauseBanner />
 
-        <div className="mx-auto max-w-md rounded-2xl bg-white shadow-2xl">
-          <div className="p-8 md:p-10">
+        <PatasiFrame>
+          <div className="bg-haku/35 p-8 backdrop-blur-[3px] md:p-10">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Your Information</h2>
+              <h2 className="text-sm font-semibold text-white">Your Information</h2>
 
               <div>
-                <label htmlFor="fullName" className="mb-2 block text-sm font-semibold text-gray-900">Name</label>
+                <label htmlFor="fullName" className="mb-2 block text-sm font-semibold text-white">Name</label>
                 <input id="fullName" type="text" {...form.register("fullName")} placeholder="Your name" className={fieldClass} />
                 {form.formState.errors.fullName && (
                   <p className="mt-1 text-sm text-alert">{form.formState.errors.fullName.message}</p>
@@ -162,7 +152,7 @@ export default function RegistrationForm() {
               </div>
 
               <div>
-                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-gray-900">Email</label>
+                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-white">Email</label>
                 <input id="email" type="email" {...form.register("email")} placeholder="you@example.com" className={fieldClass} />
                 {form.formState.errors.email && (
                   <p className="mt-1 text-sm text-alert">{form.formState.errors.email.message}</p>
@@ -172,8 +162,8 @@ export default function RegistrationForm() {
             </div>
 
             {/* Food: a question, not a category of registration. */}
-            <div className="space-y-4 border-t border-gray-200 pt-6">
-              <h2 className="text-sm font-semibold text-gray-900">Did you bring any food?</h2>
+            <div className="space-y-4 border-t border-white/10 pt-6">
+              <h2 className="text-sm font-semibold text-white">Did you bring any food?</h2>
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { label: "Yes", value: true },
@@ -188,10 +178,10 @@ export default function RegistrationForm() {
                         form.setValue("broughtFood", option.value);
                         if (!option.value) form.setValue("foodDescription", "");
                       }}
-                      className={`rounded-lg border-2 py-3 text-base font-semibold transition-all ${
+                      className={`rounded-2xl border-2 py-4 text-lg font-semibold transition-all ${
                         active
-                          ? "border-blue-500 bg-blue-50 text-blue-900 shadow-md"
-                          : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50"
+                          ? "border-patasi bg-patasi/35 text-white shadow-[0_14px_36px_-16px_rgba(192,16,43,0.95)]"
+                          : "border-white/12 bg-white/5 text-white backdrop-blur-sm hover:border-patasi/60 hover:bg-patasi/12"
                       }`}
                     >
                       {option.label}
@@ -202,7 +192,7 @@ export default function RegistrationForm() {
 
               {broughtFood && (
                 <div>
-                  <label htmlFor="foodDescription" className="mb-2 block text-sm font-semibold text-gray-900">
+                  <label htmlFor="foodDescription" className="mb-2 block text-sm font-semibold text-white">
                     What did you bring?
                   </label>
                   <input
@@ -225,10 +215,10 @@ export default function RegistrationForm() {
 
             {/* Consent gate. The wording lives in lib/legal/org.ts and is stored
                 verbatim with the registration. */}
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
               <label className="flex cursor-pointer items-start gap-3">
-                <input type="checkbox" {...form.register("consentGiven")} className="mt-1 size-5 shrink-0 cursor-pointer accent-blue-600" />
-                <span className="text-sm leading-relaxed text-gray-700">
+                <input type="checkbox" {...form.register("consentGiven")} className="mt-1 size-5 shrink-0 cursor-pointer accent-patasi" />
+                <span className="text-sm leading-relaxed text-white/80">
                     {/* Rendered FROM CONSENT_TEXT, which is what gets stored, so
                         the record cannot drift from the wording actually shown.
                         Previously the stored sentence opened differently and
@@ -240,7 +230,7 @@ export default function RegistrationForm() {
                           key={index}
                           href={part === "Privacy Policy" ? "/privacy" : "/terms"}
                           target="_blank"
-                          className="font-semibold text-blue-600 underline underline-offset-2 hover:text-blue-700"
+                          className="font-semibold text-white underline underline-offset-2"
                         >
                           {part}
                         </Link>
@@ -261,30 +251,26 @@ export default function RegistrationForm() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white shadow-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all"
-            >
+            <LiquidButton type="submit" disabled={isSubmitting} size="xxl" className="w-full text-white">
               {isSubmitting ? (
                 <>
-                  <LoaderCircle className="inline size-5 animate-spin mr-2" aria-hidden />
+                  <LoaderCircle className="size-5 animate-spin" aria-hidden />
                   <span>Registering&hellip;</span>
                 </>
               ) : (
                 <span>Complete Registration</span>
               )}
-            </button>
+            </LiquidButton>
           </form>
           </div>
-        </div>
+        </PatasiFrame>
 
-        <nav className="relative mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white drop-shadow">
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-gray-200">Privacy Policy</Link>
-          <Link href="/terms" className="underline underline-offset-2 hover:text-gray-200">Terms and Conditions</Link>
+        <nav className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/50">
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-white/80">Privacy Policy</Link>
+          <Link href="/terms" className="underline underline-offset-2 hover:text-white/80">Terms and Conditions</Link>
         </nav>
 
-        <div className="relative mt-4 text-center text-xs text-white drop-shadow" />
+        <FestivalPhotoCredit className="mt-4 text-center text-xs text-white/40" />
       </div>
     </div>
   );

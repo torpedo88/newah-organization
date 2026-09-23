@@ -47,10 +47,10 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
   const { chargedCents, toOrganizationCents, feeCents } = settlement(cents, coversFee);
 
   return (
-    <div className="space-y-4 border-t border-gray-200 pt-6">
+    <div className="space-y-4 border-t border-white/10 pt-6">
       <div>
-        <h2 className="text-sm font-semibold text-gray-900">Make a donation</h2>
-        <p className="mt-1 text-sm text-gray-600">
+        <h2 className="text-sm font-semibold text-white">Make a donation</h2>
+        <p className="mt-1 text-sm text-white/60">
           Optional, and separate from bringing food. After the event&rsquo;s expenses are
           covered, all remaining proceeds go to the {EVENT.fundName}.
         </p>
@@ -60,10 +60,10 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
         type="button"
         onClick={declineDonation}
         aria-pressed={choice === "none"}
-        className={`w-full rounded-lg border-2 py-2 font-semibold transition-all ${
+        className={`w-full rounded-xl border-2 py-3 font-semibold transition-all ${
           choice === "none"
-            ? "border-blue-500 bg-blue-50 text-blue-900 shadow-md"
-            : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50"
+            ? "border-patasi bg-patasi/35 text-white shadow-[0_12px_32px_-16px_rgba(192,16,43,0.95)]"
+            : "border-white/12 bg-white/5 text-white/80 backdrop-blur-sm hover:border-white/30 hover:bg-white/10"
         }`}
       >
         No donation
@@ -75,10 +75,10 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
             key={preset}
             type="button"
             onClick={() => setAmount(selected === preset ? undefined : preset)}
-            className={`rounded-lg border-2 py-2 text-sm font-semibold transition-all ${
+            className={`rounded-xl border-2 py-3 font-semibold transition-all ${
               selected === preset
-                ? "border-blue-500 bg-blue-50 text-blue-900 shadow-md"
-                : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50"
+                ? "border-patasi bg-patasi/35 text-white shadow-[0_12px_32px_-16px_rgba(192,16,43,0.95)]"
+                : "border-white/12 bg-white/5 text-white backdrop-blur-sm hover:border-patasi/60 hover:bg-patasi/12"
             }`}
           >
             ${preset}
@@ -87,11 +87,11 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
       </div>
 
       <div>
-        <label htmlFor="customAmount" className="mb-2 block text-sm font-semibold text-gray-900">
+        <label htmlFor="customAmount" className="mb-2 block text-sm font-semibold text-white">
           Or another amount
         </label>
         <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-900">$</span>
+          <span className="font-medium text-white">$</span>
           <input
             id="customAmount"
             type="number"
@@ -117,7 +117,7 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
               });
             }}
             placeholder="Enter an amount"
-            className="flex-1 rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            className="flex-1 rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] focus:outline-none"
           />
           {selected !== undefined && (
             <button
@@ -127,7 +127,7 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
                 form.setValue("donationAmount", undefined, { shouldDirty: true });
                 form.setValue("donationChoice", undefined, { shouldDirty: true });
               }}
-              className="px-2 text-sm text-gray-600 underline underline-offset-2 hover:text-gray-900"
+              className="px-2 text-sm text-white/60 underline underline-offset-2 hover:text-white"
             >
               Clear
             </button>
@@ -144,36 +144,36 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
       {choice === "amount" && cents > 0 && (
         <>
           {/* The choice, and its consequence, stated before they reach the card page. */}
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-300 bg-blue-50 p-4">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/12 bg-white/[0.04] p-4">
             <input
               type="checkbox"
               {...form.register("coversFee")}
-              className="mt-0.5 size-5 shrink-0 cursor-pointer accent-blue-600"
+              className="mt-0.5 size-5 shrink-0 cursor-pointer accent-patasi"
             />
-            <span className="text-sm leading-relaxed text-gray-800">
+            <span className="text-sm leading-relaxed text-white/80">
               Add the card processing fee so the organization receives my full donation.
-              <span className="mt-1 block text-gray-600">
+              <span className="mt-1 block text-white/60">
                 If you leave this unticked the fee is taken out of your donation instead.
               </span>
             </span>
           </label>
 
-          <div className="rounded-lg border border-blue-300 bg-blue-50 p-4 text-sm text-gray-900">
+          <div className="rounded-xl border border-patasi/40 bg-patasi/12 p-4 text-sm text-white">
             <div className="flex justify-between">
               <span>Your donation</span>
               <span className="font-semibold">${toDollars(cents)}</span>
             </div>
-            <div className="mt-1 flex justify-between text-gray-700">
+            <div className="mt-1 flex justify-between text-white/70">
               <span>{coversFee ? "Processing fee you add" : "Processing fee deducted"}</span>
               <span>
                 {coversFee ? "+" : "−"}${toDollars(feeCents)}
               </span>
             </div>
-            <div className="mt-2 flex justify-between border-t border-blue-200 pt-2 font-semibold">
+            <div className="mt-2 flex justify-between border-t border-white/15 pt-2 font-semibold">
               <span>You will be charged</span>
               <span>${toDollars(chargedCents)}</span>
             </div>
-            <div className="mt-1 flex justify-between text-gray-700">
+            <div className="mt-1 flex justify-between text-white/70">
               <span>The organization receives</span>
               <span>${toDollars(toOrganizationCents)}</span>
             </div>
