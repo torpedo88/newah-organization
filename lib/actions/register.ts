@@ -156,6 +156,13 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     if (error) {
       console.error("Supabase error:", error);
+      // The Stripe session was created before this insert, so a failure here
+      // strands a live session that nothing will ever claim. Left alone it
+      // fires checkout.session.expired in 24 hours, the webhook cannot match
+      // it, and the endpoint returns 500 for three days of retries. Enough of
+      // those and Stripe disables the endpoint — at which point real payments
+      // stop being recorded. Expiring it now costs one API call.
+      if (stripeSessionId) await expireSession(stripeSessionId);
       if (error.code === "PGRST205") {
         return { success: false, error: "Database not initialized. Run the SQL migrations in Supabase." };
       }
@@ -206,6 +213,15 @@ async function createCheckout(args: {
     const base = siteUrl();
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      // Card only, deliberately. Left unset, Stripe also offers Klarna,
+      // Affirm, Cash App and Amazon Pay on this account, and those charge
+      // 5.99%-6% + 30c rather than 2.9% + 30c. net_cents is computed from the
+      // card rate, so a Klarna payment would overstate what the organization
+      // receives by several dollars on a $100 donation — while the checkout
+      // page tells the donor they are covering the fee so the organization
+      // receives the full amount. Restricting the methods is what makes that
+      // sentence true.
+      payment_method_types: ["card"],
       customer_email: args.email || undefined,
       line_items: [
         {
@@ -228,6 +244,11 @@ async function createCheckout(args: {
       metadata: {
         registration_code: args.code,
         donation_cents: String(args.donationCents),
+      },
+      // Refund events carry the PaymentIntent, not the session, so without
+      // this there is nothing to tie a refund back to a registration.
+      payment_intent_data: {
+        metadata: { registration_code: args.code },
       },
       success_url: `${base}/register?donation=success&code=${encodeURIComponent(args.code)}`,
       cancel_url: `${base}/register?donation=cancelled&code=${encodeURIComponent(args.code)}`,
@@ -292,5 +313,21 @@ async function sendConfirmation(args: {
   } catch (error) {
     console.error("Email send error:", error);
     return false;
+  }
+}
+
+/**
+ * Close a checkout session nobody will ever pay.
+ *
+ * Best effort by design: if this fails the registration has already failed,
+ * and the worst case is one orphaned session rather than a lost registrant.
+ */
+async function expireSession(sessionId: string): Promise<void> {
+  const stripe = getStripe();
+  if (!stripe) return;
+  try {
+    await stripe.checkout.sessions.expire(sessionId);
+  } catch (error) {
+    console.error("Could not expire the orphaned Stripe session:", (error as Error).message);
   }
 }
