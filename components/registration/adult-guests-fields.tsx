@@ -4,6 +4,7 @@ import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { Plus, X } from "lucide-react";
 import { ADULT_AGE, MAX_ADULT_GUESTS } from "@/lib/constants/event";
 import { Registration } from "@/lib/validation/registration";
+import { formatPhoneAsTyped } from "@/lib/validation/contact";
 
 const fieldClass =
   "w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder-white/50 focus:outline-none focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all";
@@ -71,11 +72,16 @@ export default function AdultGuestsFields({ form }: { form: UseFormReturn<Regist
             </div>
             <div>
               <input
-                {...form.register(`adultGuests.${index}.phone`)}
-                type="tel"
-                placeholder="Phone number"
-                className={fieldClass}
-              />
+                  type="tel"
+                  inputMode="tel"
+                  placeholder="(555) 123-4567"
+                  className={fieldClass}
+                  {...form.register(`adultGuests.${index}.phone`)}
+                  onChange={(event) => {
+                    event.target.value = formatPhoneAsTyped(event.target.value);
+                    form.register(`adultGuests.${index}.phone`).onChange(event);
+                  }}
+                />
               {errors?.[index]?.phone && (
                 <p className="mt-1 text-sm text-alert">{errors[index]?.phone?.message}</p>
               )}

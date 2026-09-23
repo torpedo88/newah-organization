@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MAX_ADULT_GUESTS, MAX_DONATION, MIN_DONATION } from "@/lib/constants/event";
+import { emailProblem, isValidPhone, normalizePhone } from "@/lib/validation/contact";
 
 /**
  * An additional attending adult, for the name tag.
@@ -15,8 +16,6 @@ export const adultGuestSchema = z.object({
 
 export type AdultGuest = z.infer<typeof adultGuestSchema>;
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export const registrationSchema = z
   .object({
     fullName: z
@@ -25,11 +24,11 @@ export const registrationSchema = z
       .max(100, "Name must be less than 100 characters")
       .trim()
       .optional(),
-    phone: z
-      .string()
-      .regex(/^\d{10}$/, "Phone must be 10 digits")
-      .trim()
-      .optional(),
+    // Shape is checked in superRefine via isValidPhone, which strips
+    // punctuation first. A strict digits-only rule here would fire before it
+    // and reject "(415) 555-0123" — a real number, typed the way people
+    // actually write one.
+    phone: z.string().trim().optional(),
     email: z.string().email("Please enter a valid email").trim().toLowerCase().optional(),
 
     /** Every other attending adult, by name and email, for their name tags. */
@@ -55,8 +54,13 @@ export const registrationSchema = z
       ctx.addIssue({ code: z.ZodIssueCode.custom, path, message });
 
     if (!data.fullName || data.fullName.trim().length < 2) fail(["fullName"], "Please enter your name");
-    if (!data.phone || !/^\d{10}$/.test(data.phone)) fail(["phone"], "Phone must be 10 digits");
-    if (!data.email) fail(["email"], "Please enter a valid email");
+    if (!data.phone || !isValidPhone(data.phone)) {
+      // Punctuation is accepted and stripped; this only rejects numbers that
+      // cannot exist, such as a leading 0 or 1 in the area code.
+      fail(["phone"], "Please enter a 10-digit US phone number");
+    }
+    const emailIssue = emailProblem(data.email ?? "");
+    if (emailIssue) fail(["email"], emailIssue);
 
     // A guest row is only useful with both a name and an email, since the
     // point of collecting it is a name tag and a confirmation.
@@ -66,8 +70,11 @@ export const registrationSchema = z
       const phone = guest.phone?.trim() ?? "";
       if (!name && !email && !phone) return; // an untouched row is simply ignored
       if (name.length < 2) fail(["adultGuests", index, "name"], "Please enter this guest's name");
-      if (!EMAIL.test(email)) fail(["adultGuests", index, "email"], "Please enter a valid email");
-      if (!/^\d{10}$/.test(phone)) fail(["adultGuests", index, "phone"], "Phone must be 10 digits");
+      const guestEmailIssue = emailProblem(email);
+      if (guestEmailIssue) fail(["adultGuests", index, "email"], guestEmailIssue);
+      if (!isValidPhone(phone)) {
+        fail(["adultGuests", index, "phone"], "Please enter a 10-digit US phone number");
+      }
     });
 
     if (data.broughtFood === true) {
@@ -112,7 +119,7 @@ export function filledGuests(guests: AdultGuest[] | undefined): Required<AdultGu
     .map((guest) => ({
       name: guest.name?.trim() ?? "",
       email: guest.email?.trim() ?? "",
-      phone: guest.phone?.trim() ?? "",
+      phone: normalizePhone(guest.phone ?? ""),
     }))
     .filter((guest) => guest.name !== "" && guest.email !== "" && guest.phone !== "");
 }
