@@ -31,7 +31,13 @@ export const registrationSchema = z
     phone: z.string().trim().optional(),
     email: z.string().email("Please enter a valid email").trim().toLowerCase().optional(),
 
-    /** Every other attending adult, by name and email, for their name tags. */
+    /**
+     * How many other adults are coming. Asked first, so the form can show
+     * exactly that many sets of fields and require all of them.
+     */
+    additionalAdults: z.number().int().min(0).max(MAX_ADULT_GUESTS).optional(),
+
+    /** Every other attending adult, by name, email and phone, for their name tags. */
     adultGuests: z.array(adultGuestSchema).max(MAX_ADULT_GUESTS).optional(),
 
     broughtFood: z.boolean().optional(),
@@ -69,20 +75,30 @@ export const registrationSchema = z
     const emailIssue = emailProblem(data.email ?? "");
     if (emailIssue) fail(["email"], emailIssue);
 
-    // A guest row is only useful with both a name and an email, since the
-    // point of collecting it is a name tag and a confirmation.
-    (data.adultGuests ?? []).forEach((guest, index) => {
+    // The party size is an explicit answer, not an inference. Silence here is
+    // the difference between "just me" and "I did not notice the question".
+    if (typeof data.additionalAdults !== "number") {
+      fail(["additionalAdults"], "Please choose how many other adults are coming");
+    }
+
+    // Every set of fields shown is required. The previous rule ignored a row
+    // left entirely blank, which made it ambiguous whether the rows were
+    // optional — and let someone say they were bringing three people while
+    // naming none of them.
+    const expected = typeof data.additionalAdults === "number" ? data.additionalAdults : 0;
+    const rows = data.adultGuests ?? [];
+    for (let index = 0; index < expected; index += 1) {
+      const guest = rows[index] ?? {};
       const name = guest.name?.trim() ?? "";
       const email = guest.email?.trim() ?? "";
       const phone = guest.phone?.trim() ?? "";
-      if (!name && !email && !phone) return; // an untouched row is simply ignored
       if (name.length < 2) fail(["adultGuests", index, "name"], "Please enter this guest's name");
       const guestEmailIssue = emailProblem(email);
       if (guestEmailIssue) fail(["adultGuests", index, "email"], guestEmailIssue);
       if (!isValidPhone(phone)) {
         fail(["adultGuests", index, "phone"], "Please enter a 10-digit US phone number");
       }
-    });
+    }
 
     if (data.broughtFood === true) {
       if (!data.foodDescription || data.foodDescription.trim().length < 2) {
