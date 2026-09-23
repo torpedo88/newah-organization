@@ -48,6 +48,13 @@ export const registrationSchema = z
     coversFee: z.boolean().optional(),
 
     consentGiven: z.boolean().optional(),
+
+    /**
+     * Identifies one filled-in form, generated once when the page loads.
+     * A resubmit — a double click, a browser retry, a flaky connection —
+     * carries the same id and must not become a second attendee.
+     */
+    submissionId: z.string().uuid().optional(),
   })
   .superRefine((data, ctx) => {
     const fail = (path: (string | number)[], message: string) =>

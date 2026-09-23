@@ -113,13 +113,19 @@ export function RegistrationConfirmationEmail({
               margin: "24px 0",
             }}
           >
-            <p style={{ margin: "0 0 6px 0", fontWeight: "bold", color: "#333" }}>
-              Thank you for your donation of ${(donationCents / 100).toFixed(2)}.
-            </p>
-            <p style={{ margin: 0, color: "#555", fontSize: "14px" }}>
-              After the event&rsquo;s expenses are covered, all remaining proceeds are donated to
-              the {EVENT.fundName}.
-            </p>
+            {/* Sent when the registration is saved, which is before the card
+                  has been charged — only the Stripe webhook establishes
+                  payment. Thanking someone for money that has not moved is a
+                  claim we cannot support, and one a donor may reasonably read
+                  as a receipt. */}
+              <p style={{ margin: "0 0 6px 0", fontWeight: "bold", color: "#333" }}>
+                Your donation of ${(donationCents / 100).toFixed(2)} is recorded.
+              </p>
+              <p style={{ margin: 0, color: "#555", fontSize: "14px" }}>
+                Stripe sends a separate receipt once the payment completes; this email is not one.
+                After the event&rsquo;s expenses are covered, all remaining proceeds are donated to
+                the {EVENT.fundName}.
+              </p>
           </div>
         )}
 

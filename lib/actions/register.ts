@@ -1,6 +1,7 @@
 "use server";
 
 import { registrationSchema, Registration, filledGuests } from "@/lib/validation/registration";
+import { createHash } from "node:crypto";
 import { normalizePhone } from "@/lib/validation/contact";
 import { domainAcceptsMail } from "@/lib/validation/email-domain";
 import { supabase } from "@/lib/supabase/client";
@@ -40,8 +41,23 @@ function usingTestSender(): boolean {
   return senderAddress().includes("resend.dev");
 }
 
-function registrationCode(): string {
-  return `NOA-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+/**
+ * The registration code.
+ *
+ * Derived from the submission id rather than drawn at random, so a retry of
+ * the same form produces the same code. That is what makes the insert
+ * idempotent: the second attempt collides on registration_code instead of
+ * creating a second attendee, and we can still tell the registrant the code
+ * their first attempt was given.
+ */
+function registrationCode(submissionId?: string): string {
+  const year = new Date().getFullYear();
+  if (!submissionId) {
+    return `NOA-${year}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  }
+  const digest = createHash("sha256").update(submissionId).digest("base64url");
+  const suffix = digest.replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase();
+  return `NOA-${year}-${suffix}`;
 }
 
 export type RegisterResult = {
@@ -55,6 +71,8 @@ export type RegisterResult = {
   broughtFood?: boolean;
   /** Whether a confirmation actually went out, so the screen can stop promising one. */
   emailSent?: boolean;
+  /** This exact form had already been saved; the code is the original one. */
+  alreadyRegistered?: boolean;
   error?: string;
 };
 
@@ -92,7 +110,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       };
     }
 
-    const code = registrationCode();
+    const code = registrationCode(validated.submissionId);
     const broughtFood = validated.broughtFood === true;
     const guests = filledGuests(validated.adultGuests);
     // Only an explicit "amount" choice produces a charge. Deriving this from
@@ -132,6 +150,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const { error } = await insertRegistration({
       registration_code: code,
+      submission_id: validated.submissionId ?? null,
       registration_type: "event",
       full_name: validated.fullName ?? "",
       phone: normalizePhone(validated.phone ?? ""),
@@ -153,6 +172,24 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       consent_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
     });
+
+    // A duplicate submission id or registration code means this exact form was
+    // already saved — a double click, a browser retry, a flaky connection. The
+    // registrant is told the code their first attempt was given rather than
+    // becoming a second attendee.
+    if (error?.code === "23505") {
+      if (stripeSessionId) await expireSession(stripeSessionId);
+      return {
+        success: true,
+        registrationCode: code,
+        donationCents: donationCents ?? undefined,
+        chargedCents: money?.chargedCents,
+        netCents: money?.toOrganizationCents,
+        broughtFood,
+        emailSent: false,
+        alreadyRegistered: true,
+      };
+    }
 
     if (error) {
       console.error("Supabase error:", error);
