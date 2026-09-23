@@ -1,5 +1,6 @@
 import { EVENT } from "@/lib/constants/event";
 import { ORG } from "@/lib/legal/org";
+import { siteUrl } from "@/lib/site";
 
 /**
  * Confirmation email.
@@ -32,6 +33,22 @@ export function RegistrationConfirmationEmail({
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", maxWidth: "600px" }}>
+      {/* The mark sits on its own white band rather than inside the dark
+          header: the logo is black artwork on white, so on the gradient its
+          wordmark would be unreadable. An absolute URL is required — a
+          relative path has nothing to resolve against in a mail client — and
+          the alt text carries the organization's name for the clients that
+          block images by default. */}
+      <div style={{ background: "#FFFFFF", padding: "24px", textAlign: "center", borderRadius: "12px" }}>
+        <img
+          src={`${siteUrl()}/images/email-logo.png`}
+          alt={`${ORG.name}, ${ORG.chapter}`}
+          width="180"
+          height="180"
+          style={{ display: "block", margin: "0 auto", width: "180px", height: "auto", border: 0 }}
+        />
+      </div>
+
       <div
         style={{
           background: `linear-gradient(135deg, ${HAKU} 0%, ${HAKU_WARM} 100%)`,
@@ -39,6 +56,7 @@ export function RegistrationConfirmationEmail({
           textAlign: "center",
           color: "white",
           borderRadius: "12px",
+          marginTop: "12px",
         }}
       >
         <h1 style={{ margin: "0 0 10px 0" }}>You&rsquo;re registered</h1>
