@@ -127,9 +127,9 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-[0.8fr_2.2fr] min-h-[calc(100dvh-56px)] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/home-hero-image.png')" }}>
+      <main className="relative z-20 min-h-[calc(100dvh-56px)] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/home-hero-image.png')" }}>
         <div className="absolute inset-0 bg-gradient-to-r from-haku/95 via-haku/70 to-haku/30 z-10" />
-        <div className="relative z-20 flex flex-col justify-start pt-44 sm:pt-56 lg:pt-68 px-5 sm:px-8">
+        <div className="relative z-20 flex flex-col justify-start pt-44 sm:pt-56 lg:pt-68 px-5 sm:px-8 max-w-2xl">
           <div className="max-w-3xl">
           <motion.div
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-lun/25 bg-white/[0.06] px-4 py-2 backdrop-blur-sm"
@@ -188,23 +188,6 @@ export default function ShaderHero() {
           </div>
         </div>
 
-        {/* Image on right - full height */}
-        <motion.div
-          className="hidden lg:flex lg:items-stretch lg:justify-center relative h-full"
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-        >
-          <Image
-            src="/images/home-hero-image.png"
-            alt="Temples and landmarks"
-            width={600}
-            height={500}
-            className="w-full h-full object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-haku/80 via-haku/40 to-transparent pointer-events-none" />
-        </motion.div>
       </main>
 
       {/* The seal, with the era's founder orbiting it. Shankhadhar Sakhwa
