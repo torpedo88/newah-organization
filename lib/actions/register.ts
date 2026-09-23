@@ -64,8 +64,16 @@ export type RegisterResult = {
  * unusable one. If a column is missing, this now fails loudly and the migration
  * gets applied.
  */
-async function insertRegistration(row: Record<string, unknown>) {
-  return supabase.from("registrations").insert(row);
+async function insertRegistration(payload: Record<string, unknown>) {
+  // One RPC rather than two inserts. A registration and its guests now live in
+  // separate tables and must be written together: two PostgREST calls are two
+  // transactions, and a failure between them would leave a registration whose
+  // guests are silently missing. create_registration does both, or neither.
+  //
+  // The function also carries every rule the INSERT policy used to, because it
+  // is SECURITY DEFINER and RLS does not apply to it. anon has no INSERT on
+  // either table now — this is the only way in.
+  return supabase.rpc("create_registration", { payload });
 }
 
 export async function registerAttendee(input: Registration): Promise<RegisterResult> {
@@ -128,8 +136,9 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       phone: normalizePhone(validated.phone ?? ""),
       email: validated.email ?? "",
       // The registrant plus every named adult they are bringing.
-      number_of_guests: 1 + guests.length,
-      adult_guests: guests,
+      // number_of_guests is derived inside the function from the guest list,
+      // so the count and the names cannot disagree.
+      guests,
       brought_food: broughtFood,
       food_description: broughtFood ? (validated.foodDescription ?? "") : null,
       donation_cents: donationCents,
