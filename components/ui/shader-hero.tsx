@@ -127,9 +127,9 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 flex min-h-[calc(100dvh-88px)] flex-col justify-start pt-44 sm:pt-56 lg:pt-68 px-5 sm:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-        <div className="max-w-3xl">
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100dvh-56px)]">
+        <div className="flex flex-col justify-start pt-44 sm:pt-56 lg:pt-68 px-5 sm:px-8">
+          <div className="max-w-3xl">
           <motion.div
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-lun/25 bg-white/[0.06] px-4 py-2 backdrop-blur-sm"
             style={{ filter: "url(#haku-glass)" }}
@@ -186,9 +186,10 @@ export default function ShaderHero() {
           </motion.div>
         </div>
 
-        {/* Image on right */}
+
+        {/* Image on right - full height */}
         <motion.div
-          className="hidden lg:flex lg:items-center lg:justify-center relative overflow-hidden"
+          className="hidden lg:flex lg:items-stretch lg:justify-center relative h-full"
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
@@ -198,12 +199,11 @@ export default function ShaderHero() {
             alt="Temples and landmarks"
             width={600}
             height={500}
-            className="h-auto w-full rounded-2xl object-cover shadow-2xl"
+            className="w-full h-full object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-haku/60 rounded-2xl pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-haku/60 pointer-events-none" />
         </motion.div>
-        </div>
       </main>
 
       {/* The seal, with the era's founder orbiting it. Shankhadhar Sakhwa
