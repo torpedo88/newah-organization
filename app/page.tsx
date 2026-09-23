@@ -127,12 +127,15 @@ export default function Home() {
           <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
             The calendar the community observes, wherever it lives.
           </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {FESTIVALS.map((f) => (
-              <div key={f.name} className="rounded-2xl border border-white/12 bg-white/[0.04] p-5">
-                <h3 className="font-bold text-white">{f.name}</h3>
-                <p className="mt-0.5 text-sm text-lun">{f.also}</p>
-                <p className="mt-1 text-xs uppercase tracking-wide text-white/40">{f.when}</p>
+              <div key={f.name} className="group rounded-2xl border-2 border-white/12 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 transition-all hover:border-patasi/50 hover:bg-patasi/12">
+                <div className="flex items-start justify-between">
+                  <h3 className="font-bold text-white text-lg">{f.name}</h3>
+                  <div className="size-2 rounded-full bg-patasi opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+                <p className="mt-1 text-sm font-medium text-patasi">{f.also}</p>
+                <p className="mt-2 text-xs uppercase tracking-wide text-white/40">{f.when}</p>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">{f.what}</p>
               </div>
             ))}
