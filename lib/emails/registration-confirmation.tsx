@@ -54,18 +54,30 @@ export function RegistrationConfirmationEmail({
       {/* Small on purpose. The artwork is black linework on a white field, so
           a large version becomes a bright block in a dark-mode client, and a
           transparent version would disappear entirely — clients never invert
-          images. Small keeps it from dominating either way. */}
-      {/* eslint-disable-next-line @next/next/no-img-element --
-          next/image emits a srcset and an optimizer URL, neither of which a
-          mail client can use. A plain img with an absolute src is the only
-          thing that works in email. */}
-      <img
-        src={`${siteUrl()}/images/email-logo.png`}
-        alt={`${ORG.name}, ${ORG.chapter}`}
-        width="96"
-        height="96"
-        style={{ display: "block", width: "96px", height: "auto", border: 0, marginBottom: "20px" }}
-      />
+          images. Small keeps it from dominating either way.
+
+          Centred with BOTH a text-align parent and margin auto: Outlook
+          ignores margin auto on images, and some clients strip text-align
+          inheritance, so neither alone is reliable across the field. */}
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element --
+            next/image emits a srcset and an optimizer URL, neither of which a
+            mail client can use. A plain img with an absolute src is the only
+            thing that works in email. */}
+        <img
+          src={`${siteUrl()}/images/email-logo.png`}
+          alt={`${ORG.name}, ${ORG.chapter}`}
+          width="96"
+          height="96"
+          style={{
+            display: "inline-block",
+            width: "96px",
+            height: "auto",
+            border: 0,
+            margin: "0 auto",
+          }}
+        />
+      </div>
 
       <h1 style={{ margin: "0 0 4px 0", fontSize: "22px", fontWeight: "bold", color: INK }}>
         You&rsquo;re registered
