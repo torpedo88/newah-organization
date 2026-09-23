@@ -55,7 +55,11 @@ export const ORG = {
  * registration so the organization can show exactly what a given person
  * agreed to, which is the part that matters if consent is ever disputed.
  */
-export const CONSENT_VERSION = "2026-09-22.2";
+// Bumped 2026-09-23: the checkbox now renders CONSENT_TEXT itself. Until then
+// the stored sentence differed from the one displayed — it opened differently
+// and carried a withdrawal clause the visitor never saw — so records written
+// under the previous version attest to wording that was not on screen.
+export const CONSENT_VERSION = "2026-09-23.1";
 
 export const POLICY_EFFECTIVE_DATE = "September 22, 2026";
 

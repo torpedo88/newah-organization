@@ -16,7 +16,7 @@ import AdultGuestsFields from "./adult-guests-fields";
 import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
-import { ORG } from "@/lib/legal/org";
+import { CONSENT_TEXT } from "@/lib/legal/org";
 import { EVENT } from "@/lib/constants/event";
 
 const fieldClass =
@@ -47,6 +47,10 @@ export default function RegistrationForm() {
   // Above the early return below: hooks must run in the same order every render.
   const consentGiven = useWatch({ control: form.control, name: "consentGiven" }) === true;
   const broughtFood = useWatch({ control: form.control, name: "broughtFood" }) === true;
+
+  // The stored sentence, split so the two document names can be links while
+  // every character still comes from CONSENT_TEXT.
+  const consentParts = CONSENT_TEXT.split(/(Terms and Conditions|Privacy Policy)/);
 
   const onSubmit = async (data: Registration) => {
     setIsSubmitting(true);
@@ -210,13 +214,26 @@ export default function RegistrationForm() {
               <label className="flex cursor-pointer items-start gap-3">
                 <input type="checkbox" {...form.register("consentGiven")} className="mt-1 size-5 shrink-0 cursor-pointer accent-patasi" />
                 <span className="text-sm leading-relaxed text-white/80">
-                  I have read and agree to the{" "}
-                  <Link href="/terms" target="_blank" className="font-semibold text-white underline underline-offset-2">Terms and Conditions</Link>{" "}
-                  and the{" "}
-                  <Link href="/privacy" target="_blank" className="font-semibold text-white underline underline-offset-2">Privacy Policy</Link>
-                  , and agree that {ORG.name} may contact me about the organization, its events and
-                  its membership.
-                </span>
+                    {/* Rendered FROM CONSENT_TEXT, which is what gets stored, so
+                        the record cannot drift from the wording actually shown.
+                        Previously the stored sentence opened differently and
+                        carried a withdrawal clause this checkbox never
+                        displayed. */}
+                    {consentParts.map((part, index) =>
+                      part === "Terms and Conditions" || part === "Privacy Policy" ? (
+                        <Link
+                          key={index}
+                          href={part === "Privacy Policy" ? "/privacy" : "/terms"}
+                          target="_blank"
+                          className="font-semibold text-white underline underline-offset-2"
+                        >
+                          {part}
+                        </Link>
+                      ) : (
+                        <span key={index}>{part}</span>
+                      ),
+                    )}
+                  </span>
               </label>
               {!consentGiven && form.formState.isSubmitted && (
                 <p className="mt-2 text-sm text-alert">Please agree before submitting.</p>
