@@ -1,6 +1,8 @@
 "use server";
 
 import { registrationSchema, Registration, filledGuests } from "@/lib/validation/registration";
+import { normalizePhone } from "@/lib/validation/contact";
+import { domainAcceptsMail } from "@/lib/validation/email-domain";
 import { supabase } from "@/lib/supabase/client";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
@@ -80,6 +82,16 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
   try {
     const validated = registrationSchema.parse(input);
 
+    // Syntax cannot tell gmail.com from gmial.co.uk, but DNS can. This is the
+    // last point at which a typo is still cheap to fix: after this the
+    // registrant walks away believing a confirmation is coming.
+    if (!(await domainAcceptsMail(validated.email ?? ""))) {
+      return {
+        success: false,
+        error: "We could not find that email domain. Please check the address and try again.",
+      };
+    }
+
     const code = registrationCode();
     const broughtFood = validated.broughtFood === true;
     const guests = filledGuests(validated.adultGuests);
@@ -122,7 +134,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       registration_code: code,
       registration_type: "event",
       full_name: validated.fullName ?? "",
-      phone: validated.phone ?? "",
+      phone: normalizePhone(validated.phone ?? ""),
       email: validated.email ?? "",
       // The registrant plus every named adult they are bringing.
       number_of_guests: 1 + guests.length,

@@ -34,6 +34,8 @@ type RegistrationRow = {
   net_cents: number | null;
   covers_fee: boolean | null;
   payment_status: string | null;
+  /** Null with a donation present means checkout never started — see the flag below. */
+  stripe_session_id: string | null;
   consent_given: boolean | null;
   consent_at: string | null;
   created_at: string;
@@ -139,7 +141,7 @@ export default async function AdminPage(props: {
     .from("registrations")
     .select(
       "id, registration_code, full_name, phone, email, number_of_guests, adult_guests, brought_food, " +
-        "food_description, donation_cents, charged_cents, net_cents, covers_fee, payment_status, consent_given, " +
+        "food_description, donation_cents, charged_cents, net_cents, covers_fee, payment_status, stripe_session_id, consent_given, " +
         "consent_at, created_at",
     )
     .order("created_at", { ascending: false });
@@ -275,6 +277,15 @@ export default async function AdminPage(props: {
                               >
                                 {row.payment_status}
                               </span>
+                              {/* A donation with no Stripe session means checkout never started:
+                                  the donor was told it was recorded but unpaid, and nothing will
+                                  ever mark it paid. Without this flag the row looks like any other
+                                  pending one and nobody follows it up. */}
+                              {row.payment_status === "pending" && !row.stripe_session_id && (
+                                <span className="ml-2 rounded bg-alert/20 px-1.5 py-0.5 text-xs font-semibold text-alert">
+                                  checkout never started &mdash; follow up
+                                </span>
+                              )}
                             </>
                           ) : (
                             "—"

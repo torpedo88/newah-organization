@@ -7,6 +7,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import { registrationSchema, Registration } from "@/lib/validation/registration";
+import { formatPhoneAsTyped } from "@/lib/validation/contact";
 import { registerAttendee } from "@/lib/actions/register";
 import SuccessScreen, { SuccessData } from "./success-screen";
 import CauseBanner from "./cause-banner";
@@ -120,7 +121,22 @@ export default function RegistrationForm() {
 
               <div>
                 <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-white">Phone Number</label>
-                <input id="phone" type="tel" {...form.register("phone")} placeholder="5551234567" className={fieldClass} />
+                <input
+                  id="phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="(555) 123-4567"
+                  className={fieldClass}
+                  {...form.register("phone")}
+                  onChange={(event) => {
+                    // Formatted as it is typed, so the shape of the field
+                    // tells people what it wants instead of an error after
+                    // they submit. Punctuation is stripped before validation.
+                    event.target.value = formatPhoneAsTyped(event.target.value);
+                    form.register("phone").onChange(event);
+                  }}
+                />
                 {form.formState.errors.phone && (
                   <p className="mt-1 text-sm text-alert">{form.formState.errors.phone.message}</p>
                 )}
