@@ -77,6 +77,25 @@ export const FESTIVALS = [
   },
 ] as const;
 
+/**
+ * Nepal Sambat, the era the Newah community still counts by.
+ *
+ * Verified before use: the current year is 1146, running roughly October 2025
+ * to October 2026; 1147 begins at Mha Puja on 10 November 2026. The era was
+ * founded in 879 AD by Shankhadhar Sakhwa, who cleared the debts of everyone
+ * in the Kathmandu Valley.
+ *
+ * `year` needs updating each Mha Puja. It is a real date on a real calendar,
+ * so a stale value is a visible error to the community this page is for.
+ */
+export const NEPAL_SAMBAT = {
+  year: 1146,
+  founded: "879 AD",
+  founder: "Shankhadhar Sakhwa",
+  /** When `year` next rolls over. */
+  nextNewYear: "10 November 2026",
+} as const;
+
 /** Preset donation amounts: note denominations through to typical giving tiers. */
 export const DONATION_PRESETS = [5, 10, 20, 50, 100, 250, 500] as const;
 

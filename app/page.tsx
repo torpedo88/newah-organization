@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { ArrowRight, CalendarDays, LockKeyhole, MapPin } from "lucide-react";
-import ScrollExpandMedia from "@/components/ui/scroll-expansion-hero";
+import ShaderHero from "@/components/ui/shader-hero";
 import PhotoCredits from "@/components/ui/photo-credits";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
@@ -29,8 +29,20 @@ export const metadata: Metadata = {
  * or finances, none of which is verified.
  */
 
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`mx-auto w-full max-w-5xl px-5 sm:px-8 ${className}`}>{children}</section>;
+function Section({
+  children,
+  className = "",
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  return (
+    <section id={id} className={`mx-auto w-full max-w-5xl px-5 sm:px-8 ${className}`}>
+      {children}
+    </section>
+  );
 }
 
 function Heading({ kicker, children }: { kicker: string; children: React.ReactNode }) {
@@ -48,13 +60,8 @@ export default function Home() {
 
   return (
     <main className="bg-haku">
-      <ScrollExpandMedia
-        bgImageSrc="/images/gai-jatra.jpg"
-        mediaSrc="/images/indra-jatra-durbar-square.webp"
-        title="Newah Organization of America"
-        subtitle={ORG.chapter}
-        scrollToExpand="Scroll to continue"
-      >
+      <ShaderHero />
+
         {/* Who we are ------------------------------------------------- */}
         <Section className="py-16">
           <Heading kicker="Who we are">A community, kept</Heading>
@@ -94,7 +101,7 @@ export default function Home() {
               <p className="mt-5 text-pretty leading-relaxed text-white/75">
                 Newah is not only a people. It is a language with its own literature, and a script
                 that predates the country it is spoken in. Nepal Sambat, the era the community
-                still counts by, began in 880 CE and is still running.
+                still counts by, began in 879 AD and is still running.
               </p>
               <p className="mt-4 text-pretty leading-relaxed text-white/75">
                 Keeping that alive outside the Valley is most of what a chapter is for &mdash; the
@@ -115,7 +122,7 @@ export default function Home() {
         </Section>
 
         {/* The year ---------------------------------------------------- */}
-        <Section className="py-16">
+        <Section className="py-16" id="our-year">
           <Heading kicker="Our year">What the chapter keeps</Heading>
           <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
             The calendar the community observes, wherever it lives.
@@ -133,7 +140,7 @@ export default function Home() {
         </Section>
 
         {/* This year's event ------------------------------------------- */}
-        <Section className="py-16">
+        <Section className="py-16" id="this-year">
           <div className="overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
             <div className="grid md:grid-cols-5">
               <div className="relative min-h-52 md:col-span-2">
@@ -188,7 +195,7 @@ export default function Home() {
         </Section>
 
         {/* Contact ------------------------------------------------------ */}
-        <Section className="py-16">
+        <Section className="py-16" id="contact">
           <Heading kicker="Get in touch">Membership, volunteering, questions</Heading>
           <div className="mt-6 flex flex-wrap gap-x-7 gap-y-3 text-white/85">
             <a href={`mailto:${ORG.contactEmail}`} className="font-semibold underline underline-offset-4 hover:text-white">
@@ -223,7 +230,6 @@ export default function Home() {
             <PhotoCredits className="mt-6 text-center" />
           </div>
         </footer>
-      </ScrollExpandMedia>
     </main>
   );
 }
