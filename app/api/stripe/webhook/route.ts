@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { getStripe, webhookSecret } from "@/lib/payments/stripe";
+import { getStripe, webhookSecrets } from "@/lib/payments/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { intendedStatus, replaceableFrom } from "@/lib/payments/webhook-status";
 
@@ -31,8 +31,8 @@ function matchFor(event: Stripe.Event): { column: string; value: string } | null
  */
 export async function POST(request: NextRequest) {
   const stripe = getStripe();
-  const secret = webhookSecret();
-  if (!stripe || !secret) {
+  const secrets = webhookSecrets();
+  if (!stripe || secrets.length === 0) {
     console.error("Stripe webhook called but STRIPE_SECRET_KEY/STRIPE_WEBHOOK_SECRET are not set");
     return NextResponse.json({ error: "not configured" }, { status: 503 });
   }
@@ -43,11 +43,21 @@ export async function POST(request: NextRequest) {
   // Must be the raw body: any reserialization invalidates the signature.
   const payload = await request.text();
 
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(payload, signature, secret);
-  } catch (error) {
-    console.error("Stripe webhook signature verification failed:", (error as Error).message);
+  // Tried against each configured secret: during a domain move the same
+  // deployment serves two endpoints, each with its own secret, and only one of
+  // them will match any given delivery.
+  let event: Stripe.Event | null = null;
+  let lastError = "";
+  for (const secret of secrets) {
+    try {
+      event = stripe.webhooks.constructEvent(payload, signature, secret);
+      break;
+    } catch (error) {
+      lastError = (error as Error).message;
+    }
+  }
+  if (!event) {
+    console.error("Stripe webhook signature verification failed:", lastError);
     return NextResponse.json({ error: "invalid signature" }, { status: 400 });
   }
 
