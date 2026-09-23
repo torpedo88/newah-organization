@@ -127,9 +127,9 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 min-h-[calc(100dvh-56px)] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/home-hero-image.png')" }}>
+      <main className="relative z-20 flex items-center justify-center min-h-[calc(100dvh-56px)] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/home-hero-image.png')" }}>
         <div className="absolute inset-0 bg-gradient-to-r from-haku/95 via-haku/70 to-haku/30 z-10" />
-        <div className="relative z-20 flex flex-col justify-start pt-44 sm:pt-56 lg:pt-68 px-5 sm:px-8 max-w-2xl">
+        <div className="relative z-20 flex flex-col justify-center items-center text-center px-5 sm:px-8 max-w-3xl">
           <div className="max-w-3xl">
           <motion.div
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-lun/25 bg-white/[0.06] px-4 py-2 backdrop-blur-sm"
