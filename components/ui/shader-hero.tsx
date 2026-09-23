@@ -95,7 +95,7 @@ export default function ShaderHero() {
             width={512}
             height={512}
             priority
-            className="size-14 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-16"
+            className="size-16 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-20"
           />
           <span className="hidden text-sm font-semibold leading-tight text-white sm:block">
             {ORG.shortName}
