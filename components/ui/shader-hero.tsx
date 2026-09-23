@@ -30,8 +30,9 @@ export default function ShaderHero() {
 
   return (
     <div className="relative min-h-[100dvh] overflow-hidden bg-white">
+      {/* Clean professional background - no shader animation */}
 
-      <header className="relative z-20 flex items-center justify-between gap-4 bg-haku px-5 py-5 sm:px-8">
+      <header className="relative z-20 flex items-center justify-between gap-4 bg-blue-900 px-5 py-5 sm:px-8">
         <Link href="/" className="flex items-center gap-3" aria-label={`${ORG.name} home`}>
           <Image
             src="/images/newah-full-logo-transparent.png"
@@ -41,9 +42,9 @@ export default function ShaderHero() {
             priority
             className="size-11 object-contain sm:size-12"
           />
-          <span className="hidden text-sm font-semibold leading-tight text-kwa sm:block">
+          <span className="hidden text-sm font-semibold leading-tight text-white sm:block">
             {ORG.shortName}
-            <span className="block text-xs font-normal text-lun">Northern California</span>
+            <span className="block text-xs font-normal text-amber-400">Northern California</span>
           </span>
         </Link>
 
@@ -58,7 +59,7 @@ export default function ShaderHero() {
             <a
               key={href}
               href={href}
-              className="rounded-full px-3 py-2 font-medium text-kwa/75 transition-colors hover:bg-haku/80 hover:text-kwa"
+              className="rounded-full px-3 py-2 font-medium text-white/75 transition-colors hover:bg-blue-800 hover:text-white"
             >
               {label}
             </a>
@@ -67,7 +68,7 @@ export default function ShaderHero() {
 
         <Link
           href="/register/indrajatra"
-          className="rounded-full bg-patasi px-5 py-2 text-xs font-semibold text-kwa transition-colors hover:bg-patasi-bright"
+          className="rounded-full bg-red-600 px-5 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700"
         >
           Register
         </Link>
@@ -82,13 +83,13 @@ export default function ShaderHero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
             >
-              <h1 className="mb-6 text-balance text-4xl font-bold leading-tight text-haku sm:text-5xl">
-                <span className="block font-light text-haku/85">Our culture,</span>
-                <span className="block text-patasi">tradition &amp; heritage</span>
-                <span className="block font-light italic text-lun">our pride</span>
+              <h1 className="mb-6 text-balance text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
+                <span className="block">Our culture,</span>
+                <span className="block text-red-600">tradition &amp; heritage</span>
+                <span className="block font-light text-gray-700">our pride</span>
               </h1>
 
-              <p className="mb-8 max-w-xl text-pretty text-lg leading-relaxed text-haku/70">
+              <p className="mb-8 max-w-xl text-pretty text-lg leading-relaxed text-gray-700">
                 The {ORG.chapter} of the {ORG.name} &mdash; keeping Newah language, festivals and
                 craft alive on this side of the world.
               </p>
@@ -101,13 +102,13 @@ export default function ShaderHero() {
               >
                 <Link
                   href="/register/indrajatra"
-                  className="rounded-lg bg-patasi px-8 py-3 text-sm font-semibold text-kwa shadow-lg transition-colors hover:bg-patasi-bright"
+                  className="rounded-lg bg-red-600 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700"
                 >
                   Register for Indra Jatra
                 </Link>
                 <a
                   href="#our-year"
-                  className="rounded-lg border-2 border-lun/40 px-8 py-3 text-sm font-semibold text-haku transition-colors hover:border-lun hover:bg-white/10"
+                  className="rounded-lg border-2 border-gray-400 px-8 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-gray-600 hover:bg-gray-50"
                 >
                   Explore Events
                 </a>
