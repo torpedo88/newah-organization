@@ -5,7 +5,7 @@ import Stripe from "stripe";
  * Stripe client, built lazily.
  *
  * Constructing it at module scope with a missing key is the failure that took
- * registration down once already (see the Resend client). A missing key here
+ * registration down once already (see the old Resend client). A missing key here
  * must only mean "donations are unavailable", never "the site is down".
  */
 let client: Stripe | null = null;

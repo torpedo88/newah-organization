@@ -98,7 +98,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Supabase</strong> &mdash; hosts the database that stores registrations.</li>
         <li><strong>Vercel</strong> &mdash; hosts this website and serves its pages.</li>
-        <li><strong>Resend</strong> &mdash; sends confirmation emails on our behalf.</li>
+        <li><strong>Cloudflare</strong> &mdash; sends confirmation emails on our behalf, and provides DNS for our domain.</li>
         <li><strong>Stripe</strong> &mdash; processes donation payments.</li>
       </ul>
       <p>
