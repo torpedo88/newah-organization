@@ -30,6 +30,53 @@ export const EVENT = {
   city: "",
 } as const;
 
+/**
+ * The chapter's year, not one festival.
+ *
+ * Drawn from what NOA chapters publish as their annual programme. The
+ * organization exists all year; Indra Jatra is the event it happens to be
+ * raising money around right now, and a site that shows only that
+ * misrepresents what the chapter is.
+ */
+export const FESTIVALS = [
+  {
+    name: "Yenya Punhi",
+    also: "Indra Jatra",
+    when: "Bhadra \u2014 late summer",
+    what: "Kathmandu's own festival: the lingo raised, the chariots pulled, the city awake for days.",
+  },
+  {
+    name: "Mha Puja",
+    also: "worship of the self",
+    when: "Kachhala \u2014 with Nepal Sambat",
+    what: "The one night a year the family honours each of its own, mandala by mandala.",
+  },
+  {
+    name: "Nepal Sambat",
+    also: "the Newah new year",
+    when: "Kachhala Thwa \u2014 autumn",
+    what: "Our own era, counted from 880 CE and still counting \u2014 a calendar kept by a people, not a state.",
+  },
+  {
+    name: "Yomari Punhi",
+    also: "the harvest",
+    when: "Thinla \u2014 winter full moon",
+    what: "Steamed yomari shaped by hand, the first sweetness of the new rice.",
+  },
+  {
+    name: "Buddha Jayanti",
+    also: "Swanya Punhi",
+    when: "Bachhala \u2014 spring",
+    what: "Marked across the Valley's bahals and stupas, and by Newah communities wherever they live.",
+  },
+  {
+    name: "World Newah Day",
+    also: "Vishwa Newah Diwas",
+    when: "Last Saturday of March",
+    what: "One day the diaspora keeps together, wherever it has settled.",
+  },
+] as const;
+
 /** Preset donation amounts: note denominations through to typical giving tiers. */
 export const DONATION_PRESETS = [5, 10, 20, 50, 100, 250, 500] as const;
 
