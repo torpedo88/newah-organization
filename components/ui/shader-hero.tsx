@@ -185,7 +185,7 @@ export default function ShaderHero() {
         </div>
 
         <motion.div
-          className="hidden lg:flex lg:items-center lg:justify-center relative"
+          className="hidden lg:flex lg:items-stretch lg:justify-center relative h-full"
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
@@ -195,7 +195,7 @@ export default function ShaderHero() {
             alt="Newah community"
             width={600}
             height={500}
-            className="w-full h-auto rounded-lg object-cover shadow-lg"
+            className="w-full h-full object-cover rounded-lg"
             priority
           />
         </motion.div>
