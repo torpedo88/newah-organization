@@ -259,8 +259,8 @@ async function createCheckout(args: {
       payment_intent_data: {
         metadata: { registration_code: args.code },
       },
-      success_url: `${base}/register?donation=success&code=${encodeURIComponent(args.code)}`,
-      cancel_url: `${base}/register?donation=cancelled&code=${encodeURIComponent(args.code)}`,
+      success_url: `${base}/register/indrajatra?donation=success&code=${encodeURIComponent(args.code)}`,
+      cancel_url: `${base}/register/indrajatra?donation=cancelled&code=${encodeURIComponent(args.code)}`,
     });
 
     return { id: session.id, url: session.url ?? undefined };
