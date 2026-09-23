@@ -128,6 +128,9 @@ export default function ShaderHero() {
       </header>
 
       <main className="relative z-20 flex items-center justify-center min-h-[calc(100dvh-56px)] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/home-hero-image.png')" }}>
+        <div className="absolute inset-0 z-10 pointer-events-none" style={{
+          background: "radial-gradient(ellipse 800px 400px at center, rgba(10, 14, 39, 0.85) 0%, rgba(10, 14, 39, 0.3) 100%)"
+        }} />
         <div className="relative z-20 flex flex-col justify-center items-center text-center px-5 sm:px-8 max-w-3xl">
           <div className="max-w-3xl">
           <motion.div
