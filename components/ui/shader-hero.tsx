@@ -128,7 +128,7 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100dvh-56px)] items-center bg-white gap-8 lg:gap-12">
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-screen items-center bg-white gap-8 lg:gap-12">
         <div className="flex flex-col justify-center px-8 sm:px-12 pt-0 pb-16 sm:pb-20">
           <motion.div
             className="mb-6 inline-flex items-center gap-0 rounded-lg border border-white/20 bg-black/40 px-2.5 py-1 backdrop-blur-sm"
