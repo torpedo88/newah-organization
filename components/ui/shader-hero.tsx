@@ -190,7 +190,7 @@ export default function ShaderHero() {
 
         {/* Image on right */}
         <motion.div
-          className="hidden lg:flex lg:items-center lg:justify-center"
+          className="hidden lg:flex lg:items-center lg:justify-center relative overflow-hidden"
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
@@ -203,6 +203,7 @@ export default function ShaderHero() {
             className="h-auto w-full rounded-2xl object-cover shadow-2xl"
             priority
           />
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-haku/60 rounded-2xl pointer-events-none" />
         </motion.div>
         </div>
       </main>
