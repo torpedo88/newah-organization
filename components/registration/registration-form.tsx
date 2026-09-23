@@ -52,10 +52,15 @@ export default function RegistrationForm() {
   // every character still comes from CONSENT_TEXT.
   const consentParts = CONSENT_TEXT.split(/(Terms and Conditions|Privacy Policy)/);
 
+  // One id per filled-in form, fixed for the life of this page. A resubmit
+  // carries the same value so the server can recognise it as the same
+  // registration rather than a second attendee.
+  const [submissionId] = useState(() => crypto.randomUUID());
+
   const onSubmit = async (data: Registration) => {
     setIsSubmitting(true);
     try {
-      const result = await registerAttendee(data);
+      const result = await registerAttendee({ ...data, submissionId });
       if (!result.success) {
         form.setError("root", { message: result.error });
         return;
