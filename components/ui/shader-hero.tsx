@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
 import { MeshGradient } from "@paper-design/shaders-react";
 import { ORG } from "@/lib/legal/org";
