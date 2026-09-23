@@ -202,7 +202,7 @@ export default function ShaderHero() {
             className="w-full h-full object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-haku/60 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-haku/80 via-haku/40 to-transparent pointer-events-none" />
         </motion.div>
       </main>
 
