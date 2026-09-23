@@ -127,69 +127,65 @@ export default function ShaderHero() {
         </Link>
       </header>
 
-      <main className="relative z-20 flex items-center justify-center min-h-[calc(100dvh-56px)] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/home-hero-image.png')" }}>
-        <div className="absolute inset-0 z-10 pointer-events-none" style={{
-          background: "radial-gradient(ellipse 800px 400px at center, rgba(10, 14, 39, 0.85) 0%, rgba(10, 14, 39, 0.3) 100%)"
-        }} />
-        <div className="relative z-20 flex flex-col justify-center items-center text-center px-5 sm:px-8 max-w-3xl">
-          <div className="max-w-3xl">
-          <motion.div
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-lun/25 bg-white/[0.06] px-4 py-2 backdrop-blur-sm"
-            style={{ filter: "url(#haku-glass)" }}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-          >
-            {/* A real fact about the community, not a product tagline: the era
-                it still counts by, and the year it is now. */}
-            <span className="text-sm font-medium tracking-wide text-kwa/90">
-              नेपाल सम्बत् {NEPAL_SAMBAT.year} &middot; Nepal Sambat {NEPAL_SAMBAT.year}
-            </span>
-          </motion.div>
-
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100dvh-56px)] items-center bg-white gap-8 lg:gap-12">
+        <div className="flex flex-col justify-center px-8 sm:px-12 py-16 sm:py-20">
           <motion.h1
-            className="mb-5 text-balance text-6xl font-bold leading-[1.05] tracking-tight text-kwa sm:text-8xl lg:text-9xl"
+            className="mb-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-haku"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <span className="block font-light text-kwa/85">Our culture,</span>
-            <span className="block">tradition &amp; heritage</span>
-            <span className="block font-light italic text-lun">our pride</span>
+            A Home for Our Culture.{" "}
+            <span className="text-patasi">A Place for Every Generation.</span>
           </motion.h1>
 
           <motion.p
-            className="mb-8 max-w-xl text-pretty text-xl leading-relaxed text-kwa/70 sm:text-2xl"
+            className="mb-8 text-lg text-haku/75"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
-            The {ORG.chapter} of the {ORG.name} &mdash; keeping Newah language, festivals and
-            craft alive on this side of the world.
+            Preserving our heritage. Connecting our community. Since 1994.
           </motion.p>
 
           <motion.div
-            className="flex flex-wrap items-center gap-3"
+            className="flex flex-wrap items-center gap-4"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.75 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
           >
             <Link
               href="/register/indrajatra"
-              className="rounded-full bg-patasi px-8 py-3.5 text-sm font-semibold text-kwa shadow-[0_10px_34px_-10px_rgba(192,16,43,0.9)] transition-colors hover:bg-patasi-bright"
+              className="inline-flex items-center gap-2 rounded-lg bg-patasi px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-patasi/90"
             >
               Register for Indra Jatra
+              <ArrowRight className="size-4" />
             </Link>
-            <a
+            <Link
               href="#our-year"
-              className="rounded-full border-2 border-lun/40 px-8 py-3.5 text-sm font-medium text-kwa backdrop-blur-sm transition-colors hover:border-lun hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-haku px-6 py-3 text-sm font-semibold text-haku transition-colors hover:bg-haku/5"
             >
               See our year
-            </a>
+              <ArrowRight className="size-4" />
+            </Link>
           </motion.div>
-          </div>
         </div>
 
+        <motion.div
+          className="hidden lg:flex lg:items-center lg:justify-center relative"
+          initial={{ opacity: 0, x: 24 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+        >
+          <Image
+            src="/images/home-hero-image.png"
+            alt="Newah community"
+            width={600}
+            height={500}
+            className="w-full h-auto rounded-lg object-cover shadow-lg"
+            priority
+          />
+        </motion.div>
       </main>
 
       {/* The seal, with the era's founder orbiting it. Shankhadhar Sakhwa
