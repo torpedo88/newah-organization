@@ -130,30 +130,42 @@ export default function ShaderHero() {
 
       <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100dvh-56px)] items-center bg-white gap-8 lg:gap-12">
         <div className="flex flex-col justify-center px-8 sm:px-12 py-16 sm:py-20">
+          <motion.div
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-patasi/30 bg-patasi/10 px-4 py-2"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+          >
+            <span className="text-sm font-medium tracking-wide text-haku">
+              नेपाल सम्बत् {NEPAL_SAMBAT.year} &middot; Nepal Sambat {NEPAL_SAMBAT.year}
+            </span>
+          </motion.div>
+
           <motion.h1
             className="mb-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-haku"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
           >
-            A Home for Our Culture.{" "}
-            <span className="text-patasi">A Place for Every Generation.</span>
+            <span className="block font-light text-haku/85">Our culture,</span>
+            <span className="block">tradition &amp; heritage</span>
+            <span className="block font-light italic text-patasi">our pride</span>
           </motion.h1>
 
           <motion.p
             className="mb-8 text-lg text-haku/75"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
           >
-            Preserving our heritage. Connecting our community. Since 1994.
+            The {ORG.chapter} of the {ORG.name} &mdash; keeping Newah language, festivals and craft alive on this side of the world.
           </motion.p>
 
           <motion.div
             className="flex flex-wrap items-center gap-4"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.75 }}
           >
             <Link
               href="/register/indrajatra"
