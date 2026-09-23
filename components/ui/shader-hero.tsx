@@ -103,9 +103,7 @@ export default function ShaderHero() {
           </span>
         </Link>
 
-        {/* Hidden below sm: three links wrapping to two lines each is worse
-            than no links, and every section is a scroll away regardless. */}
-        <nav className="hidden items-center gap-1 text-xs sm:flex sm:gap-2">
+        <nav className="flex items-center gap-2 text-xs sm:gap-3">
           {[
             ["Our year", "#our-year"],
             ["This year", "#this-year"],
@@ -114,7 +112,7 @@ export default function ShaderHero() {
             <a
               key={href}
               href={href}
-              className="rounded-full px-3 py-2 font-medium text-kwa/75 transition-colors hover:bg-white/10 hover:text-kwa"
+              className="px-3 py-2 font-medium text-kwa/75 transition-colors hover:bg-white/10 hover:text-kwa rounded-full"
             >
               {label}
             </a>
