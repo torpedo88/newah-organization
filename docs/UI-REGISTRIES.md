@@ -53,7 +53,7 @@ that is itself a product.
 | | |
 |---|---|
 | **Uiverse** | MIT, community CSS/Tailwind snippets. Zero risk, copy-paste, but most use raw values and need porting to the design tokens. |
-| **Unicorn Studio** | Free tier watermarks the site; ~$168/yr removes it and grants a commercial licence. Same category as `@paper-design/shaders-react`, which this project already uses for free — you would be paying for the visual editor. |
+| **Unicorn Studio** | Free tier watermarks the site; ~$168/yr removes it and grants a commercial licence. Same category as `@paper-design/shaders-react`, which this project used for free — you would be paying for the visual editor. |
 | **Mobbin** | Screenshots of real apps, no code. ~$10–17/mo, has an MCP. Design research, not integration. |
 
 ## Treat registry components as starting points
@@ -69,5 +69,7 @@ before they were safe:
 Before shipping anything from a registry, check it in this order: does it
 compile against the installed versions; does it respect
 `prefers-reduced-motion`; can it be used with a keyboard; does it use project
-tokens rather than hard-coded colours. See `components/ui/shader-hero.tsx` for
-what that ends up looking like.
+tokens rather than hard-coded colours. See
+`components/ui/animated-marquee-hero.tsx` for what that ends up looking like —
+the header comment records each change and why, so the next person does not
+undo them.
