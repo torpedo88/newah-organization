@@ -2,7 +2,7 @@
 
 import { registrationSchema, Registration, filledGuests } from "@/lib/validation/registration";
 import { createHash } from "node:crypto";
-import { normalizePhone } from "@/lib/validation/contact";
+import { normalizePhone, normalizeEmail } from "@/lib/validation/contact";
 import { domainAcceptsMail } from "@/lib/validation/email-domain";
 import { supabase } from "@/lib/supabase/client";
 import { render } from "@react-email/render";
@@ -45,6 +45,8 @@ export type RegisterResult = {
   emailSent?: boolean;
   /** This exact form had already been saved; the code is the original one. */
   alreadyRegistered?: boolean;
+  /** Warning message if phone number is already registered (non-blocking). */
+  phoneWarning?: string;
   error?: string;
 };
 
@@ -79,11 +81,25 @@ async function insertRegistration(payload: Record<string, unknown>) {
 export async function registerAttendee(input: Registration): Promise<RegisterResult> {
   try {
     const validated = registrationSchema.parse(input);
+    const normalizedEmail = normalizeEmail(validated.email ?? "");
+
+    // Check for existing registration with this email.
+    const { data: existing } = await supabase
+      .from("registrations")
+      .select("id", { count: "exact", head: true })
+      .eq("email", normalizedEmail);
+
+    if (existing && existing.length > 0) {
+      return {
+        success: false,
+        error: "This email is already registered. Need to make changes? Contact us.",
+      };
+    }
 
     // Syntax cannot tell gmail.com from gmial.co.uk, but DNS can. This is the
     // last point at which a typo is still cheap to fix: after this the
     // registrant walks away believing a confirmation is coming.
-    if (!(await domainAcceptsMail(validated.email ?? ""))) {
+    if (!(await domainAcceptsMail(normalizedEmail))) {
       return {
         success: false,
         error: "We could not find that email domain. Please check the address and try again.",
@@ -92,7 +108,10 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const code = registrationCode(validated.submissionId);
     const broughtFood = validated.broughtFood === true;
-    const guests = filledGuests(validated.adultGuests);
+    const guests = filledGuests(validated.adultGuests).map(guest => ({
+      ...guest,
+      phone: guest.phone.length === 10 ? `+1${guest.phone}` : guest.phone,
+    }));
     // Only an explicit "amount" choice produces a charge. Deriving this from
     // donationAmount alone would let a caller decline the donation and still
     // name a figure, and the figure is what the charge is built from.
@@ -128,12 +147,15 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       stripeSessionId = session?.id;
     }
 
+    const normalizedPhone = normalizePhone(validated.phone ?? "");
+    const e164Phone = normalizedPhone.length === 10 ? `+1${normalizedPhone}` : normalizedPhone;
+
     const { error } = await insertRegistration({
       registration_code: code,
       submission_id: validated.submissionId ?? null,
       full_name: validated.fullName ?? "",
-      phone: normalizePhone(validated.phone ?? ""),
-      email: validated.email ?? "",
+      phone: e164Phone,
+      email: normalizedEmail,
       // The registrant plus every named adult they are bringing.
       // number_of_guests is derived inside the function from the guest list,
       // so the count and the names cannot disagree.
@@ -153,12 +175,22 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       created_at: new Date().toISOString(),
     });
 
-    // A duplicate submission id or registration code means this exact form was
-    // already saved — a double click, a browser retry, a flaky connection. The
-    // registrant is told the code their first attempt was given rather than
-    // becoming a second attendee.
+    // Error code 23505 is a unique constraint violation. Could be:
+    // 1. Duplicate submission_id or registration_code (browser retry/double-click)
+    // 2. Duplicate email (intentional check failed, or race condition)
     if (error?.code === "23505") {
       if (stripeSessionId) await expireSession(stripeSessionId);
+
+      // If the error mentions email, it's a duplicate email not caught by our check.
+      // This can happen if two submissions arrive simultaneously before checking.
+      if (error.message?.toLowerCase().includes("email")) {
+        return {
+          success: false,
+          error: "This email is already registered. Need to make changes? Contact us.",
+        };
+      }
+
+      // Otherwise it's a duplicate submission (same browser, same form, resubmit).
       return {
         success: true,
         registrationCode: code,
@@ -188,13 +220,25 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const emailSent = await sendConfirmation({
       name: validated.fullName ?? "",
-      email: validated.email ?? "",
+      email: normalizedEmail,
       code,
       broughtFood,
       foodDescription: validated.foodDescription ?? "",
       donationCents,
       guestCount: guests.length,
     });
+
+    // Check if this phone number is already registered (non-blocking warning).
+    const { data: existingPhone } = await supabase
+      .from("registrations")
+      .select("id", { count: "exact", head: true })
+      .eq("phone", e164Phone)
+      .neq("email", normalizedEmail); // Exclude this registration itself
+
+    let phoneWarning: string | undefined;
+    if (existingPhone && existingPhone.length > 0) {
+      phoneWarning = "This phone number is already registered. If you're registering a family member, you can use a different phone number.";
+    }
 
     return {
       success: true,
@@ -205,6 +249,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       netCents: money?.toOrganizationCents,
       broughtFood,
       emailSent,
+      phoneWarning,
     };
   } catch (error) {
     console.error("Registration error:", error);

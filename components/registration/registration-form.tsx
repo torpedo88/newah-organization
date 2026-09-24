@@ -62,7 +62,12 @@ export default function RegistrationForm() {
     try {
       const result = await registerAttendee({ ...data, submissionId });
       if (!result.success) {
-        form.setError("root", { message: result.error });
+        // Email-specific errors go under the email field for better UX
+        if (result.error?.toLowerCase().includes("email")) {
+          form.setError("email", { message: result.error });
+        } else {
+          form.setError("root", { message: result.error });
+        }
         return;
       }
       // A donation sends them to Stripe; everything else lands on the
@@ -83,6 +88,7 @@ export default function RegistrationForm() {
         // A donation with no checkout URL means Stripe is not configured.
         paymentPending: Boolean(result.donationCents),
         emailSent: result.emailSent === true,
+        phoneWarning: result.phoneWarning,
       });
     } finally {
       setIsSubmitting(false);

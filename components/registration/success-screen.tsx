@@ -19,6 +19,8 @@ export type SuccessData = {
   paymentPending: boolean;
   /** Whether a confirmation email actually went out. */
   emailSent: boolean;
+  /** Warning if phone number is shared with another registration. */
+  phoneWarning?: string;
 };
 
 export default function SuccessScreen({ data }: { data: SuccessData }) {
@@ -98,6 +100,12 @@ export default function SuccessScreen({ data }: { data: SuccessData }) {
               ? "A confirmation has been sent to your email."
               : "Please keep a note of your registration number \u2014 we were not able to send a confirmation email."}
           </p>
+
+          {data.phoneWarning && (
+            <div className="mb-6 rounded-2xl border border-white/20 bg-white/[0.06] p-5 text-left">
+              <p className="text-sm text-white/80">{data.phoneWarning}</p>
+            </div>
+          )}
 
           <LiquidButton asChild size="xl" className="text-white">
             <Link href="/">Done</Link>
