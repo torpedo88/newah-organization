@@ -5,8 +5,9 @@
 -- 3. Normalize email to lowercase in the create_registration function.
 -- 4. Update create_registration to handle E.164 phone numbers from the app.
 
--- Add unique constraint on email to prevent duplicates
+-- Add unique constraints to prevent duplicates
 alter table registrations add constraint registrations_email_unique unique (email);
+alter table registrations add constraint registrations_phone_unique unique (phone);
 
 -- Update phone validation constraint for registration_guests to accept E.164 format
 alter table registration_guests drop constraint if exists registration_guests_phone_fmt;

@@ -45,8 +45,6 @@ export type RegisterResult = {
   emailSent?: boolean;
   /** This exact form had already been saved; the code is the original one. */
   alreadyRegistered?: boolean;
-  /** Warning message if phone number is already registered (non-blocking). */
-  phoneWarning?: string;
   error?: string;
 };
 
@@ -84,15 +82,28 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
     const normalizedEmail = normalizeEmail(validated.email ?? "");
 
     // Check for existing registration with this email.
-    const { data: existing } = await supabase
+    const { data: existingEmail } = await supabase
       .from("registrations")
       .select("id", { count: "exact", head: true })
       .eq("email", normalizedEmail);
 
-    if (existing && existing.length > 0) {
+    if (existingEmail && existingEmail.length > 0) {
       return {
         success: false,
         error: "This email is already registered. Need to make changes? Contact us.",
+      };
+    }
+
+    // Check for existing registration with this phone.
+    const { data: existingPhone } = await supabase
+      .from("registrations")
+      .select("id", { count: "exact", head: true })
+      .eq("phone", normalizedPhone);
+
+    if (existingPhone && existingPhone.length > 0) {
+      return {
+        success: false,
+        error: "This phone number is already registered.",
       };
     }
 
@@ -104,6 +115,32 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
         success: false,
         error: "We could not find that email domain. Please check the address and try again.",
       };
+    }
+
+    // Check guest emails for duplicates with registrant or existing registrations
+    const guestEmails = (validated.adultGuests ?? [])
+      .map(g => (g.email ?? "").trim().toLowerCase())
+      .filter(e => e.length > 0);
+
+    for (const guestEmail of guestEmails) {
+      if (guestEmail === normalizedEmail) {
+        return {
+          success: false,
+          error: "A guest email cannot be the same as the registrant email.",
+        };
+      }
+
+      const { data: duplicateGuestEmail } = await supabase
+        .from("registrations")
+        .select("id", { count: "exact", head: true })
+        .eq("email", guestEmail);
+
+      if (duplicateGuestEmail && duplicateGuestEmail.length > 0) {
+        return {
+          success: false,
+          error: `Guest email "${guestEmail}" is already registered. Each person needs their own email.`,
+        };
+      }
     }
 
     const code = registrationCode(validated.submissionId);
@@ -225,18 +262,6 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       guestCount: guests.length,
     });
 
-    // Check if this phone number is already registered (non-blocking warning).
-    const { data: existingPhone } = await supabase
-      .from("registrations")
-      .select("id", { count: "exact", head: true })
-      .eq("phone", normalizedPhone)
-      .neq("email", normalizedEmail); // Exclude this registration itself
-
-    let phoneWarning: string | undefined;
-    if (existingPhone && existingPhone.length > 0) {
-      phoneWarning = "This phone number is already registered. If you're registering a family member, you can use a different phone number.";
-    }
-
     return {
       success: true,
       registrationCode: code,
@@ -246,7 +271,6 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       netCents: money?.toOrganizationCents,
       broughtFood,
       emailSent,
-      phoneWarning,
     };
   } catch (error) {
     console.error("Registration error:", error);
