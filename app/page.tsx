@@ -64,7 +64,7 @@ export default function Home() {
     <main className="bg-haku">
       <SiteHeader />
       <AnimatedMarqueeHero
-        tagline={`${ORG.shortName} \u00b7 Northern California`}
+        tagline={`${ORG.name} \u00b7 Northern California`}
         title={
           <>
             <span className="block font-light text-white/85">Our culture,</span>

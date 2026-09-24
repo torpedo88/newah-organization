@@ -104,41 +104,12 @@ export function AnimatedMarqueeHero({
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,rgba(126,10,28,0.55)_0%,transparent_60%)]"
       />
 
-      {/* The seal, watermarked across the hero. It is the chapter's own mark,
-          so it is allowed to be large — the small copy in the header is a
-          link, this is the identity. Kept faint enough that the headline over
-          it still passes contrast, and hidden from assistive technology
-          because the header already names the organization. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 flex items-start justify-center pt-[6vh]"
-      >
-        {/* Cropped to the emblem. Both logo files bake the organization's name
-            into the artwork, and two lines of display type behind the headline
-            compete with it; the temple and the NOA monogram do not. A box
-            wider than the square plus object-top drops the lettering.
-
-            The transparent file, not newah-logo.png — that one has a white
-            background, which at any opacity paints a pale rectangle across the
-            hero. */}
-        <div className="relative aspect-[1/0.66] w-[96vw] max-w-[760px] opacity-[0.1] sm:w-[68vw]">
-          <Image
-            src="/images/newah-full-logo-transparent.png"
-            alt=""
-            fill
-            sizes="(max-width: 640px) 96vw, 68vw"
-            priority
-            className="object-cover object-top"
-          />
-        </div>
-      </div>
-
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-10">
         <motion.p
           initial="hidden"
           animate="show"
           variants={FADE_IN}
-          className="mb-5 inline-block rounded-full border border-lun/40 bg-lun/10 px-4 py-1.5 text-sm font-medium text-lun backdrop-blur-sm"
+          className="mb-6 inline-block max-w-[92vw] text-balance rounded-full border border-lun/40 bg-lun/10 px-5 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-lun backdrop-blur-sm sm:text-xs"
         >
           {tagline}
         </motion.p>
@@ -147,7 +118,7 @@ export function AnimatedMarqueeHero({
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
-          className="text-balance text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
+          className="text-balance text-[2.6rem] font-bold leading-[1.05] tracking-[-0.03em] text-white sm:text-6xl md:text-7xl"
         >
           {typeof title === "string"
             ? title.split(" ").map((word, i) => (
@@ -163,7 +134,7 @@ export function AnimatedMarqueeHero({
           animate="show"
           variants={FADE_IN}
           transition={{ delay: 0.5 }}
-          className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-white/75"
+          className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-white/70 sm:text-xl"
         >
           {description}
         </motion.p>
@@ -177,7 +148,7 @@ export function AnimatedMarqueeHero({
         >
           <Link
             href={ctaHref}
-            className="inline-flex items-center gap-2 rounded-full bg-patasi px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-patasi-bright focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lun"
+            className="inline-flex items-center gap-2 rounded-full bg-patasi px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-patasi-bright focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lun sm:text-sm"
           >
             {ctaText}
             <ArrowRight className="size-4" aria-hidden />
@@ -186,7 +157,7 @@ export function AnimatedMarqueeHero({
           {secondaryText && secondaryHref && (
             <Link
               href={secondaryHref}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lun"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lun sm:text-sm"
             >
               {secondaryText}
               <ArrowRight className="size-4" aria-hidden />
