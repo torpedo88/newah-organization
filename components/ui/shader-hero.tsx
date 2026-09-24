@@ -181,11 +181,10 @@ export default function ShaderHero() {
         >
           <Image
             src="/images/home-hero-image.png"
-            alt="Newah community"
+            alt="Kathmandu Valley temples beside the Golden Gate Bridge and the Sierra Nevada"
             width={600}
             height={500}
-            className="w-full h-auto object-cover rounded-lg"
-            style={{ mixBlendMode: "screen" }}
+            className="photo-bleed h-auto w-full object-cover saturate-90"
             priority
           />
         </motion.div>
