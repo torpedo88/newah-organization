@@ -148,3 +148,117 @@
     @apply font-sans;
   }
 }
+
+@utility photo-bleed {
+  /* Dissolves a photograph's edges into the page instead of cutting it out as
+     a rectangle.
+
+     Two linear fades intersected, not one radial: a radial big enough to keep
+     the subject readable still crosses the top and bottom edges at partial
+     opacity, which leaves exactly the crisp horizontal line it was meant to
+     remove. Intersecting a horizontal and a vertical fade takes every edge to
+     zero while leaving the middle of the frame untouched.
+
+     Each property is declared twice. Safari below 15.4 only understands the
+     prefixed form, and its composite keyword is source-in rather than
+     intersect. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 26%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 26%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* ── Animated header buttons ──────────────────────────────────────────
+   Keyframes for components/ui/button-3d.tsx and components/ui/glow-button.tsx.
+
+   The 21st.dev sources shipped these as a bare @keyframes list (the 3D button)
+   and as a styled-jsx <style jsx global> block (the glow button). styled-jsx
+   inside an App Router component forces the whole subtree client-side for what
+   is a stylesheet, so both live here instead.
+
+   Everything here is decorative. The two components gate their animations on
+   prefers-reduced-motion, and the blanket rule at the end is a backstop for
+   anything that forgets.
+------------------------------------------------------------------------ */
+
+@keyframes char-appear {
+  0% {
+    transform: translateY(50%);
+    opacity: 0;
+    filter: blur(8px);
+  }
+  50% {
+    transform: translateY(-12%);
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes char-disappear {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-70%);
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+
+/* The outline drawing itself round the pill. The dash array is set on the
+   element so one keyframe serves any path length. */
+@keyframes trace-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The rays that flick outward on press. */
+@keyframes splash {
+  to {
+    stroke-dasharray: 2 60;
+    stroke-dashoffset: -60;
+  }
+}
+
+/* The glow button's two motions: a slow rotation of the gradient, and a
+   breathing scale so the light does not sweep at a constant rate. */
+@keyframes glow-spin {
+  0% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(190deg);
+  }
+  100% {
+    transform: rotate(370deg);
+  }
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animated-button] *,
+  [data-animated-button]::before,
+  [data-animated-button]::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

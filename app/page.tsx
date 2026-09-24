@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { ArrowRight, CalendarDays, LockKeyhole, MapPin } from "lucide-react";
-import ShaderHero from "@/components/ui/shader-hero";
+import SiteHeader from "@/components/ui/site-header";
+import AnimatedMarqueeHero from "@/components/ui/animated-marquee-hero";
+import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import PhotoCredits from "@/components/ui/photo-credits";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
@@ -60,7 +62,23 @@ export default function Home() {
 
   return (
     <main className="bg-haku">
-      <ShaderHero />
+      <SiteHeader />
+      <AnimatedMarqueeHero
+        tagline={`${ORG.name} \u00b7 Northern California`}
+        title={
+          <>
+            <span className="block font-light text-white/85">Our culture,</span>
+            <span className="block">tradition &amp; heritage</span>
+            <span className="block font-light italic text-lun">our pride</span>
+          </>
+        }
+        description={`The ${ORG.chapter} of the ${ORG.name} \u2014 keeping Newah language, festivals and craft alive on this side of the world.`}
+        ctaText="Register for Indra Jatra"
+        ctaHref="/register/indrajatra"
+        secondaryText="See our year"
+        secondaryHref="#our-year"
+        images={COMMUNITY_PHOTOS}
+      />
 
         {/* Who we are ------------------------------------------------- */}
         <Section className="py-16">
@@ -109,13 +127,13 @@ export default function Home() {
                 reason to speak it.
               </p>
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <div className="photo-bleed relative aspect-[4/3]">
               <Image
                 src="/images/patan-durbar.jpg"
                 alt="Patan Durbar Square at dusk"
                 fill
                 sizes="(max-width: 768px) 100vw, 480px"
-                className="object-cover"
+                className="object-cover saturate-90"
               />
             </div>
           </div>
@@ -142,14 +160,19 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* This year's event ------------------------------------------- */}
-        <Section className="py-16" id="this-year">
-          <div className="overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
+        {/* Upcoming events ---------------------------------------------- */}
+        <Section className="py-16" id="upcoming">
+          <Heading kicker="Upcoming events">What the chapter is doing next</Heading>
+          <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+            One event at a time, announced here as the board confirms it.
+          </p>
+
+          <div className="mt-8 overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
             <div className="grid md:grid-cols-5">
               <div className="relative min-h-52 md:col-span-2">
                 <Image
-                  src="/images/samay-baji.jpg"
-                  alt="Samay baji, the Newah ceremonial plate"
+                  src="/images/community/indra-jatra-2023-kumari.jpg"
+                  alt="The Kumari at the chapter's Indra Jatra in Berkeley, 2023"
                   fill
                   sizes="(max-width: 768px) 100vw, 400px"
                   className="object-cover"
@@ -157,11 +180,18 @@ export default function Home() {
               </div>
               <div className="p-7 sm:p-9 md:col-span-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lun-bright">
-                  This year
+                  Next up
                 </p>
                 <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                   {EVENT.name}: {EVENT.title}
                 </h2>
+
+                {!hasWhen && !hasWhere && (
+                  <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-lun/40 bg-lun/10 px-4 py-1.5 text-sm text-lun">
+                    <CalendarDays className="size-4 shrink-0" aria-hidden />
+                    Date and venue to be announced
+                  </p>
+                )}
 
                 {(hasWhen || hasWhere) && (
                   <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-white/85">
