@@ -2,7 +2,7 @@
 
 import { registrationSchema, Registration, filledGuests } from "@/lib/validation/registration";
 import { createHash } from "node:crypto";
-import { normalizePhone } from "@/lib/validation/contact";
+import { normalizePhone, normalizeEmail } from "@/lib/validation/contact";
 import { domainAcceptsMail } from "@/lib/validation/email-domain";
 import { supabase } from "@/lib/supabase/client";
 import { render } from "@react-email/render";
@@ -79,15 +79,55 @@ async function insertRegistration(payload: Record<string, unknown>) {
 export async function registerAttendee(input: Registration): Promise<RegisterResult> {
   try {
     const validated = registrationSchema.parse(input);
+    const normalizedEmail = normalizeEmail(validated.email ?? "");
+
+    // Check for existing registration with this email.
+    const { data: existingEmail } = await supabase
+      .from("registrations")
+      .select("id", { count: "exact", head: true })
+      .eq("email", normalizedEmail);
+
+    if (existingEmail && existingEmail.length > 0) {
+      return {
+        success: false,
+        error: "This email is already registered. Need to make changes? Contact us.",
+      };
+    }
 
     // Syntax cannot tell gmail.com from gmial.co.uk, but DNS can. This is the
     // last point at which a typo is still cheap to fix: after this the
     // registrant walks away believing a confirmation is coming.
-    if (!(await domainAcceptsMail(validated.email ?? ""))) {
+    if (!(await domainAcceptsMail(normalizedEmail))) {
       return {
         success: false,
         error: "We could not find that email domain. Please check the address and try again.",
       };
+    }
+
+    // Check guest emails for duplicates with registrant or existing registrations
+    const guestEmails = (validated.adultGuests ?? [])
+      .map(g => (g.email ?? "").trim().toLowerCase())
+      .filter(e => e.length > 0);
+
+    for (const guestEmail of guestEmails) {
+      if (guestEmail === normalizedEmail) {
+        return {
+          success: false,
+          error: "A guest email cannot be the same as the registrant email.",
+        };
+      }
+
+      const { data: duplicateGuestEmail } = await supabase
+        .from("registrations")
+        .select("id", { count: "exact", head: true })
+        .eq("email", guestEmail);
+
+      if (duplicateGuestEmail && duplicateGuestEmail.length > 0) {
+        return {
+          success: false,
+          error: `Guest email "${guestEmail}" is already registered. Each person needs their own email.`,
+        };
+      }
     }
 
     const code = registrationCode(validated.submissionId);
@@ -128,13 +168,15 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       stripeSessionId = session?.id;
     }
 
+    const normalizedPhone = normalizePhone(validated.phone ?? "");
+    const e164Phone = normalizedPhone.length === 10 ? `+1${normalizedPhone}` : normalizedPhone;
+
     const { error } = await insertRegistration({
       registration_code: code,
       submission_id: validated.submissionId ?? null,
-      registration_type: "event",
       full_name: validated.fullName ?? "",
-      phone: normalizePhone(validated.phone ?? ""),
-      email: validated.email ?? "",
+      phone: e164Phone,
+      email: normalizedEmail,
       // The registrant plus every named adult they are bringing.
       // number_of_guests is derived inside the function from the guest list,
       // so the count and the names cannot disagree.
@@ -154,12 +196,22 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       created_at: new Date().toISOString(),
     });
 
-    // A duplicate submission id or registration code means this exact form was
-    // already saved — a double click, a browser retry, a flaky connection. The
-    // registrant is told the code their first attempt was given rather than
-    // becoming a second attendee.
+    // Error code 23505 is a unique constraint violation. Could be:
+    // 1. Duplicate submission_id or registration_code (browser retry/double-click)
+    // 2. Duplicate email (intentional check failed, or race condition)
     if (error?.code === "23505") {
       if (stripeSessionId) await expireSession(stripeSessionId);
+
+      // If the error mentions email, it's a duplicate email not caught by our check.
+      // This can happen if two submissions arrive simultaneously before checking.
+      if (error.message?.toLowerCase().includes("email")) {
+        return {
+          success: false,
+          error: "This email is already registered. Need to make changes? Contact us.",
+        };
+      }
+
+      // Otherwise it's a duplicate submission (same browser, same form, resubmit).
       return {
         success: true,
         registrationCode: code,
@@ -189,7 +241,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const emailSent = await sendConfirmation({
       name: validated.fullName ?? "",
-      email: validated.email ?? "",
+      email: normalizedEmail,
       code,
       broughtFood,
       foodDescription: validated.foodDescription ?? "",

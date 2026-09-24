@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
 import { MeshGradient } from "@paper-design/shaders-react";
 import { ORG } from "@/lib/legal/org";
@@ -87,7 +88,7 @@ export default function ShaderHero() {
           exactly what makes it unreliable to read against. */}
       <div className="absolute inset-0 bg-gradient-to-t from-haku via-haku/45 to-haku/70" />
 
-      <header className="relative z-20 flex items-center justify-between gap-4 px-5 py-5 sm:px-8">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between gap-4 px-5 py-3 sm:px-8 bg-gradient-to-r from-haku to-haku/80 backdrop-blur-sm border-b-4 border-patasi">
         <Link href="/" className="flex items-center gap-3" aria-label={`${ORG.name} home`}>
           <Image
             src="/images/newah-full-logo-transparent.png"
@@ -95,17 +96,15 @@ export default function ShaderHero() {
             width={512}
             height={512}
             priority
-            className="size-11 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-12"
+            className="size-12 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-16"
           />
-          <span className="hidden text-sm font-semibold leading-tight text-kwa sm:block">
+          <span className="hidden text-sm font-semibold leading-tight text-lun sm:block">
             {ORG.shortName}
-            <span className="block text-xs font-normal text-lun">Northern California</span>
+            <span className="block text-xs font-normal text-lun/80">Northern California</span>
           </span>
         </Link>
 
-        {/* Hidden below sm: three links wrapping to two lines each is worse
-            than no links, and every section is a scroll away regardless. */}
-        <nav className="hidden items-center gap-1 text-xs sm:flex sm:gap-2">
+        <nav className="flex items-center gap-2 text-sm sm:gap-3">
           {[
             ["Our year", "#our-year"],
             ["This year", "#this-year"],
@@ -114,7 +113,7 @@ export default function ShaderHero() {
             <a
               key={href}
               href={href}
-              className="rounded-full px-3 py-2 font-medium text-kwa/75 transition-colors hover:bg-white/10 hover:text-kwa"
+              className="px-3 py-1 font-medium text-lun/80 transition-colors hover:bg-lun/20 hover:text-lun rounded-full"
             >
               {label}
             </a>
@@ -123,69 +122,73 @@ export default function ShaderHero() {
 
         <Link
           href="/register/indrajatra"
-          className="rounded-full bg-kwa px-5 py-2 text-xs font-semibold text-haku transition-colors hover:bg-white"
+          className="rounded-full bg-lun px-6 py-2 text-sm font-semibold text-haku transition-colors hover:bg-lun/90"
         >
           Register
         </Link>
       </header>
 
-      <main className="relative z-20 flex min-h-[calc(100dvh-88px)] flex-col justify-end px-5 pb-12 sm:px-8 sm:pb-16">
-        <div className="max-w-3xl">
-          <motion.div
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-lun/25 bg-white/[0.06] px-4 py-2 backdrop-blur-sm"
-            style={{ filter: "url(#haku-glass)" }}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-          >
-            {/* A real fact about the community, not a product tagline: the era
-                it still counts by, and the year it is now. */}
-            <span className="text-sm font-medium tracking-wide text-kwa/90">
-              नेपाल सम्बत् {NEPAL_SAMBAT.year} &middot; Nepal Sambat {NEPAL_SAMBAT.year}
-            </span>
-          </motion.div>
-
-          <motion.h1
-            className="mb-5 text-balance text-4xl font-bold leading-[1.05] tracking-tight text-kwa sm:text-6xl lg:text-7xl"
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 pt-24 pb-32 lg:pb-40 items-center bg-haku gap-8 lg:gap-12 min-h-screen">
+        <div className="flex flex-col justify-center px-8 sm:px-12 pt-0 pb-16 sm:pb-20">
+<motion.h1
+            className="mb-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <span className="block font-light text-kwa/85">Our culture,</span>
+            <span className="block font-light text-white/85">Our culture,</span>
             <span className="block">tradition &amp; heritage</span>
             <span className="block font-light italic text-lun">our pride</span>
           </motion.h1>
 
           <motion.p
-            className="mb-8 max-w-xl text-pretty text-base leading-relaxed text-kwa/70 sm:text-lg"
+            className="mb-8 text-lg text-white/75"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.55 }}
           >
-            The {ORG.chapter} of the {ORG.name} &mdash; keeping Newah language, festivals and
-            craft alive on this side of the world.
+            The {ORG.chapter} of the {ORG.name} &mdash; keeping Newah language, festivals and craft alive on this side of the world.
           </motion.p>
 
           <motion.div
-            className="flex flex-wrap items-center gap-3"
+            className="flex flex-wrap items-center gap-4"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.75 }}
           >
             <Link
               href="/register/indrajatra"
-              className="rounded-full bg-patasi px-8 py-3.5 text-sm font-semibold text-kwa shadow-[0_10px_34px_-10px_rgba(192,16,43,0.9)] transition-colors hover:bg-patasi-bright"
+              className="inline-flex items-center gap-2 rounded-lg bg-patasi px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-patasi/90"
             >
               Register for Indra Jatra
+              <ArrowRight className="size-4" />
             </Link>
-            <a
+            <Link
               href="#our-year"
-              className="rounded-full border-2 border-lun/40 px-8 py-3.5 text-sm font-medium text-kwa backdrop-blur-sm transition-colors hover:border-lun hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-white px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               See our year
-            </a>
+              <ArrowRight className="size-4" />
+            </Link>
           </motion.div>
         </div>
+
+        <motion.div
+          className="hidden lg:flex lg:items-stretch lg:justify-center relative"
+          initial={{ opacity: 0, x: 24 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+        >
+          <Image
+            src="/images/home-hero-image.png"
+            alt="Newah community"
+            width={600}
+            height={500}
+            className="w-full h-auto object-cover rounded-lg"
+            style={{ mixBlendMode: "screen" }}
+            priority
+          />
+        </motion.div>
       </main>
 
       {/* The seal, with the era's founder orbiting it. Shankhadhar Sakhwa
