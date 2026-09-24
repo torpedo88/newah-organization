@@ -109,13 +109,13 @@ export default function Home() {
                 reason to speak it.
               </p>
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <div className="photo-bleed relative aspect-[4/3]">
               <Image
                 src="/images/patan-durbar.jpg"
                 alt="Patan Durbar Square at dusk"
                 fill
                 sizes="(max-width: 768px) 100vw, 480px"
-                className="object-cover"
+                className="object-cover saturate-90"
               />
             </div>
           </div>
