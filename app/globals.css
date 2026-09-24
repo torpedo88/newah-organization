@@ -148,3 +148,26 @@
     @apply font-sans;
   }
 }
+
+@utility photo-bleed {
+  /* Dissolves a photograph's edges into the page instead of cutting it out as
+     a rectangle.
+
+     Two linear fades intersected, not one radial: a radial big enough to keep
+     the subject readable still crosses the top and bottom edges at partial
+     opacity, which leaves exactly the crisp horizontal line it was meant to
+     remove. Intersecting a horizontal and a vertical fade takes every edge to
+     zero while leaving the middle of the frame untouched.
+
+     Each property is declared twice. Safari below 15.4 only understands the
+     prefixed form, and its composite keyword is source-in rather than
+     intersect. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 26%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 26%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-composite: intersect;
+}
