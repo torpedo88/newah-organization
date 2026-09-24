@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { ArrowRight, CalendarDays, LockKeyhole, MapPin } from "lucide-react";
-import ShaderHero from "@/components/ui/shader-hero";
+import SiteHeader from "@/components/ui/site-header";
+import AnimatedMarqueeHero from "@/components/ui/animated-marquee-hero";
+import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import PhotoCredits from "@/components/ui/photo-credits";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
@@ -60,7 +62,23 @@ export default function Home() {
 
   return (
     <main className="bg-haku">
-      <ShaderHero />
+      <SiteHeader />
+      <AnimatedMarqueeHero
+        tagline={`${ORG.shortName} \u00b7 Northern California`}
+        title={
+          <>
+            <span className="block font-light text-white/85">Our culture,</span>
+            <span className="block">tradition &amp; heritage</span>
+            <span className="block font-light italic text-lun">our pride</span>
+          </>
+        }
+        description={`The ${ORG.chapter} of the ${ORG.name} \u2014 keeping Newah language, festivals and craft alive on this side of the world.`}
+        ctaText="Register for Indra Jatra"
+        ctaHref="/register/indrajatra"
+        secondaryText="See our year"
+        secondaryHref="#our-year"
+        images={COMMUNITY_PHOTOS}
+      />
 
         {/* Who we are ------------------------------------------------- */}
         <Section className="py-16">
