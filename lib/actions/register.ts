@@ -94,19 +94,6 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
       };
     }
 
-    // Check for existing registration with this phone.
-    const { data: existingPhone } = await supabase
-      .from("registrations")
-      .select("id", { count: "exact", head: true })
-      .eq("phone", normalizedPhone);
-
-    if (existingPhone && existingPhone.length > 0) {
-      return {
-        success: false,
-        error: "This phone number is already registered.",
-      };
-    }
-
     // Syntax cannot tell gmail.com from gmial.co.uk, but DNS can. This is the
     // last point at which a typo is still cheap to fix: after this the
     // registrant walks away believing a confirmation is coming.
