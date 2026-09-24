@@ -11,25 +11,25 @@ import { ORG } from "@/lib/legal/org";
 export default function SiteHeader() {
   return (
     <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between gap-4 border-b-4 border-patasi bg-gradient-to-r from-haku to-haku/80 px-5 py-3 backdrop-blur-sm sm:px-8">
-      <Link href="/" className="flex items-center gap-3" aria-label={`${ORG.name} home`}>
+      <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={`${ORG.name} home`}>
         <Image
           src="/images/newah-full-logo-transparent.png"
           alt=""
           width={512}
           height={512}
           priority
-          className="size-12 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-16"
+          className="size-16 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-20"
         />
-        <span className="hidden text-sm font-semibold leading-tight text-lun sm:block">
+        <span className="text-sm font-semibold leading-tight text-lun">
           {ORG.shortName}
           <span className="block text-xs font-normal text-lun/80">Northern California</span>
         </span>
       </Link>
 
-      <nav className="flex items-center gap-2 text-sm sm:gap-3">
+      <nav className="hidden items-center gap-2 text-sm sm:flex sm:gap-3">
         {[
           ["Our year", "#our-year"],
-          ["This year", "#this-year"],
+          ["Upcoming", "#upcoming"],
           ["Contact", "#contact"],
         ].map(([label, href]) => (
           <a

@@ -1,7 +1,10 @@
 /**
  * Photograph attribution.
  *
- * Every image here is Creative Commons licensed and REQUIRES attribution.
+ * Every image HERE is Creative Commons licensed and REQUIRES attribution. It
+ * is not every image on the site: the chapter's own photographs live in
+ * COMMUNITY_PHOTOS and carry no licence condition, only photographers worth
+ * thanking.
  * Rendering these credits is a licence condition, not a courtesy — removing
  * them breaches the terms the photographs are used under.
  *
@@ -36,13 +39,6 @@ export const PHOTO_CREDITS: PhotoCredit[] = [
     licence: "CC BY-SA 3.0",
     licenceUrl: "https://creativecommons.org/licenses/by-sa/3.0",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Mhapuja_bhoy.jpg",
-  },
-  {
-    file: "samay-baji.jpg",
-    photographer: "Shristi24",
-    licence: "CC BY-SA 4.0",
-    licenceUrl: "https://creativecommons.org/licenses/by-sa/4.0",
-    sourceUrl: "https://commons.wikimedia.org/wiki/File:Samay_Baji_-_Newar_Culture.jpg",
   },
   {
     file: "indra-jatra-durbar-square.webp",
