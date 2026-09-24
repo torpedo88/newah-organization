@@ -108,10 +108,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
 
     const code = registrationCode(validated.submissionId);
     const broughtFood = validated.broughtFood === true;
-    const guests = filledGuests(validated.adultGuests).map(guest => ({
-      ...guest,
-      phone: guest.phone.length === 10 ? `+1${guest.phone}` : guest.phone,
-    }));
+    const guests = filledGuests(validated.adultGuests);
     // Only an explicit "amount" choice produces a charge. Deriving this from
     // donationAmount alone would let a caller decline the donation and still
     // name a figure, and the figure is what the charge is built from.
@@ -232,7 +229,7 @@ export async function registerAttendee(input: Registration): Promise<RegisterRes
     const { data: existingPhone } = await supabase
       .from("registrations")
       .select("id", { count: "exact", head: true })
-      .eq("phone", e164Phone)
+      .eq("phone", normalizedPhone)
       .neq("email", normalizedEmail); // Exclude this registration itself
 
     let phoneWarning: string | undefined;
