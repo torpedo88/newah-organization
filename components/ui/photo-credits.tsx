@@ -1,11 +1,18 @@
 import { PHOTO_CREDITS } from "@/lib/constants/photo-credits";
+import { COMMUNITY_PHOTO_CREDITS } from "@/lib/constants/community-photos";
 
 /**
  * Photograph attribution.
  *
- * Every image on this site is Creative Commons licensed and requires credit.
- * This is a licence condition, not a courtesy — remove it and the photographs
- * are being used in breach of their terms.
+ * Two different obligations, deliberately kept apart:
+ *
+ * The Creative Commons images require credit. That is a licence condition, not
+ * a courtesy — remove it and the photographs are being used in breach of their
+ * terms.
+ *
+ * The chapter's own photographs carry no such condition. Where one bears a
+ * photographer's mark, they are thanked by name, because someone stood at the
+ * chapter's festival and took it.
  */
 export default function PhotoCredits({ className = "" }: { className?: string }) {
   return (
@@ -33,6 +40,12 @@ export default function PhotoCredits({ className = "" }: { className?: string })
         </span>
       ))}
       , via Wikimedia Commons.
+      {COMMUNITY_PHOTO_CREDITS.length > 0 && (
+        <>
+          {" "}
+          Photographs of the chapter by {COMMUNITY_PHOTO_CREDITS.join(" and ")}.
+        </>
+      )}
     </p>
   );
 }

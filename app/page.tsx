@@ -64,7 +64,7 @@ export default function Home() {
     <main className="bg-haku">
       <SiteHeader />
       <AnimatedMarqueeHero
-        tagline={`${ORG.shortName} \u00b7 Northern California`}
+        tagline={`${ORG.name} \u00b7 Northern California`}
         title={
           <>
             <span className="block font-light text-white/85">Our culture,</span>
@@ -160,14 +160,19 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* This year's event ------------------------------------------- */}
-        <Section className="py-16" id="this-year">
-          <div className="overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
+        {/* Upcoming events ---------------------------------------------- */}
+        <Section className="py-16" id="upcoming">
+          <Heading kicker="Upcoming events">What the chapter is doing next</Heading>
+          <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+            One event at a time, announced here as the board confirms it.
+          </p>
+
+          <div className="mt-8 overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
             <div className="grid md:grid-cols-5">
               <div className="relative min-h-52 md:col-span-2">
                 <Image
-                  src="/images/samay-baji.jpg"
-                  alt="Samay baji, the Newah ceremonial plate"
+                  src="/images/community/indra-jatra-2023-kumari.jpg"
+                  alt="The Kumari at the chapter's Indra Jatra in Berkeley, 2023"
                   fill
                   sizes="(max-width: 768px) 100vw, 400px"
                   className="object-cover"
@@ -175,11 +180,18 @@ export default function Home() {
               </div>
               <div className="p-7 sm:p-9 md:col-span-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lun-bright">
-                  This year
+                  Next up
                 </p>
                 <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                   {EVENT.name}: {EVENT.title}
                 </h2>
+
+                {!hasWhen && !hasWhere && (
+                  <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-lun/40 bg-lun/10 px-4 py-1.5 text-sm text-lun">
+                    <CalendarDays className="size-4 shrink-0" aria-hidden />
+                    Date and venue to be announced
+                  </p>
+                )}
 
                 {(hasWhen || hasWhere) && (
                   <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-white/85">
