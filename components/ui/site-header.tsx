@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import NavLinks from "@/components/ui/nav-links";
+import { GlowButton } from "@/components/ui/glow-button";
 import { ORG } from "@/lib/legal/org";
 
 /**
@@ -51,12 +52,9 @@ export default function SiteHeader() {
 
       <NavLinks />
 
-      <Link
-        href="/register/indrajatra"
-        className="shrink-0 rounded-full bg-lun px-5 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-haku transition-colors hover:bg-lun-bright focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lun sm:px-6 sm:text-sm"
-      >
+      <GlowButton href="/register/indrajatra" className="shrink-0">
         Register
-      </Link>
+      </GlowButton>
     </header>
   );
 }
