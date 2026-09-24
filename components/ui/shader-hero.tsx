@@ -88,7 +88,7 @@ export default function ShaderHero() {
           exactly what makes it unreliable to read against. */}
       <div className="absolute inset-0 bg-gradient-to-t from-haku via-haku/45 to-haku/70" />
 
-      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 sm:px-8 bg-gradient-to-r from-haku to-haku/80 backdrop-blur-sm border-b-4 border-patasi">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between gap-4 px-5 py-3 sm:px-8 bg-gradient-to-r from-haku to-haku/80 backdrop-blur-sm border-b-4 border-patasi">
         <Link href="/" className="flex items-center gap-3" aria-label={`${ORG.name} home`}>
           <Image
             src="/images/newah-full-logo-transparent.png"
@@ -96,15 +96,15 @@ export default function ShaderHero() {
             width={512}
             height={512}
             priority
-            className="size-16 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-20"
+            className="size-12 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-16"
           />
-          <span className="hidden text-lg font-semibold leading-tight text-lun sm:block">
+          <span className="hidden text-sm font-semibold leading-tight text-lun sm:block">
             {ORG.shortName}
-            <span className="block text-base font-normal text-lun/80">Northern California</span>
+            <span className="block text-xs font-normal text-lun/80">Northern California</span>
           </span>
         </Link>
 
-        <nav className="flex items-center gap-2 text-base sm:gap-3">
+        <nav className="flex items-center gap-2 text-sm sm:gap-3">
           {[
             ["Our year", "#our-year"],
             ["This year", "#this-year"],
@@ -113,7 +113,7 @@ export default function ShaderHero() {
             <a
               key={href}
               href={href}
-              className="px-3 py-2 font-medium text-lun/80 transition-colors hover:bg-lun/20 hover:text-lun rounded-full"
+              className="px-3 py-1 font-medium text-lun/80 transition-colors hover:bg-lun/20 hover:text-lun rounded-full"
             >
               {label}
             </a>
@@ -122,26 +122,15 @@ export default function ShaderHero() {
 
         <Link
           href="/register/indrajatra"
-          className="rounded-full bg-lun px-8 py-3 text-base font-semibold text-haku transition-colors hover:bg-lun/90"
+          className="rounded-full bg-lun px-6 py-2 text-sm font-semibold text-haku transition-colors hover:bg-lun/90"
         >
           Register
         </Link>
       </header>
 
-      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 min-h-screen items-center bg-haku gap-8 lg:gap-12">
+      <main className="relative z-20 grid grid-cols-1 lg:grid-cols-2 pt-24 pb-32 lg:pb-40 items-center bg-haku gap-8 lg:gap-12 min-h-screen">
         <div className="flex flex-col justify-center px-8 sm:px-12 pt-0 pb-16 sm:pb-20">
-          <motion.div
-            className="mb-6 inline-flex items-center gap-0 rounded-lg border border-white/20 bg-black/40 px-2.5 py-1 backdrop-blur-sm"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-          >
-            <span className="text-[11px] font-medium tracking-wide text-white/90">
-              नेपाल सम्बत् {NEPAL_SAMBAT.year} · Nepal Sambat {NEPAL_SAMBAT.year}
-            </span>
-          </motion.div>
-
-          <motion.h1
+<motion.h1
             className="mb-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -185,7 +174,7 @@ export default function ShaderHero() {
         </div>
 
         <motion.div
-          className="hidden lg:flex lg:items-stretch lg:justify-center relative h-full"
+          className="hidden lg:flex lg:items-stretch lg:justify-center relative"
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
@@ -195,7 +184,8 @@ export default function ShaderHero() {
             alt="Newah community"
             width={600}
             height={500}
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-auto object-cover rounded-lg"
+            style={{ mixBlendMode: "screen" }}
             priority
           />
         </motion.div>
