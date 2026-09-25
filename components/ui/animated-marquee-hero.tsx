@@ -49,6 +49,8 @@ interface AnimatedMarqueeHeroProps {
   secondaryText?: string;
   secondaryHref?: string;
   images: MarqueeImage[];
+  /** The proof strip between the buttons and the photographs. */
+  stats?: ReadonlyArray<{ value: string; label: string }>;
   className?: string;
 }
 
@@ -70,6 +72,7 @@ export function AnimatedMarqueeHero({
   secondaryText,
   secondaryHref,
   images,
+  stats,
   className,
 }: AnimatedMarqueeHeroProps) {
   const reduceMotion = usePrefersReducedMotion();
@@ -169,6 +172,45 @@ export function AnimatedMarqueeHero({
             </Link>
           )}
         </motion.div>
+
+        {/* The proof strip.
+            Between the buttons and the photographs there was nothing, on a
+            hero tall enough that the gap read as unfinished rather than
+            spacious. A community landing earns attention with evidence it is
+            real, so the gap carries four facts — every one of them already
+            true elsewhere in this codebase, none of them invented to fill a
+            layout.
+
+            Tabular figures: the numbers sit in a row, and proportional digits
+            would leave them visibly unaligned. */}
+        {stats && stats.length > 0 && (
+          <motion.dl
+            initial="hidden"
+            animate="show"
+            variants={{ hidden: {}, show: { transition: { delayChildren: 0.75, staggerChildren: 0.06 } } }}
+            /* Two up on a phone, one row above it. Wrapping a flex row put
+               each fact on its own line at 390px, which made the strip taller
+               than the headline and pushed the photographs off the screen. */
+            className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:mt-14 sm:flex sm:flex-wrap sm:items-start sm:justify-center sm:gap-x-14"
+          >
+            {stats.map((stat) => (
+              <motion.div key={stat.label} variants={FADE_IN} className="text-center sm:min-w-[7rem]">
+                <dt className="sr-only">{stat.label}</dt>
+                <dd>
+                  <span className="block font-bold tabular-nums text-2xl text-lun sm:text-3xl">
+                    {stat.value}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="mt-1.5 block text-[0.6875rem] font-medium uppercase leading-snug tracking-[0.16em] text-white/55"
+                  >
+                    {stat.label}
+                  </span>
+                </dd>
+              </motion.div>
+            ))}
+          </motion.dl>
+        )}
       </div>
 
       <div className="pointer-events-none relative h-60 w-full shrink-0 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)] md:h-80">
