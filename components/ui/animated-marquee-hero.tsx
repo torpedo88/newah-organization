@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
+import AstaMangalWatermark from "@/components/ui/asta-mangal-watermark";
 
 /**
  * Marquee hero, from 21st.dev, rebuilt for this chapter.
@@ -100,6 +101,8 @@ export function AnimatedMarqueeHero({
         className,
       )}
     >
+      <AstaMangalWatermark />
+
       {/* A little depth under the headline, in the sari's red. Flat black
           behind a black-and-red palette reads as an unstyled page. */}
       <div

@@ -11,6 +11,9 @@ import { ORG, formattedAddress } from "@/lib/legal/org";
 import { EVENT, FESTIVALS, NEPAL_SAMBAT } from "@/lib/constants/event";
 import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/about";
 import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
+import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
+import LatticeDivider from "@/components/ui/lattice-divider";
+import WindowMark from "@/components/ui/window-mark";
 
 export const metadata: Metadata = {
   title: `${ORG.name} — ${ORG.chapter}`,
@@ -43,7 +46,9 @@ function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={`mx-auto w-full max-w-5xl px-5 sm:px-8 ${className}`}>
+    // scroll-mt clears the fixed header: without it every in-page link lands
+    // with its own heading hidden behind the bar it just scrolled under.
+    <section id={id} className={`mx-auto w-full max-w-5xl scroll-mt-28 px-5 sm:px-8 ${className}`}>
       {children}
     </section>
   );
@@ -256,6 +261,76 @@ export default function Home() {
             </div>
           </div>
         </Section>
+
+        {/* Craft --------------------------------------------------------- */}
+        <LatticeDivider className="my-4 text-lun" />
+
+        <Section className="py-16" id="craft">
+          <Heading kicker="Newah craft">What the valley built, and why</Heading>
+          <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+            A Newah house is read from its windows. Each floor takes a different one, and each
+            one does a job before it is beautiful.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {NEWAR_WINDOWS.map((w) => (
+              <div
+                key={w.name}
+                className="rounded-2xl border-2 border-white/12 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 transition-colors hover:border-lun/40"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="text-lg font-bold text-white">{w.name}</h3>
+                  <span lang="ne" className="text-sm text-lun">
+                    {w.devanagari}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">{w.what}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-lun">
+            Three the valley knows by name
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+            {FAMOUS_WINDOWS.map((w) => (
+              <li key={w.name} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <p className="font-semibold text-white">{w.name}</p>
+                <p className="mt-0.5 text-xs uppercase tracking-wide text-white/40">{w.where}</p>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">{w.what}</p>
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        {/* Asta Mangal --------------------------------------------------- */}
+        <Section className="py-16" id="asta-mangal">
+          <div className="grid gap-10 md:grid-cols-[auto_1fr] md:items-start">
+            <WindowMark className="size-24 text-lun/80 md:size-32" />
+            <div>
+              <Heading kicker="Asta Mangal">The eight auspicious signs</Heading>
+              <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+                Carved over doorways, beaten into metal, drawn in colour at the threshold on a
+                festival morning. They are shared across Buddhism, Hinduism and Jainism, and they
+                are signs rather than ornament &mdash; so they are named here, not scattered
+                across the page.
+              </p>
+              <dl className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                {ASTA_MANGAL.map((sign) => (
+                  <div key={sign.name} className="border-l-2 border-patasi/50 pl-4">
+                    <dt className="font-semibold text-white">
+                      {sign.name}{" "}
+                      <span className="font-normal text-lun">&mdash; {sign.english}</span>
+                    </dt>
+                    <dd className="mt-0.5 text-sm leading-relaxed text-white/60">{sign.meaning}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </Section>
+
+        <LatticeDivider className="my-4 text-lun" />
 
         {/* Who runs it -------------------------------------------------- */}
         <Section className="py-16" id="board">
