@@ -8,7 +8,7 @@ import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import PhotoCredits from "@/components/ui/photo-credits";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG, formattedAddress } from "@/lib/legal/org";
-import { EVENT, FESTIVALS, NEPAL_SAMBAT } from "@/lib/constants/event";
+import { EVENT, FESTIVALS } from "@/lib/constants/event";
 import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/about";
 import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
 import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
@@ -62,24 +62,6 @@ function Heading({ kicker, children }: { kicker: string; children: React.ReactNo
   );
 }
 
-/**
- * The four facts under the hero.
- *
- * Every one is already asserted elsewhere: the era and its year from
- * NEPAL_SAMBAT, the quarter century and the five chapters from the paragraph
- * further down this page, the 501(c)(3) status from ORG and gated on the same
- * switch that governs every other tax statement on the site. Nothing here is a
- * number chosen because it looked good in a row.
- */
-const HERO_STATS = [
-  { value: `NS ${NEPAL_SAMBAT.year}`, label: "The era we count by" },
-  { value: "25 years", label: "Serving the diaspora" },
-  { value: "5 chapters", label: "Across the United States" },
-  ...(ORG.showTaxDeductibility
-    ? [{ value: "501(c)(3)", label: "Non-profit, tax-exempt" }]
-    : []),
-] as const;
-
 export default function Home() {
   const hasWhen = EVENT.date !== "";
   const hasWhere = EVENT.venue !== "" || EVENT.city !== "";
@@ -101,7 +83,10 @@ export default function Home() {
         secondaryText="See our year"
         secondaryHref="#our-year"
         images={COMMUNITY_PHOTOS}
-        stats={HERO_STATS}
+        backdrop={{
+          src: "/images/hero-lakhey-mask.jpg",
+          alt: "A Lakhey mask in red, green and gold, with its white mane, at the chapter's Indra Jatra in Berkeley",
+        }}
       />
 
         {/* Who we are ------------------------------------------------- */}
