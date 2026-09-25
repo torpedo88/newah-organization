@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/ui/site-header";
 import LatticeDivider from "@/components/ui/lattice-divider";
-import WindowMark from "@/components/ui/window-mark";
 import { ORG } from "@/lib/legal/org";
 import {
   CRAFTS,
@@ -82,12 +81,11 @@ function FactCards({ facts, columns = "sm:grid-cols-2" }: { facts: Fact[]; colum
 
 export default function NewahPage() {
   return (
-    <main className="min-h-screen bg-haku pt-28">
+    <main className="min-h-screen pt-28">
       <SiteHeader />
 
       <div className="mx-auto w-full max-w-5xl px-5 pb-6 pt-8 sm:px-8">
-        <div className="flex items-start gap-6">
-          <WindowMark className="hidden size-20 shrink-0 text-lun/70 sm:block" />
+        <div>
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-lun">
               Newa&#x304;h

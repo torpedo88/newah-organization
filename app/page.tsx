@@ -13,7 +13,6 @@ import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/a
 import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
 import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
 import LatticeDivider from "@/components/ui/lattice-divider";
-import WindowMark from "@/components/ui/window-mark";
 
 export const metadata: Metadata = {
   title: `${ORG.name} — ${ORG.chapter}`,
@@ -86,7 +85,7 @@ export default function Home() {
   const hasWhere = EVENT.venue !== "" || EVENT.city !== "";
 
   return (
-    <main className="bg-haku">
+    <main>
       <SiteHeader />
       <AnimatedMarqueeHero
         title={
@@ -305,8 +304,7 @@ export default function Home() {
 
         {/* Asta Mangal --------------------------------------------------- */}
         <Section className="py-16" id="asta-mangal">
-          <div className="grid gap-10 md:grid-cols-[auto_1fr] md:items-start">
-            <WindowMark className="size-24 text-lun/80 md:size-32" />
+          <div>
             <div>
               <Heading kicker="Asta Mangal">The eight auspicious signs</Heading>
               <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
