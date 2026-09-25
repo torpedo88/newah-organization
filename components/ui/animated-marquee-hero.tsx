@@ -97,7 +97,7 @@ export function AnimatedMarqueeHero({
         // which puts the photographs across the paragraph and the buttons on
         // any short window; padding the text off an absolute band then pushes
         // it up under the fixed header instead. As rows, neither can happen.
-        "relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-haku pt-28 text-center",
+        "relative flex min-h-[100dvh] w-full flex-col overflow-hidden pt-28 text-center",
         className,
       )}
     >

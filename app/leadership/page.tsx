@@ -87,7 +87,7 @@ function Section({
 
 export default function LeadershipPage() {
   return (
-    <main className="min-h-screen bg-haku pt-28">
+    <main className="min-h-screen pt-28">
       <SiteHeader />
 
       <div className="mx-auto w-full max-w-5xl px-5 pb-4 pt-6 sm:px-8">
