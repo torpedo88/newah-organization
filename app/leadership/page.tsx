@@ -72,7 +72,7 @@ function Section({
   columns?: string;
 }) {
   return (
-    <section className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8">
+    <section className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 py-12 sm:px-8">
       <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-lun">{kicker}</p>
       <h2 className="text-2xl font-bold text-white sm:text-3xl">{title}</h2>
       <p className="mt-3 max-w-2xl leading-relaxed text-white/70">{blurb}</p>
@@ -90,7 +90,7 @@ export default function LeadershipPage() {
     <main className="min-h-screen pt-28">
       <SiteHeader />
 
-      <div className="mx-auto w-full max-w-5xl px-5 pb-4 pt-6 sm:px-8">
+      <div className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 pb-4 pt-6 sm:px-8">
         <h1 className="text-3xl font-bold text-white sm:text-4xl">Who runs the chapter</h1>
         <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-white/75">
           The officers, members and advisors of the {ORG.chapter}, for the {BOARD_TERM} term.
@@ -120,7 +120,7 @@ export default function LeadershipPage() {
         columns="sm:grid-cols-2 lg:grid-cols-3"
       />
 
-      <div className="mx-auto w-full max-w-5xl px-5 pb-16 sm:px-8">
+      <div className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 pb-16 sm:px-8">
         <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm leading-relaxed text-white/55">
           If you are listed here and would like your entry changed or removed, email{" "}
           <a

@@ -170,7 +170,12 @@ export function AnimatedMarqueeHero({
           below, where the same picture appears with its alt text. */}
       <span className="sr-only">{backdrop?.alt}</span>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-5 py-10 sm:px-8">
+      {/* Not the centred page container. Centring a fixed column left ~490px
+          of nothing down the left of a 2000px screen while the header's own
+          logo sat hard against the edge, so the hero read as indented. The
+          copy lines up with the header instead, and max-w-2xl on the
+          paragraph keeps the measure readable however wide the screen is. */}
+      <div className="relative z-10 flex w-full flex-1 flex-col justify-center px-5 py-10 sm:px-8 lg:px-12">
         {/* Optional. It is off on the landing page: the header sets the
             organization's name in full a few pixels above, and a pill
             repeating it word for word is the same sentence twice. */}
