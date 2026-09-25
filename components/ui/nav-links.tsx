@@ -8,12 +8,17 @@ import Button3D from "@/components/ui/button-3d";
  * Each is a Button3D: the pill fills, its outline draws itself round the
  * label, the characters rise in sequence, and a few short rays flick outward
  * on press.
+ *
+ * The section links are "/#id", not "#id". The header now renders on pages
+ * other than the landing page, where a bare hash would look for a section that
+ * is not there and do nothing.
  */
 
 const LINKS: ReadonlyArray<readonly [label: string, href: string]> = [
-  ["Our year", "#our-year"],
-  ["Upcoming", "#upcoming"],
-  ["Contact", "#contact"],
+  ["Our year", "/#our-year"],
+  ["Upcoming", "/#upcoming"],
+  ["Board", "/leadership"],
+  ["Contact", "/#contact"],
 ];
 
 export default function NavLinks() {
