@@ -40,7 +40,12 @@ export default function PhotoCredits({ className = "" }: { className?: string })
         </span>
       ))}
       , via Wikimedia Commons.
-      {SYMBOL_CREDITS.length > 0 && (
+      {/* The Asta Mangal drawings are not rendered while the hero carries a
+          photograph, and a credit for something nobody can see is noise rather
+          than attribution. SYMBOL_CREDITS and the files are kept: restore this
+          the moment the watermark goes back, because CC BY-SA asks for the
+          credit whenever the work is shown. */}
+      {false && SYMBOL_CREDITS.length > 0 && (
         <>
           {" "}
           Asta Mangal drawings{" "}

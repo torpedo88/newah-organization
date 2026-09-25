@@ -52,6 +52,8 @@ interface AnimatedMarqueeHeroProps {
   images: MarqueeImage[];
   /** The proof strip between the buttons and the photographs. */
   stats?: ReadonlyArray<{ value: string; label: string }>;
+  /** The photograph behind the copy, anchored right. */
+  backdrop?: { src: string; alt: string };
   className?: string;
 }
 
@@ -74,6 +76,7 @@ export function AnimatedMarqueeHero({
   secondaryHref,
   images,
   stats,
+  backdrop,
   className,
 }: AnimatedMarqueeHeroProps) {
   const reduceMotion = usePrefersReducedMotion();
@@ -97,20 +100,77 @@ export function AnimatedMarqueeHero({
         // which puts the photographs across the paragraph and the buttons on
         // any short window; padding the text off an absolute band then pushes
         // it up under the fixed header instead. As rows, neither can happen.
-        "relative flex min-h-[100dvh] w-full flex-col overflow-hidden pt-28 text-center",
+        "relative flex min-h-[100dvh] w-full flex-col overflow-hidden pt-28",
         className,
       )}
     >
-      <AstaMangalWatermark />
+      {/* The photograph, anchored right, with the copy reading over the dark
+          side of it — the share card's composition, which is where this came
+          from.
 
-      {/* A little depth under the headline, in the sari's red. Flat black
-          behind a black-and-red palette reads as an unstyled page. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,rgba(126,10,28,0.55)_0%,transparent_60%)]"
-      />
+          The eight signs step aside when there is a photograph: two things
+          competing for the space behind the same words is one too many. */}
+      {backdrop ? (
+        <>
+          {/* A panel on the right, not the whole frame. Full-bleed made the
+              mask enormous and painted over the haku patasi weave, which is the
+              cloth the whole site is printed on and should not disappear
+              behind one photograph.
 
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-10">
+              The file is cropped to the mask, its mane and the costume, and
+              nothing else. The full photograph put bystanders in the hero,
+              including a child, and a face at hero scale is a different thing
+              from a face in a passing band of festival pictures — nobody at a
+              public festival expects to become the front page.
+
+              A portrait crop in a tall panel also behaves: the source is
+              narrower than the panel, so cover trims the top and bottom and
+              leaves the mask whole. Cropping wide and then covering a narrow
+              panel magnifies twice, which is how an earlier attempt ended up
+              with half a mask filling the screen. */}
+          <div
+            aria-hidden
+            className="photo-bleed pointer-events-none absolute bottom-0 right-0 top-16 w-[66%] sm:bottom-6 sm:right-[2%] sm:top-20 sm:w-[38%]"
+          >
+            <Image
+              src={backdrop.src}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 640px) 62vw, 44vw"
+              /* contain, not cover: the crop is tight to the mask, and cover
+                 in a full-height panel scales it until it fills the screen,
+                 which is how it got too big. Contained it stays whole, and
+                 photo-bleed on the panel takes the edges of the box to nothing
+                 so it is still part of the page rather than a rectangle laid
+                 on top of it. */
+              className="object-contain object-bottom saturate-[0.92] sm:object-right-bottom"
+            />
+          </div>
+          {/* Steeper on a phone, where the copy runs the full width and needs
+              the whole frame behind it darkened rather than just the left. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(14,14,17,0.90)_0%,rgba(14,14,17,0.82)_58%,rgba(14,14,17,0.64)_100%)] sm:bg-[linear-gradient(100deg,rgba(14,14,17,0.97)_34%,rgba(14,14,17,0.80)_56%,rgba(14,14,17,0.42)_78%,rgba(14,14,17,0.22)_100%)]"
+          />
+        </>
+      ) : (
+        <>
+          <AstaMangalWatermark />
+          {/* A little depth under the headline, in the sari's red. Flat black
+              behind a black-and-red palette reads as an unstyled page. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,rgba(126,10,28,0.55)_0%,transparent_60%)]"
+          />
+        </>
+      )}
+
+      {/* The photograph is decoration; its subject is described in the band
+          below, where the same picture appears with its alt text. */}
+      <span className="sr-only">{backdrop?.alt}</span>
+
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-5 py-10 sm:px-8">
         {/* Optional. It is off on the landing page: the header sets the
             organization's name in full a few pixels above, and a pill
             repeating it word for word is the same sentence twice. */}
@@ -129,7 +189,7 @@ export function AnimatedMarqueeHero({
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
-          className="text-balance text-[2.6rem] font-bold leading-[1.05] tracking-[-0.03em] text-white sm:text-6xl md:text-7xl"
+          className="max-w-[16ch] text-balance text-[2.6rem] font-bold leading-[1.05] tracking-[-0.03em] text-white sm:text-6xl md:text-7xl"
         >
           {typeof title === "string"
             ? title.split(" ").map((word, i) => (
@@ -145,7 +205,7 @@ export function AnimatedMarqueeHero({
           animate="show"
           variants={FADE_IN}
           transition={{ delay: 0.5 }}
-          className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-white/70 sm:text-xl"
+          className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-white/75 sm:text-xl"
         >
           {description}
         </motion.p>
@@ -155,7 +215,7 @@ export function AnimatedMarqueeHero({
           animate="show"
           variants={FADE_IN}
           transition={{ delay: 0.6 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-4"
+          className="mt-9 flex flex-wrap items-center gap-4"
         >
           <Link
             href={ctaHref}
@@ -194,10 +254,10 @@ export function AnimatedMarqueeHero({
             /* Two up on a phone, one row above it. Wrapping a flex row put
                each fact on its own line at 390px, which made the strip taller
                than the headline and pushed the photographs off the screen. */
-            className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:mt-14 sm:flex sm:flex-wrap sm:items-start sm:justify-center sm:gap-x-14"
+            className="mt-11 grid grid-cols-2 gap-x-6 gap-y-6 sm:mt-12 sm:flex sm:flex-wrap sm:items-start sm:gap-x-12"
           >
             {stats.map((stat) => (
-              <motion.div key={stat.label} variants={FADE_IN} className="text-center sm:min-w-[7rem]">
+              <motion.div key={stat.label} variants={FADE_IN} className="sm:min-w-[7rem]">
                 <dt className="sr-only">{stat.label}</dt>
                 <dd>
                   <span className="block font-bold tabular-nums text-2xl text-lun sm:text-3xl">
