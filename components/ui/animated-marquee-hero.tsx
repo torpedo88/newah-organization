@@ -41,7 +41,7 @@ export type MarqueeImage = {
 };
 
 interface AnimatedMarqueeHeroProps {
-  tagline: string;
+  tagline?: string;
   title: React.ReactNode;
   description: string;
   ctaText: string;
@@ -105,14 +105,19 @@ export function AnimatedMarqueeHero({
       />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-10">
-        <motion.p
-          initial="hidden"
-          animate="show"
-          variants={FADE_IN}
-          className="mb-6 inline-block max-w-[92vw] text-balance rounded-full border border-lun/40 bg-lun/10 px-5 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-lun backdrop-blur-sm sm:text-xs"
-        >
-          {tagline}
-        </motion.p>
+        {/* Optional. It is off on the landing page: the header sets the
+            organization's name in full a few pixels above, and a pill
+            repeating it word for word is the same sentence twice. */}
+        {tagline && (
+          <motion.p
+            initial="hidden"
+            animate="show"
+            variants={FADE_IN}
+            className="mb-6 inline-block max-w-[92vw] text-balance rounded-full border border-lun/40 bg-lun/10 px-5 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-lun backdrop-blur-sm sm:text-xs"
+          >
+            {tagline}
+          </motion.p>
+        )}
 
         <motion.h1
           initial="hidden"
