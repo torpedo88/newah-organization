@@ -60,23 +60,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        {/*
-          Noto Sans Newa, for text in the Newa script (Prachalit Nepal,
-          Unicode U+11400-U+1147F). next/font/google does not carry this
-          family, so it is loaded from the stylesheet directly.
-
-          Ranjana is a different script and is NOT encoded in Unicode at all —
-          the standard's own Blocks.txt has no entry for it — so Ranjana can
-          only ever be artwork on this site, never text.
-        */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="flex min-h-full flex-col bg-haku">
         {/*
           The haku patasi weave, under every page.

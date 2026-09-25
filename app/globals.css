@@ -262,9 +262,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-
-@utility font-newa {
-  /* Text in the Newa script. Without this the codepoints fall back to a face
-     that has no Newa glyphs and render as tofu. */
-  font-family: "Noto Sans Newa", system-ui, sans-serif;
-}
