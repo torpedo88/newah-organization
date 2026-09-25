@@ -7,7 +7,6 @@ import "@/lib/env";
 import { Geist, Geist_Mono } from "next/font/google";
 import { siteUrl } from "@/lib/site";
 import { ORG } from "@/lib/legal/org";
-import { EVENT } from "@/lib/constants/event";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,9 +20,15 @@ const geistMono = Geist_Mono({
 });
 
 const TITLE = `${ORG.name} \u2014 ${ORG.chapter}`;
+
+// The site's own description, not the event's. This is what a link to the root
+// shows when it is shared, and the root is the organization — a share of
+// noancc.org that reads "Register for Indra Jatra" describes one evening of a
+// chapter that has been going for a quarter of a century. The registration
+// page carries the event wording, and its own card.
 const DESCRIPTION =
-  `Register for ${EVENT.name} with the ${ORG.chapter} of the ${ORG.name}. ` +
-  `${EVENT.promise} ${EVENT.fundName}.`;
+  `The ${ORG.chapter} of the ${ORG.name}: keeping Newah language, festivals ` +
+  `and craft alive on this side of the world.`;
 
 export const metadata: Metadata = {
   // Without this, the Open Graph image resolves relative and link previews
