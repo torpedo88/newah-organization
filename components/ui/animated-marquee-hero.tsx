@@ -130,7 +130,7 @@ export function AnimatedMarqueeHero({
               with half a mask filling the screen. */}
           <div
             aria-hidden
-            className="photo-bleed pointer-events-none absolute inset-y-0 right-0 w-[70%] sm:right-[1%] sm:w-[42%]"
+            className="photo-bleed pointer-events-none absolute inset-y-0 right-0 w-[72%] rotate-[3deg] sm:right-[1%] sm:w-[48%]"
           >
             <Image
               src={backdrop.src}
@@ -138,19 +138,13 @@ export function AnimatedMarqueeHero({
               fill
               priority
               sizes="(max-width: 640px) 62vw, 44vw"
-              /* contain, not cover: the crop is tight to the mask, and cover
-                 crops a portrait source in a panel this shape, which takes the
-                 sides off the mask.
-
-                 The panel runs the full height of the hero. Insetting it left
-                 a straight edge where the fade began in mid-air, which read as
-                 a box — the thing the fade is there to avoid. Full height, the
-                 fade has room to finish.
-
-                 The tilt is three degrees. It is enough to look placed rather
-                 than pasted, and the fade hides what the rotation does to the
-                 corners. */
-              className="rotate-[3deg] object-contain object-center saturate-[0.92]"
+              /* cover, and the tilt is on the panel rather than on this.
+                 contain leaves the photograph a rectangle inside the panel,
+                 and rotating that rectangle put its own straight edges outside
+                 the faded area — which is where the visible borders came from.
+                 Filling the panel means the only edges are the panel's, and
+                 those are masked; rotating the panel turns the mask with it. */
+              className="object-cover object-center saturate-[0.92]"
             />
           </div>
           {/* Steeper on a phone, where the copy runs the full width and needs
