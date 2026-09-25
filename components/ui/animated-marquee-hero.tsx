@@ -130,7 +130,7 @@ export function AnimatedMarqueeHero({
               with half a mask filling the screen. */}
           <div
             aria-hidden
-            className="photo-bleed pointer-events-none absolute bottom-0 right-0 top-16 w-[66%] sm:bottom-6 sm:right-[2%] sm:top-20 sm:w-[38%]"
+            className="photo-bleed pointer-events-none absolute inset-y-0 right-0 w-[70%] sm:right-[1%] sm:w-[42%]"
           >
             <Image
               src={backdrop.src}
@@ -139,12 +139,18 @@ export function AnimatedMarqueeHero({
               priority
               sizes="(max-width: 640px) 62vw, 44vw"
               /* contain, not cover: the crop is tight to the mask, and cover
-                 in a full-height panel scales it until it fills the screen,
-                 which is how it got too big. Contained it stays whole, and
-                 photo-bleed on the panel takes the edges of the box to nothing
-                 so it is still part of the page rather than a rectangle laid
-                 on top of it. */
-              className="object-contain object-bottom saturate-[0.92] sm:object-right-bottom"
+                 crops a portrait source in a panel this shape, which takes the
+                 sides off the mask.
+
+                 The panel runs the full height of the hero. Insetting it left
+                 a straight edge where the fade began in mid-air, which read as
+                 a box — the thing the fade is there to avoid. Full height, the
+                 fade has room to finish.
+
+                 The tilt is three degrees. It is enough to look placed rather
+                 than pasted, and the fade hides what the rotation does to the
+                 corners. */
+              className="rotate-[3deg] object-contain object-center saturate-[0.92]"
             />
           </div>
           {/* Steeper on a phone, where the copy runs the full width and needs
