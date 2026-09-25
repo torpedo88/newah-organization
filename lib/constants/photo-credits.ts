@@ -48,3 +48,37 @@ export const PHOTO_CREDITS: PhotoCredit[] = [
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Start_of_Indra_Jatra.jpg",
   },
 ];
+
+/**
+ * The Asta Mangal drawings.
+ *
+ * Separate from PHOTO_CREDITS because these are drawings, not photographs, and
+ * because share-alike has a consequence the photographs do not carry: the
+ * files in public/images/asta-mangal are served exactly as downloaded. The
+ * gold and the fade in the hero are CSS on top of them. Recolouring the files
+ * themselves would make an adaptation, and an adaptation of a CC BY-SA work
+ * has to be released under CC BY-SA too.
+ */
+export const SYMBOL_CREDITS: PhotoCredit[] = [
+  {
+    file: "asta-mangal (parasol, conch, banner, vase, lotus, wheel)",
+    photographer: "Christopher J. Fynn",
+    licence: "CC BY-SA 3.0/4.0",
+    licenceUrl: "https://creativecommons.org/licenses/by-sa/4.0",
+    sourceUrl: "https://commons.wikimedia.org/wiki/Category:Ashtamangala",
+  },
+  {
+    file: "asta-mangal (golden fish)",
+    photographer: "Nick Terazzi",
+    licence: "CC BY-SA 3.0",
+    licenceUrl: "https://creativecommons.org/licenses/by-sa/3.0",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:8signs-SERNYA.svg",
+  },
+  {
+    file: "asta-mangal (endless knot)",
+    photographer: "Iketsi",
+    licence: "Public domain",
+    licenceUrl: "https://en.wikipedia.org/wiki/Public_domain",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Endless_knot_squared.svg",
+  },
+];
