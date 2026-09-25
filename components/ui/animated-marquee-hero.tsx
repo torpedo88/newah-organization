@@ -8,6 +8,11 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
 import AstaMangalWatermark from "@/components/ui/asta-mangal-watermark";
+import {
+  HERO_HEADLINE_NEPAL_BHASA,
+  NEWA_ENDONYM,
+  NEWA_ENDONYM_LATIN,
+} from "@/lib/constants/newa-script";
 
 /**
  * Marquee hero, from 21st.dev, rebuilt for this chapter.
@@ -189,6 +194,42 @@ export function AnimatedMarqueeHero({
             {tagline}
           </motion.p>
         )}
+
+        {/* The script line.
+            The endonym, in Newa, with the romanisation beside it for anyone
+            whose device has not loaded the font. lang is new-Newa: Nepal
+            Bhasa written in Newa, which is what tells a screen reader it is
+            not English.
+
+            If the board supplies the headline in Nepal Bhasa it renders here
+            instead, above the English. Until then this is the one string that
+            can be cited rather than composed. */}
+        <motion.p
+          initial="hidden"
+          animate="show"
+          variants={FADE_IN}
+          className="mb-5 flex items-baseline gap-3"
+        >
+          <span
+            lang={
+              HERO_HEADLINE_NEPAL_BHASA.text && HERO_HEADLINE_NEPAL_BHASA.script === "devanagari"
+                ? "new-Deva"
+                : "new-Newa"
+            }
+            className={
+              HERO_HEADLINE_NEPAL_BHASA.text && HERO_HEADLINE_NEPAL_BHASA.script === "devanagari"
+                ? "text-2xl leading-none text-lun sm:text-3xl"
+                : "font-newa text-2xl leading-none text-lun sm:text-3xl"
+            }
+          >
+            {HERO_HEADLINE_NEPAL_BHASA.text || NEWA_ENDONYM}
+          </span>
+          {!HERO_HEADLINE_NEPAL_BHASA.text && (
+            <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-white/55">
+              {NEWA_ENDONYM_LATIN}
+            </span>
+          )}
+        </motion.p>
 
         <motion.h1
           initial="hidden"
