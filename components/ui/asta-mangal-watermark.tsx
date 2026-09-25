@@ -28,7 +28,11 @@ export default function AstaMangalWatermark() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 top-[18%] z-0 flex select-none items-center justify-center gap-[6vw] px-4 opacity-[0.06] sm:top-[22%] sm:gap-[5vw]"
+      /* Centred in the hero's content area rather than pinned near the top.
+         The bounds are the header above and the photo band below — inset-0
+         would centre it against the whole section and drop the row behind the
+         photographs, where it is neither visible nor doing anything. */
+      className="pointer-events-none absolute inset-x-0 bottom-60 top-28 z-0 flex select-none items-center justify-center gap-[6vw] px-4 opacity-[0.06] md:bottom-80 sm:gap-[5vw]"
       style={{
         // Fades the row out at both ends so it reads as a watermark rather
         // than a strip of clip art that stops.
