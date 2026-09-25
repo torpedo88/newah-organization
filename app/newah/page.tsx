@@ -47,7 +47,7 @@ function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className="mx-auto w-full max-w-5xl scroll-mt-28 px-5 py-14 sm:px-8">
+    <section id={id} className="mx-auto w-full max-w-6xl 2xl:max-w-7xl scroll-mt-28 px-5 py-14 sm:px-8">
       <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-lun">{kicker}</p>
       <h2 className="text-2xl font-bold text-white sm:text-3xl">{title}</h2>
       {lede && <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-white/70">{lede}</p>}
@@ -84,7 +84,7 @@ export default function NewahPage() {
     <main className="min-h-screen pt-28">
       <SiteHeader />
 
-      <div className="mx-auto w-full max-w-5xl px-5 pb-6 pt-8 sm:px-8">
+      <div className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 pb-6 pt-8 sm:px-8">
         <div>
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-lun">
@@ -232,7 +232,7 @@ export default function NewahPage() {
 
       <LatticeDivider className="my-6" />
 
-      <section className="mx-auto w-full max-w-5xl px-5 py-14 sm:px-8">
+      <section className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 py-14 sm:px-8">
         <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-lun">Where this comes from</h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
           Written from published references rather than from memory, and listed here so anyone can

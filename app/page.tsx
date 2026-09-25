@@ -47,7 +47,7 @@ function Section({
   return (
     // scroll-mt clears the fixed header: without it every in-page link lands
     // with its own heading hidden behind the bar it just scrolled under.
-    <section id={id} className={`mx-auto w-full max-w-5xl scroll-mt-28 px-5 sm:px-8 ${className}`}>
+    <section id={id} className={`mx-auto w-full max-w-6xl 2xl:max-w-7xl scroll-mt-28 px-5 sm:px-8 ${className}`}>
       {children}
     </section>
   );
@@ -370,7 +370,7 @@ export default function Home() {
         </Section>
 
         {/* Footer -------------------------------------------------------- */}
-        <footer className="mx-auto w-full max-w-5xl px-5 pb-14 sm:px-8">
+        <footer className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 pb-14 sm:px-8">
           <div className="border-t border-white/10 pt-7">
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/55">
               <Link href="/register/indrajatra" className="underline-offset-4 hover:text-white/85 hover:underline">Register</Link>
