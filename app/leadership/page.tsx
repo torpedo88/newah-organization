@@ -49,7 +49,7 @@ function PersonCard({ person, prominent = false }: { person: Person; prominent?:
         <span className="block truncate font-semibold text-white">{person.name}</span>
         {person.role && <span className="block text-sm text-lun">{person.role}</span>}
         {person.city && (
-          <span className="block text-xs uppercase tracking-wide text-white/40">{person.city}</span>
+          <span className="block text-xs uppercase tracking-wide text-white/55">{person.city}</span>
         )}
       </span>
     </div>
