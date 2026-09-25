@@ -148,7 +148,7 @@ export default function NewahPage() {
             >
               <h3 className="text-lg font-bold text-white">{festival.name}</h3>
               <p className="mt-0.5 text-sm font-medium text-patasi-bright">{festival.also}</p>
-              <p className="mt-1 text-xs uppercase tracking-wide text-white/40">{festival.when}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-white/55">{festival.when}</p>
               <p className="mt-3 text-sm leading-relaxed text-white/70">{festival.what}</p>
             </div>
           ))}
@@ -205,7 +205,7 @@ export default function NewahPage() {
           {FAMOUS_WINDOWS.map((window) => (
             <li key={window.name} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
               <p className="font-semibold text-white">{window.name}</p>
-              <p className="mt-0.5 text-xs uppercase tracking-wide text-white/40">{window.where}</p>
+              <p className="mt-0.5 text-xs uppercase tracking-wide text-white/55">{window.where}</p>
               <p className="mt-2 text-sm leading-relaxed text-white/65">{window.what}</p>
             </li>
           ))}

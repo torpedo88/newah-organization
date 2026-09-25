@@ -187,7 +187,7 @@ export default function Home() {
                   <div className="size-2 rounded-full bg-patasi opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
                 <p className="mt-1 text-sm font-medium text-patasi">{f.also}</p>
-                <p className="mt-2 text-xs uppercase tracking-wide text-white/40">{f.when}</p>
+                <p className="mt-2 text-xs uppercase tracking-wide text-white/55">{f.when}</p>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">{f.what}</p>
               </div>
             ))}
@@ -295,7 +295,7 @@ export default function Home() {
             {FAMOUS_WINDOWS.map((w) => (
               <li key={w.name} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                 <p className="font-semibold text-white">{w.name}</p>
-                <p className="mt-0.5 text-xs uppercase tracking-wide text-white/40">{w.where}</p>
+                <p className="mt-0.5 text-xs uppercase tracking-wide text-white/55">{w.where}</p>
                 <p className="mt-2 text-sm leading-relaxed text-white/65">{w.what}</p>
               </li>
             ))}
@@ -348,7 +348,7 @@ export default function Home() {
               >
                 <p className="font-bold text-white">{person.name}</p>
                 <p className="mt-0.5 text-sm font-medium text-patasi-bright">{person.role}</p>
-                <p className="mt-1 text-xs uppercase tracking-wide text-white/40">{person.city}</p>
+                <p className="mt-1 text-xs uppercase tracking-wide text-white/55">{person.city}</p>
               </div>
             ))}
           </div>
@@ -392,7 +392,7 @@ export default function Home() {
               <Link href="/privacy" className="underline-offset-4 hover:text-white/85 hover:underline">Privacy Policy</Link>
               <Link href="/terms" className="underline-offset-4 hover:text-white/85 hover:underline">Terms and Conditions</Link>
             </nav>
-            <p className="mt-5 text-center text-xs text-white/40">
+            <p className="mt-5 text-center text-xs text-white/55">
               &copy; {new Date().getFullYear()} {ORG.name} &mdash; {ORG.chapter}
             </p>
             <div className="mt-4 flex justify-center">

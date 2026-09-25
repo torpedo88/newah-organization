@@ -275,7 +275,7 @@ export default function RegistrationForm() {
           <Link href="/terms" className="underline underline-offset-2 hover:text-white/80">Terms and Conditions</Link>
         </nav>
 
-        <FestivalPhotoCredit className="mt-4 text-center text-xs text-white/40" />
+        <FestivalPhotoCredit className="mt-4 text-center text-xs text-white/55" />
       </div>
     </div>
   );

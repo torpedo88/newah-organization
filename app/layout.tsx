@@ -65,19 +65,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           repeats to any size without going soft and carries no licence.
 
           Fixed rather than scrolled, so it reads as the cloth the page is
-          printed on instead of a texture sliding past. At 5% it is felt more
-          than seen — enough to stop the black being flat, not enough to
-          compete with anything on top of it.
+          printed on instead of a texture sliding past.
+
+          At 9% the weave is meant to be seen rather than merely sensed, and
+          the number has a ceiling behind it. The brightest thing in the tile
+          is the cream motif, so the worst case anywhere on the site is the
+          faintest text crossing one: white at 55% measures 5.8:1 there, and
+          at 14% it was 5.3:1. Raise this and measure that text again.
+
+          Measuring it turned up something the weave did not cause. The small
+          metadata labels were white at 40%, which was 3.8:1 against plain
+          haku — already under AA before any of this. They are 55% now.
 
           aria-hidden and behind everything: it says nothing a reader needs.
         */}
         <div
           aria-hidden
-          className="pointer-events-none fixed inset-0 -z-10 opacity-[0.05]"
+          className="pointer-events-none fixed inset-0 -z-10 opacity-[0.09]"
           style={{
             backgroundImage: "url('/images/patasi-weave.svg')",
             backgroundRepeat: "repeat",
-            backgroundSize: "120px 120px",
+            backgroundSize: "132px 132px",
           }}
         />
         {children}
