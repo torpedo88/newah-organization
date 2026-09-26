@@ -1,3 +1,16 @@
+/**
+ * The address printed on paper, and the one the QR code encodes.
+ *
+ * Deliberately a constant rather than siteUrl(): that resolves to whatever
+ * host is serving the page, so a poster rendered on localhost or a preview
+ * deployment would print an address that does not match the QR beside it — and
+ * on paper the two cannot disagree.
+ *
+ * It must stay identical to the URL in docs/PRINTED-QR.md. A printed code
+ * cannot be reissued, so this address has to resolve forever.
+ */
+export const PRINTED_REGISTRATION_URL = "www.noancc.org/register/indrajatra";
+
 /** The campaign this registration drive is running. */
 export const EVENT = {
   /** The festival itself. */
