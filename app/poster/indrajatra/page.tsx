@@ -3,7 +3,7 @@ import Image from "next/image";
 import { CalendarDays, MapPin } from "lucide-react";
 import PrintButton from "@/components/ui/print-button";
 import { ORG } from "@/lib/legal/org";
-import { EVENT, PRINTED_REGISTRATION_URL } from "@/lib/constants/event";
+import { CO_ORGANISERS, EVENT, PRINTED_REGISTRATION_URL } from "@/lib/constants/event";
 
 export const metadata: Metadata = {
   title: `${EVENT.name} poster — ${ORG.chapter}`,
@@ -100,6 +100,11 @@ export default function PosterPage() {
                 <p className="text-[3mm] font-medium uppercase tracking-[0.18em] text-lun/75">
                   {ORG.chapter}
                 </p>
+                {CO_ORGANISERS.length > 0 && (
+                  <p className="mt-[2mm] text-[2.8mm] uppercase tracking-[0.16em] text-white/60">
+                    With {CO_ORGANISERS.join(" \u00b7 ")}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -113,8 +118,13 @@ export default function PosterPage() {
               {EVENT.title}
             </p>
 
+            {/* When there is no date or venue, nothing is printed. The poster
+                hangs at the venue, where "date and venue to be announced" tells
+                a reader standing in front of it nothing it does not already
+                know. The block appears on its own the moment EVENT.date or
+                EVENT.venue is set. */}
             <div className="mt-[8mm] max-w-[98mm] space-y-[3mm] text-[3.8mm] leading-relaxed text-white/85">
-              {hasWhen || hasWhere ? (
+              {(hasWhen || hasWhere) && (
                 <div className="space-y-[2mm]">
                   {hasWhen && (
                     <p className="flex items-center gap-[3mm] font-semibold">
@@ -129,11 +139,6 @@ export default function PosterPage() {
                     </p>
                   )}
                 </div>
-              ) : (
-                <p className="inline-flex items-center gap-[3mm] rounded-full border border-lun/50 px-[5mm] py-[2mm] text-[3.4mm] font-semibold uppercase tracking-[0.12em] text-lun">
-                  <CalendarDays className="size-[4.5mm] shrink-0" aria-hidden />
-                  Date and venue to be announced
-                </p>
               )}
 
               <p className="text-pretty">
@@ -144,22 +149,23 @@ export default function PosterPage() {
             {/* The QR, on white. A code printed on a dark ground is a code that
                 does not scan: readers look for dark modules on a light field,
                 and inverting it defeats most of them. */}
-            <div className="mt-auto flex items-end gap-[8mm]">
-              <div className="shrink-0 rounded-[3mm] bg-white p-[4mm]">
+            <div className="mt-auto flex items-end gap-[9mm]">
+              <div className="shrink-0 rounded-[4mm] bg-white p-[5mm]">
                 <Image
                   src="/images/qr-register.png"
                   alt={`QR code linking to ${registerUrl}`}
                   width={1960}
                   height={1960}
-                  className="h-[42mm] w-[42mm]"
+                  className="h-[60mm] w-[60mm]"
                 />
               </div>
-              <div className="pb-[2mm]">
-                <p className="text-[4.4mm] font-bold uppercase tracking-[0.14em] text-lun">
-                  Scan to register
+              <div className="pb-[3mm]">
+                <p className="text-[9mm] font-bold uppercase leading-[1.05] tracking-[0.04em] text-lun-bright">
+                  Register
+                  <span className="block">here</span>
                 </p>
-                <p className="mt-[2mm] text-[4mm] font-semibold text-white">{registerUrl}</p>
-                <p className="mt-[3mm] text-[3.4mm] text-white/70">
+                <p className="mt-[3mm] text-[4mm] font-semibold text-white">{registerUrl}</p>
+                <p className="mt-[2mm] text-[3.4mm] text-white/70">
                   Free to attend &middot; donations optional
                 </p>
               </div>
