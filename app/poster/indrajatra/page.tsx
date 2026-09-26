@@ -101,8 +101,8 @@ export default function PosterPage() {
                   {ORG.chapter}
                 </p>
                 {CO_ORGANISERS.length > 0 && (
-                  <p className="mt-[2mm] text-[2.8mm] uppercase tracking-[0.16em] text-white/60">
-                    With {CO_ORGANISERS.join(" \u00b7 ")}
+                  <p className="mt-[2mm] text-[3.6mm] font-bold uppercase leading-tight tracking-[0.14em] text-lun">
+                    {CO_ORGANISERS.join(" \u00b7 ")}
                   </p>
                 )}
               </div>
@@ -149,26 +149,27 @@ export default function PosterPage() {
             {/* The QR, on white. A code printed on a dark ground is a code that
                 does not scan: readers look for dark modules on a light field,
                 and inverting it defeats most of them. */}
-            <div className="mt-auto flex items-end gap-[9mm]">
-              <div className="shrink-0 rounded-[4mm] bg-white p-[5mm]">
+            {/* Stacked, not side by side: a poster is read top to bottom, and
+                the code wants to be the thing a passer-by sees first with the
+                instruction directly beneath it. mt-auto keeps the block on the
+                foot of the sheet whatever the copy above it does. */}
+            <div className="mt-auto flex flex-col items-start">
+              <div className="rounded-[4mm] bg-white p-[5mm]">
                 <Image
                   src="/images/qr-register.png"
                   alt={`QR code linking to ${registerUrl}`}
                   width={1960}
                   height={1960}
-                  className="h-[60mm] w-[60mm]"
+                  className="h-[64mm] w-[64mm]"
                 />
               </div>
-              <div className="pb-[3mm]">
-                <p className="text-[9mm] font-bold uppercase leading-[1.05] tracking-[0.04em] text-lun-bright">
-                  Register
-                  <span className="block">here</span>
-                </p>
-                <p className="mt-[3mm] text-[4mm] font-semibold text-white">{registerUrl}</p>
-                <p className="mt-[2mm] text-[3.4mm] text-white/70">
-                  Free to attend &middot; donations optional
-                </p>
-              </div>
+              <p className="mt-[5mm] text-[9mm] font-bold uppercase leading-[1.02] tracking-[0.04em] text-lun-bright">
+                Register here
+              </p>
+              <p className="mt-[2mm] text-[4mm] font-semibold text-white">{registerUrl}</p>
+              <p className="mt-[2mm] text-[3.4mm] text-white/70">
+                Free to attend &middot; donations optional
+              </p>
             </div>
           </div>
         </div>
