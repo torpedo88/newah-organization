@@ -11,6 +11,18 @@
  */
 export const PRINTED_REGISTRATION_URL = "www.noancc.org/register/indrajatra";
 
+/**
+ * Who is putting the event on, besides the chapter.
+ *
+ * SPELLING UNCONFIRMED. Nothing in this repository or in the video work used
+ * this name before, so there was no prior usage to copy. It is set from how
+ * the owner wrote it, normalised to the usual romanisation of
+ * झी नेवाः पुचः ("our Newar group"). A partner
+ * organization's own name is theirs to spell, and this goes on printed
+ * material, so confirm it with them before a print run.
+ */
+export const CO_ORGANISERS = ["Jhi Newa Pucha"] as const;
+
 /** The campaign this registration drive is running. */
 export const EVENT = {
   /** The festival itself. */
