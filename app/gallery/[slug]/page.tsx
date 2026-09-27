@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import SiteHeader from "@/components/ui/site-header";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import { createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 interface PhotoPageProps {
   params: { slug: string };
