@@ -15,6 +15,7 @@ import Button3D from "@/components/ui/button-3d";
  */
 
 const LINKS: ReadonlyArray<readonly [label: string, href: string]> = [
+  ["Home", "/"],
   ["Our people", "/newah"],
   ["Upcoming", "/#upcoming"],
   ["Board", "/leadership"],
