@@ -45,7 +45,7 @@ export default function LegalPage({
           </div>
         </article>
 
-        <FestivalPhotoCredit className="mt-8 text-center text-xs text-white/40" />
+        <FestivalPhotoCredit className="mt-8 text-center text-xs text-white/55" />
       </div>
     </div>
   );

@@ -5,14 +5,16 @@
  * correction is a one-line edit rather than a search through prose.
  *
  * VERIFIED — published by the organization itself:
- *   - name, chapter, contactEmail, website, facebook
+ *   - name, chapter, contactEmail, phone, address, website, facebook
  *
- * UNCONFIRMED — `ein` came from a third-party IRS-derived record (CauseIQ) and
- * has NOT been confirmed by the board. The mailing address is now the one the
- * organization publishes itself, but it is the Maryland address for the whole
- * organization rather than a Northern California one.
- * Claiming tax-deductibility under an EIN that turns out to be wrong is a real
- * liability, so `showTaxDeductibility` stays false until the board confirms.
+ * `ein` originally came from a third-party IRS-derived record (CauseIQ). The
+ * chapter's own site publishes the same number alongside an explicit
+ * "501 C (3) Tax-Exempt, Non-Profit Charitable Organization (02-0630839)", and
+ * the owner confirmed on 2026-09-25 that the site may state it. Note what that
+ * is and is not: corroboration by the organization itself, not an independent
+ * check against the IRS Exempt Organizations file. If the number is ever found
+ * to be wrong, `showTaxDeductibility` is the single switch that takes every
+ * such claim off the site.
  */
 export const ORG = {
   name: "Newah Organization of America",
@@ -20,8 +22,11 @@ export const ORG = {
   chapter: "Northern California Chapter",
   legalName: "Newah Organization of America, Inc.",
 
-  /** The chapter address published on newah.org/noa-northern-california. */
-  contactEmail: "newah2001@gmail.com",
+  /** The chapter's own address, as it publishes on its chapter site. */
+  contactEmail: "newahnorcal@gmail.com",
+  /** The address the chapter publishes for itself. Kept for reference. */
+  legacyContactEmail: "newah2001@gmail.com",
+  phone: "707-508-9814",
   /** The national organization's address, for reference. */
   nationalEmail: "info@newah.org",
   website: "https://www.newah.org",
@@ -35,24 +40,27 @@ export const ORG = {
   /** UNCONFIRMED — see note above. */
   ein: "02-0630839",
   /**
-   * Published by the organization on its own chapter page as the address for
-   * mailing checks. The page lists it "C/O" a named board member; the person's
-   * name is deliberately NOT reproduced here, because a privacy policy should
-   * not publish an individual's name against a residential address.
+   * The chapter's own address, as published on its chapter site. It replaces
+   * the national organization's Germantown, Maryland address, which is a poor
+   * thing for a Northern California chapter to list.
+   *
+   * It appears to be residential. No individual's name is attached to it here:
+   * the chapter publishes the address, not a person at it.
    */
   mailingAddress: {
-    street: "19043 Steeple Place",
-    city: "Germantown",
-    state: "MD",
-    zip: "20874",
+    street: "481 Palmilla Pl",
+    city: "Santa Rosa",
+    state: "CA",
+    zip: "95407",
   },
 
   /**
-   * Gates every tax-deductibility statement. Flip to true only once the board
-   * confirms the EIN above and that donations through this site are receipted
-   * under it.
+   * Gates every tax-deductibility statement on the site. On since 2026-09-25,
+   * on the owner's instruction and on the strength of the chapter publishing
+   * its own 501(c)(3) status and EIN. Setting this back to false removes every
+   * such claim in one edit.
    */
-  showTaxDeductibility: false,
+  showTaxDeductibility: true,
 } as const;
 
 /**
@@ -64,7 +72,13 @@ export const ORG = {
 // the stored sentence differed from the one displayed — it opened differently
 // and carried a withdrawal clause the visitor never saw — so records written
 // under the previous version attest to wording that was not on screen.
-export const CONSENT_VERSION = "2026-09-23.1";
+//
+// Bumped 2026-09-25: CONSENT_TEXT interpolates ORG.contactEmail, and that
+// address changed from newah2001@ to newahnorcal@. The withdrawal address is
+// part of what a person agreed to, so the sentence is not the same sentence
+// and must not be recorded under the old version. Records written before this
+// point name the old address, which is what those people were shown.
+export const CONSENT_VERSION = "2026-09-25.1";
 
 export const POLICY_EFFECTIVE_DATE = "September 22, 2026";
 

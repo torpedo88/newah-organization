@@ -49,3 +49,4 @@ brag-output*/
 
 # pnpm is the package manager here; a stray npm lockfile breaks frozen-lockfile CI
 package-lock.json
+.gstack/

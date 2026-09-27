@@ -104,7 +104,7 @@ export default function SuccessScreen({ data }: { data: SuccessData }) {
           </LiquidButton>
         </div>
 
-        <FestivalPhotoCredit className="mt-8 text-center text-xs text-white/40" />
+        <FestivalPhotoCredit className="mt-8 text-center text-xs text-white/55" />
       </div>
     </div>
   );

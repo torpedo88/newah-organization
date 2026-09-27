@@ -7,8 +7,12 @@ import AnimatedMarqueeHero from "@/components/ui/animated-marquee-hero";
 import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import PhotoCredits from "@/components/ui/photo-credits";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import { ORG } from "@/lib/legal/org";
+import { ORG, formattedAddress } from "@/lib/legal/org";
 import { EVENT, FESTIVALS } from "@/lib/constants/event";
+import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/about";
+import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
+import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
+import LatticeDivider from "@/components/ui/lattice-divider";
 
 export const metadata: Metadata = {
   title: `${ORG.name} — ${ORG.chapter}`,
@@ -41,7 +45,9 @@ function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={`mx-auto w-full max-w-5xl px-5 sm:px-8 ${className}`}>
+    // scroll-mt clears the fixed header: without it every in-page link lands
+    // with its own heading hidden behind the bar it just scrolled under.
+    <section id={id} className={`mx-auto w-full max-w-6xl 2xl:max-w-7xl scroll-mt-28 px-5 sm:px-8 ${className}`}>
       {children}
     </section>
   );
@@ -61,10 +67,9 @@ export default function Home() {
   const hasWhere = EVENT.venue !== "" || EVENT.city !== "";
 
   return (
-    <main className="bg-haku">
+    <main>
       <SiteHeader />
       <AnimatedMarqueeHero
-        tagline={`${ORG.name} \u00b7 Northern California`}
         title={
           <>
             <span className="block font-light text-white/85">Our culture,</span>
@@ -78,15 +83,20 @@ export default function Home() {
         secondaryText="See our year"
         secondaryHref="#our-year"
         images={COMMUNITY_PHOTOS}
+        backdrop={{
+          src: "/images/hero-lakhey-mask.jpg",
+          alt: "A Lakhey mask in red, green and gold, with its white mane, at the chapter's Indra Jatra in Berkeley",
+        }}
       />
 
         {/* Who we are ------------------------------------------------- */}
         <Section className="py-16">
           <Heading kicker="Who we are">A community, kept</Heading>
           <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-white/80">
-            We are the {ORG.chapter} of the {ORG.name} &mdash; a non-profit dedicated to the
-            preservation, promotion and continuation of Newah culture, traditions, language and
-            arts, and to the unity of Newah and Nepali communities across Northern California.
+            We are the {ORG.chapter} of the {ORG.name}. {ABOUT_INTRO}
+          </p>
+          <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-white/70">
+            {ABOUT_BACKGROUND}
           </p>
           <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-white/70">
             {ORG.shortName} has served the Newah diaspora in the United States for a quarter of a
@@ -94,21 +104,30 @@ export default function Home() {
             and New England. This one is based in {ORG.basedIn}.
           </p>
 
-          <blockquote className="mt-8 max-w-2xl border-l-4 border-lun pl-5">
-            <p className="text-pretty italic leading-relaxed text-white/75">
-              &ldquo;To provide a democratic forum for the Newah community to advance in all field
-              of human activities, keeping in perspective the rich historical heritage of the Past,
-              working creatively and collectively with friends and well-wishers to resolve
-              important issues of the present and to secure the future for the coming generation
-              and our country Nepal.&rdquo;
-            </p>
-            <footer className="mt-3 text-sm text-white/50">
-              &mdash; {ORG.name},{" "}
-              <a href={ORG.website} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-white/75">
-                newah.org
-              </a>
-            </footer>
-          </blockquote>
+          <h3 className="mt-10 text-xs font-semibold uppercase tracking-[0.22em] text-lun">
+            Our mission
+          </h3>
+          <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+            {MISSION_POINTS.map((point) => (
+              <li
+                key={point}
+                className="rounded-2xl border border-white/12 bg-white/[0.04] p-5 text-sm leading-relaxed text-white/75"
+              >
+                {point}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm text-white/45">
+            &mdash; {ORG.name},{" "}
+            <a
+              href={ORG.website}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-4 hover:text-white/75"
+            >
+              newah.org
+            </a>
+          </p>
         </Section>
 
         {/* Language ---------------------------------------------------- */}
@@ -153,7 +172,7 @@ export default function Home() {
                   <div className="size-2 rounded-full bg-patasi opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
                 <p className="mt-1 text-sm font-medium text-patasi">{f.also}</p>
-                <p className="mt-2 text-xs uppercase tracking-wide text-white/40">{f.when}</p>
+                <p className="mt-2 text-xs uppercase tracking-wide text-white/55">{f.when}</p>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">{f.what}</p>
               </div>
             ))}
@@ -227,12 +246,115 @@ export default function Home() {
           </div>
         </Section>
 
+        {/* Craft --------------------------------------------------------- */}
+        <LatticeDivider className="my-4 text-lun" />
+
+        <Section className="py-16" id="craft">
+          <Heading kicker="Newah craft">What the valley built, and why</Heading>
+          <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+            A Newah house is read from its windows. Each floor takes a different one, and each
+            one does a job before it is beautiful.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {NEWAR_WINDOWS.map((w) => (
+              <div
+                key={w.name}
+                className="rounded-2xl border-2 border-white/12 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 transition-colors hover:border-lun/40"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="text-lg font-bold text-white">{w.name}</h3>
+                  <span lang="ne" className="text-sm text-lun">
+                    {w.devanagari}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">{w.what}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-lun">
+            Three the valley knows by name
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+            {FAMOUS_WINDOWS.map((w) => (
+              <li key={w.name} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <p className="font-semibold text-white">{w.name}</p>
+                <p className="mt-0.5 text-xs uppercase tracking-wide text-white/55">{w.where}</p>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">{w.what}</p>
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        {/* Asta Mangal --------------------------------------------------- */}
+        <Section className="py-16" id="asta-mangal">
+          <div>
+            <div>
+              <Heading kicker="Asta Mangal">The eight auspicious signs</Heading>
+              <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+                Carved over doorways, beaten into metal, drawn in colour at the threshold on a
+                festival morning. They are shared across Buddhism, Hinduism and Jainism, and they
+                are signs rather than ornament &mdash; so they are named here, not scattered
+                across the page.
+              </p>
+              <dl className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                {ASTA_MANGAL.map((sign) => (
+                  <div key={sign.name} className="border-l-2 border-patasi/50 pl-4">
+                    <dt className="font-semibold text-white">
+                      {sign.name}{" "}
+                      <span className="font-normal text-lun">&mdash; {sign.english}</span>
+                    </dt>
+                    <dd className="mt-0.5 text-sm leading-relaxed text-white/60">{sign.meaning}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </Section>
+
+        <LatticeDivider className="my-4 text-lun" />
+
+        {/* Who runs it -------------------------------------------------- */}
+        <Section className="py-16" id="board">
+          <Heading kicker="Executive board">Who runs the chapter</Heading>
+          <p className="mt-4 max-w-2xl leading-relaxed text-white/70">
+            Elected for the {BOARD_TERM} term. The members and advisors are on the{" "}
+            <Link href="/leadership" className="underline underline-offset-4 hover:text-white">
+              full roster
+            </Link>
+            .
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {EXECUTIVE_BOARD.map((person) => (
+              <div
+                key={person.name}
+                className="rounded-2xl border-2 border-white/12 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-5 transition-colors hover:border-patasi/50"
+              >
+                <p className="font-bold text-white">{person.name}</p>
+                <p className="mt-0.5 text-sm font-medium text-patasi-bright">{person.role}</p>
+                <p className="mt-1 text-xs uppercase tracking-wide text-white/55">{person.city}</p>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="/leadership"
+            className="mt-7 inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-6 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-white/10"
+          >
+            Members and advisors
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </Section>
+
         {/* Contact ------------------------------------------------------ */}
         <Section className="py-16" id="contact">
           <Heading kicker="Get in touch">Membership, volunteering, questions</Heading>
           <div className="mt-6 flex flex-wrap gap-x-7 gap-y-3 text-white/85">
             <a href={`mailto:${ORG.contactEmail}`} className="font-semibold underline underline-offset-4 hover:text-white">
               {ORG.contactEmail}
+            </a>
+            <a href={`tel:${ORG.phone.replace(/-/g, "")}`} className="font-semibold underline underline-offset-4 hover:text-white">
+              {ORG.phone}
             </a>
             <a href={ORG.facebook} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4 hover:text-white">
               Facebook
@@ -241,17 +363,21 @@ export default function Home() {
               newah.org
             </a>
           </div>
+          <p className="mt-5 inline-flex items-start gap-2 text-white/60">
+            <MapPin className="mt-0.5 size-4 shrink-0 text-lun" aria-hidden />
+            {formattedAddress()}
+          </p>
         </Section>
 
         {/* Footer -------------------------------------------------------- */}
-        <footer className="mx-auto w-full max-w-5xl px-5 pb-14 sm:px-8">
+        <footer className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 pb-14 sm:px-8">
           <div className="border-t border-white/10 pt-7">
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/55">
               <Link href="/register/indrajatra" className="underline-offset-4 hover:text-white/85 hover:underline">Register</Link>
               <Link href="/privacy" className="underline-offset-4 hover:text-white/85 hover:underline">Privacy Policy</Link>
               <Link href="/terms" className="underline-offset-4 hover:text-white/85 hover:underline">Terms and Conditions</Link>
             </nav>
-            <p className="mt-5 text-center text-xs text-white/40">
+            <p className="mt-5 text-center text-xs text-white/55">
               &copy; {new Date().getFullYear()} {ORG.name} &mdash; {ORG.chapter}
             </p>
             <div className="mt-4 flex justify-center">
