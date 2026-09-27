@@ -13,7 +13,7 @@ import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/a
 import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
 import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
 import LatticeDivider from "@/components/ui/lattice-divider";
-import { createClient } from "@/lib/supabase/client";
+import { createServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: `${ORG.name} — ${ORG.chapter}`,
@@ -70,7 +70,7 @@ export default async function Home() {
   // Fetch community photos from database
   let photos = COMMUNITY_PHOTOS;
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data } = await supabase
       .from("community_photos")
       .select("*")

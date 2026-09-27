@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import SiteHeader from "@/components/ui/site-header";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import { createClient } from "@/lib/supabase/client";
+import { createServerClient } from "@/lib/supabase/server";
 
 interface PhotoPageProps {
   params: { slug: string };
@@ -13,7 +13,7 @@ interface PhotoPageProps {
 
 export async function generateMetadata({ params }: PhotoPageProps): Promise<Metadata> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data: photo } = await supabase
       .from("community_photos")
       .select("*")
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PhotoPageProps): Promise<Meta
 
 export async function generateStaticParams() {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data: photos } = await supabase
       .from("community_photos")
       .select("slug")
@@ -53,7 +53,7 @@ export async function generateStaticParams() {
 
 export default async function PhotoPage({ params }: PhotoPageProps) {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data: allPhotos } = await supabase
       .from("community_photos")
       .select("*")
