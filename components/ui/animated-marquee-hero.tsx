@@ -291,7 +291,7 @@ export function AnimatedMarqueeHero({
             <Link
               key={`${image.src}-${index}`}
               href="/#upcoming"
-              className="group relative aspect-[3/4] h-44 flex-shrink-0 overflow-hidden rounded-2xl transition-opacity hover:opacity-80 md:h-60"
+              className="group pointer-events-auto relative aspect-[3/4] h-44 flex-shrink-0 overflow-hidden rounded-2xl transition-opacity hover:opacity-80 md:h-60"
               style={{ rotate: `${index % 2 === 0 ? -2 : 5}deg` }}
             >
               <Image
