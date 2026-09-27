@@ -203,6 +203,9 @@ export default async function AdminPage(props: {
             <Link href="/admin/events" className="underline underline-offset-2 hover:text-white">
               Events
             </Link>
+            <Link href="/admin/community-photos" className="underline underline-offset-2 hover:text-white">
+              Community Photos
+            </Link>
           </p>
         </div>
         <form action={logOut}>

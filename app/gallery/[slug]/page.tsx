@@ -5,30 +5,151 @@ import { ArrowLeft } from "lucide-react";
 import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import SiteHeader from "@/components/ui/site-header";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import { createClient } from "@/lib/supabase/client";
 
 interface PhotoPageProps {
   params: { slug: string };
 }
 
 export async function generateMetadata({ params }: PhotoPageProps): Promise<Metadata> {
-  const photo = COMMUNITY_PHOTOS.find((p) => p.slug === params.slug);
-  return {
-    title: photo ? `Photo - ${COMMUNITY_PHOTOS.indexOf(photo) + 1}` : "Photo",
-    description: photo?.alt || "Community photo",
-  };
+  try {
+    const supabase = createClient();
+    const { data: photo } = await supabase
+      .from("community_photos")
+      .select("*")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .single();
+
+    return {
+      title: photo ? "Photo" : "Photo",
+      description: photo?.alt_text || "Community photo",
+    };
+  } catch {
+    return {
+      title: "Photo",
+      description: "Community photo",
+    };
+  }
 }
 
 export async function generateStaticParams() {
-  return COMMUNITY_PHOTOS.map((photo) => ({
-    slug: photo.slug,
-  }));
+  try {
+    const supabase = createClient();
+    const { data: photos } = await supabase
+      .from("community_photos")
+      .select("slug")
+      .eq("published", true);
+
+    return (photos || []).map((photo: any) => ({
+      slug: photo.slug,
+    }));
+  } catch {
+    return COMMUNITY_PHOTOS.map((photo) => ({
+      slug: photo.slug,
+    }));
+  }
 }
 
-export default function PhotoPage({ params }: PhotoPageProps) {
-  const photoIndex = COMMUNITY_PHOTOS.findIndex((p) => p.slug === params.slug);
-  const photo = COMMUNITY_PHOTOS[photoIndex];
+export default async function PhotoPage({ params }: PhotoPageProps) {
+  try {
+    const supabase = createClient();
+    const { data: allPhotos } = await supabase
+      .from("community_photos")
+      .select("*")
+      .eq("published", true)
+      .order("display_order", { ascending: true });
 
-  if (!photo) {
+    const photos = allPhotos || [];
+    const photoIndex = photos.findIndex((p: any) => p.slug === params.slug);
+    const photo = photos[photoIndex];
+
+    if (!photo) {
+      return (
+        <main>
+          <SiteHeader />
+          <div className="relative min-h-screen px-4 py-16">
+            <div className="mx-auto max-w-4xl">
+              <Link href="/">
+                <LiquidButton>
+                  <ArrowLeft className="size-4" />
+                  Back to homepage
+                </LiquidButton>
+              </Link>
+              <h1 className="mt-8 text-2xl font-bold text-white">Photo not found</h1>
+            </div>
+          </div>
+        </main>
+      );
+    }
+
+    const prevPhoto = photoIndex > 0 ? photos[photoIndex - 1] : null;
+    const nextPhoto = photoIndex < photos.length - 1 ? photos[photoIndex + 1] : null;
+
+    return (
+      <main>
+        <SiteHeader />
+        <div className="relative min-h-screen px-4 py-12">
+          <div className="mx-auto max-w-4xl">
+            <Link href="/">
+              <LiquidButton>
+                <ArrowLeft className="size-4" />
+                Back to homepage
+              </LiquidButton>
+            </Link>
+
+            <div className="mt-8 overflow-hidden rounded-3xl border border-white/15">
+              <div className="relative aspect-[3/4] sm:aspect-[4/3] md:aspect-video">
+                <Image
+                  src={photo.image_url}
+                  alt={photo.alt_text}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <p className="text-lg leading-relaxed text-white/80">{photo.alt_text}</p>
+              {photo.credit && (
+                <p className="mt-4 text-sm text-white/60">Photo credit: {photo.credit}</p>
+              )}
+            </div>
+
+            <div className="mt-12 flex items-center justify-between gap-4 border-t border-white/10 pt-8">
+              {prevPhoto ? (
+                <Link href={`/gallery/${prevPhoto.slug}`}>
+                  <LiquidButton>
+                    <ArrowLeft className="size-4" />
+                    Previous
+                  </LiquidButton>
+                </Link>
+              ) : (
+                <div />
+              )}
+
+              <p className="text-sm text-white/60">
+                {photoIndex + 1} of {photos.length}
+              </p>
+
+              {nextPhoto ? (
+                <Link href={`/gallery/${nextPhoto.slug}`}>
+                  <LiquidButton>
+                    Next
+                    <ArrowLeft className="size-4 rotate-180" />
+                  </LiquidButton>
+                </Link>
+              ) : (
+                <div />
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  } catch {
     return (
       <main>
         <SiteHeader />
@@ -40,77 +161,10 @@ export default function PhotoPage({ params }: PhotoPageProps) {
                 Back to homepage
               </LiquidButton>
             </Link>
-            <h1 className="mt-8 text-2xl font-bold text-white">Photo not found</h1>
+            <h1 className="mt-8 text-2xl font-bold text-white">Could not load photo</h1>
           </div>
         </div>
       </main>
     );
   }
-
-  const prevPhoto = photoIndex > 0 ? COMMUNITY_PHOTOS[photoIndex - 1] : null;
-  const nextPhoto = photoIndex < COMMUNITY_PHOTOS.length - 1 ? COMMUNITY_PHOTOS[photoIndex + 1] : null;
-
-  return (
-    <main>
-      <SiteHeader />
-      <div className="relative min-h-screen px-4 py-12">
-        <div className="mx-auto max-w-4xl">
-          <Link href="/">
-            <LiquidButton>
-              <ArrowLeft className="size-4" />
-              Back to homepage
-            </LiquidButton>
-          </Link>
-
-          <div className="mt-8 overflow-hidden rounded-3xl border border-white/15">
-            <div className="relative aspect-[3/4] sm:aspect-[4/3] md:aspect-video">
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 800px"
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <p className="text-lg leading-relaxed text-white/80">{photo.alt}</p>
-            {photo.credit && (
-              <p className="mt-4 text-sm text-white/60">Photo credit: {photo.credit}</p>
-            )}
-          </div>
-
-          <div className="mt-12 flex items-center justify-between gap-4 border-t border-white/10 pt-8">
-            {prevPhoto ? (
-              <Link href={`/gallery/${prevPhoto.slug}`}>
-                <LiquidButton>
-                  <ArrowLeft className="size-4" />
-                  Previous
-                </LiquidButton>
-              </Link>
-            ) : (
-              <div />
-            )}
-
-            <p className="text-sm text-white/60">
-              {photoIndex + 1} of {COMMUNITY_PHOTOS.length}
-            </p>
-
-            {nextPhoto ? (
-              <Link href={`/gallery/${nextPhoto.slug}`}>
-                <LiquidButton>
-                  Next
-                  <ArrowLeft className="size-4 rotate-180" />
-                </LiquidButton>
-              </Link>
-            ) : (
-              <div />
-            )}
-          </div>
-        </div>
-      </div>
-    </main>
-  );
 }

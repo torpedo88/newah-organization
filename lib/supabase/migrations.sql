@@ -67,3 +67,32 @@ CREATE POLICY "Admin full access events" ON events
 
 CREATE POLICY "Public read published events" ON events
   FOR SELECT USING (published = true);
+
+-- Create community_photos table
+CREATE TABLE IF NOT EXISTS community_photos (
+  id BIGSERIAL PRIMARY KEY,
+  slug VARCHAR(255) NOT NULL UNIQUE,
+  image_url VARCHAR(500) NOT NULL,
+  alt_text TEXT NOT NULL,
+  credit VARCHAR(255),
+  display_order INTEGER DEFAULT 0,
+  published BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create index on slug for URL lookups
+CREATE INDEX IF NOT EXISTS idx_community_photos_slug ON community_photos(slug);
+
+-- Create index on display_order for sorting
+CREATE INDEX IF NOT EXISTS idx_community_photos_order ON community_photos(display_order);
+
+-- Enable RLS on community_photos
+ALTER TABLE community_photos ENABLE ROW LEVEL SECURITY;
+
+-- Admin-only read/write, public read published photos
+CREATE POLICY "Admin full access photos" ON community_photos
+  FOR ALL USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public read published photos" ON community_photos
+  FOR SELECT USING (published = true);

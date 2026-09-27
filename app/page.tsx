@@ -13,6 +13,7 @@ import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/a
 import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
 import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
 import LatticeDivider from "@/components/ui/lattice-divider";
+import { createClient } from "@/lib/supabase/client";
 
 export const metadata: Metadata = {
   title: `${ORG.name} — ${ORG.chapter}`,
@@ -62,9 +63,31 @@ function Heading({ kicker, children }: { kicker: string; children: React.ReactNo
   );
 }
 
-export default function Home() {
+export default async function Home() {
   const hasWhen = EVENT.date !== "";
   const hasWhere = EVENT.venue !== "" || EVENT.city !== "";
+
+  // Fetch community photos from database
+  let photos = COMMUNITY_PHOTOS;
+  try {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("community_photos")
+      .select("*")
+      .eq("published", true)
+      .order("display_order", { ascending: true });
+
+    if (data && data.length > 0) {
+      photos = data.map((p: any) => ({
+        slug: p.slug,
+        src: p.image_url,
+        alt: p.alt_text,
+        credit: p.credit,
+      }));
+    }
+  } catch {
+    // Fallback to hardcoded photos if database fetch fails
+  }
 
   return (
     <main>
@@ -82,7 +105,7 @@ export default function Home() {
         ctaHref="/register/indrajatra"
         secondaryText="See our year"
         secondaryHref="#our-year"
-        images={COMMUNITY_PHOTOS}
+        images={photos}
         backdrop={{
           src: "/images/hero-lakhey-mask.jpg",
           alt: "A Lakhey mask in red, green and gold, with its white mane, at the chapter's Indra Jatra in Berkeley",
