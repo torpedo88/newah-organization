@@ -288,9 +288,10 @@ export function AnimatedMarqueeHero({
           transition={{ ease: "linear", duration: 45, repeat: Infinity }}
         >
           {marqueeImages.map((image, index) => (
-            <div
+            <Link
               key={`${image.src}-${index}`}
-              className="relative aspect-[3/4] h-44 flex-shrink-0 overflow-hidden rounded-2xl md:h-60"
+              href="/#upcoming"
+              className="group relative aspect-[3/4] h-44 flex-shrink-0 overflow-hidden rounded-2xl transition-opacity hover:opacity-80 md:h-60"
               style={{ rotate: `${index % 2 === 0 ? -2 : 5}deg` }}
             >
               <Image
@@ -309,7 +310,7 @@ export function AnimatedMarqueeHero({
                 priority={index === 0}
                 className="object-cover"
               />
-            </div>
+            </Link>
           ))}
         </motion.div>
       </div>
