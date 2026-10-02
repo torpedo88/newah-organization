@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/ui/site-header";
-import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import DonationForm from "./form";
 
 export const metadata: Metadata = {
   title: "Donate - Newah Organization",
@@ -48,66 +48,8 @@ export default function DonatePage() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="rounded-3xl border-2 border-white/20 bg-white/[0.07] p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Donation Options</h2>
-
-              <div className="space-y-4 mb-8">
-                <label className="flex items-center gap-4 p-4 rounded-lg border-2 border-white/20 cursor-pointer hover:bg-white/5 transition">
-                  <input type="radio" name="amount" value="25" defaultChecked className="size-5" />
-                  <div>
-                    <p className="font-semibold text-white">$25</p>
-                    <p className="text-sm text-white/60">Student/Limited Income</p>
-                  </div>
-                </label>
-
-                <label className="flex items-center gap-4 p-4 rounded-lg border-2 border-white/20 cursor-pointer hover:bg-white/5 transition">
-                  <input type="radio" name="amount" value="50" className="size-5" />
-                  <div>
-                    <p className="font-semibold text-white">$50</p>
-                    <p className="text-sm text-white/60">Standard Donation</p>
-                  </div>
-                </label>
-
-                <label className="flex items-center gap-4 p-4 rounded-lg border-2 border-white/20 cursor-pointer hover:bg-white/5 transition">
-                  <input type="radio" name="amount" value="100" className="size-5" />
-                  <div>
-                    <p className="font-semibold text-white">$100</p>
-                    <p className="text-sm text-white/60">Generous Donation</p>
-                  </div>
-                </label>
-
-                <label className="flex items-center gap-4 p-4 rounded-lg border-2 border-white/20 cursor-pointer hover:bg-white/5 transition">
-                  <input type="radio" name="amount" value="custom" className="size-5" />
-                  <div>
-                    <p className="font-semibold text-white">Custom Amount</p>
-                    <p className="text-sm text-white/60">Choose your own amount</p>
-                  </div>
-                </label>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">Purpose (Optional)</label>
-                <select className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white focus:border-white/40 focus:outline-none">
-                  <option value="">General Fund</option>
-                  <option value="scholarship">Scholarship Fund</option>
-                  <option value="event">Event Support</option>
-                  <option value="project">Cultural Projects</option>
-                </select>
-              </div>
-
-              <div className="mb-6">
-                <label className="flex items-center gap-3">
-                  <input type="checkbox" className="size-4 rounded" />
-                  <span className="text-sm text-white/80">Make this donation anonymous</span>
-                </label>
-              </div>
-
-              <LiquidButton className="w-full text-white mb-4">
-                Proceed to Checkout
-              </LiquidButton>
-
-              <p className="text-xs text-white/50 text-center">
-                Secure payment processing via Stripe. All donations are tax-deductible.
-              </p>
+              <h2 className="text-2xl font-bold text-white mb-6">Make Your Donation</h2>
+              <DonationForm />
             </div>
 
             <div className="space-y-6">
