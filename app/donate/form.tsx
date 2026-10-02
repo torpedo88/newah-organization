@@ -24,30 +24,40 @@ export default function DonationForm() {
     setError(null);
     setSuccess(false);
 
-    const result = await submitDonation({
-      donor_name: formData.donor_name,
-      donor_email: formData.donor_email,
-      donor_phone: formData.donor_phone,
-      amount: parseFloat(formData.amount),
-      donation_type: formData.donation_type || "general",
-      anonymous: formData.anonymous,
-    });
+    try {
+      const amount = parseFloat(formData.amount);
+      if (!amount || amount < 1) {
+        setError("Please enter a valid donation amount");
+        setLoading(false);
+        return;
+      }
 
-    if ("error" in result) {
-      setError(result.error);
-      setLoading(false);
-    } else {
-      setSuccess(true);
-      setFormData({
-        donor_name: "",
-        donor_email: "",
-        donor_phone: "",
-        amount: "50",
-        donation_type: "",
-        anonymous: false,
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          donor_name: formData.donor_name,
+          donor_email: formData.donor_email,
+          donor_phone: formData.donor_phone,
+          amount,
+          donation_type: formData.donation_type || "general",
+          anonymous: formData.anonymous,
+        }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.url) {
+        setError(data.error || "Failed to create checkout session");
+        setLoading(false);
+        return;
+      }
+
+      // Redirect to Stripe checkout
+      window.location.href = data.url;
+    } catch (err) {
+      setError("An error occurred. Please try again.");
       setLoading(false);
-      setTimeout(() => setSuccess(false), 5000);
     }
   }
 
