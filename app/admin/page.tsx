@@ -195,10 +195,14 @@ export default async function AdminPage(props: {
     <Shell>
       <div className="mb-8 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Registrations</h1>
-          <p className="mt-1 text-sm text-white/60">
-            {EVENT.title} &middot; {rows.length} {rows.length === 1 ? "entry" : "entries"}, newest
-            first
+          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+          <p className="mt-3 text-sm text-white/60 flex gap-6">
+            <Link href="/admin" className="underline underline-offset-2 hover:text-white">
+              Registrations ({rows.length})
+            </Link>
+            <Link href="/admin/events" className="underline underline-offset-2 hover:text-white">
+              Events
+            </Link>
           </p>
         </div>
         <form action={logOut}>
@@ -207,6 +211,14 @@ export default async function AdminPage(props: {
             Sign out
           </LiquidButton>
         </form>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-4">Registrations</h2>
+        <p className="text-sm text-white/60 mb-4">
+          {EVENT.title} &middot; {rows.length} {rows.length === 1 ? "entry" : "entries"}, newest
+          first
+        </p>
       </div>
 
       {queryError ? (
