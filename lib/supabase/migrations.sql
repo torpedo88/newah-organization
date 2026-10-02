@@ -211,3 +211,28 @@ CREATE POLICY "Admin full access volunteers" ON volunteers
 
 CREATE POLICY "Public read active volunteers" ON volunteers
   FOR SELECT USING (status = 'active');
+
+-- Create contacts table
+CREATE TABLE IF NOT EXISTS contacts (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  subject VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'read', 'responded', 'archived')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email);
+CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
+CREATE INDEX IF NOT EXISTS idx_contacts_date ON contacts(created_at);
+
+ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin full access contacts" ON contacts
+  FOR ALL USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public insert contacts" ON contacts
+  FOR INSERT WITH CHECK (true);

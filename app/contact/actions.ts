@@ -1,6 +1,7 @@
 "use server";
 
 import { Resend } from "resend";
+import { createClient } from "@/lib/supabase/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -11,7 +12,22 @@ export async function submitContactForm(data: {
   subject: string;
   message: string;
 }) {
+  const supabase = await createClient();
+
   try {
+    // Save to database
+    const { error: dbError } = await supabase.from("contacts").insert([{
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      subject: data.subject,
+      message: data.message,
+      status: "new",
+    }]);
+
+    if (dbError) return { error: "Failed to save submission." };
+
+    // Send email notification
     await resend.emails.send({
       from: "contact@newah-org.local",
       to: process.env.CONTACT_EMAIL || "contact@example.com",
