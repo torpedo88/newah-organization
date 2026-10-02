@@ -96,3 +96,88 @@ CREATE POLICY "Admin full access photos" ON community_photos
 
 CREATE POLICY "Public read published photos" ON community_photos
   FOR SELECT USING (published = true);
+
+-- Create memberships table
+CREATE TABLE IF NOT EXISTS memberships (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  phone VARCHAR(20),
+  membership_type VARCHAR(50) NOT NULL CHECK (membership_type IN ('regular', 'family', 'lifetime')),
+  membership_status VARCHAR(50) NOT NULL DEFAULT 'active' CHECK (membership_status IN ('active', 'inactive', 'expired')),
+  join_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  renewal_date TIMESTAMP WITH TIME ZONE,
+  annual_fee DECIMAL(10, 2),
+  paid BOOLEAN DEFAULT false,
+  stripe_customer_id VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_memberships_email ON memberships(email);
+CREATE INDEX IF NOT EXISTS idx_memberships_status ON memberships(membership_status);
+
+ALTER TABLE memberships ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin full access memberships" ON memberships
+  FOR ALL USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public read active memberships" ON memberships
+  FOR SELECT USING (membership_status = 'active');
+
+-- Create donations table
+CREATE TABLE IF NOT EXISTS donations (
+  id BIGSERIAL PRIMARY KEY,
+  donor_name VARCHAR(255) NOT NULL,
+  donor_email VARCHAR(255) NOT NULL,
+  donor_phone VARCHAR(20),
+  amount DECIMAL(10, 2) NOT NULL,
+  donation_type VARCHAR(50) NOT NULL DEFAULT 'general' CHECK (donation_type IN ('general', 'scholarship', 'event', 'project')),
+  purpose TEXT,
+  payment_status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'failed')),
+  stripe_payment_intent_id VARCHAR(255),
+  stripe_charge_id VARCHAR(255),
+  anonymous BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_donations_email ON donations(donor_email);
+CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(payment_status);
+CREATE INDEX IF NOT EXISTS idx_donations_date ON donations(created_at);
+
+ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin full access donations" ON donations
+  FOR ALL USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public read completed donations" ON donations
+  FOR SELECT USING (payment_status = 'completed');
+
+-- Create board_members table
+CREATE TABLE IF NOT EXISTS board_members (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  position VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  phone VARCHAR(20),
+  bio TEXT,
+  image_url VARCHAR(500),
+  term_start DATE,
+  term_end DATE,
+  active BOOLEAN DEFAULT true,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_board_members_active ON board_members(active);
+CREATE INDEX IF NOT EXISTS idx_board_members_order ON board_members(display_order);
+
+ALTER TABLE board_members ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin full access board_members" ON board_members
+  FOR ALL USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public read active board_members" ON board_members
+  FOR SELECT USING (active = true);
