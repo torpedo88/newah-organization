@@ -50,6 +50,23 @@ export default async function AdminEventsPage() {
   }
 
   const admin = createAdminClient();
+  if (!admin) {
+    return (
+      <div className="relative min-h-screen px-4 py-12">
+        <FestivalBackdrop />
+        <div className="relative mx-auto w-full max-w-6xl text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Cannot read events</h1>
+          <p className="text-white/70 mb-8">
+            SUPABASE_SERVICE_ROLE_KEY is not set, so the events table cannot be reached.
+          </p>
+          <Link href="/admin">
+            <LiquidButton>Back to Admin</LiquidButton>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const { data: events, error } = await admin
     .from("events")
     .select("*")

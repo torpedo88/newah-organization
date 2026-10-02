@@ -27,7 +27,7 @@ export default function EventForm({ event }: { event?: Event }) {
     description: event?.description || "",
     event_date: event?.event_date ? new Date(event.event_date).toISOString().slice(0, 16) : "",
     location: event?.location || "",
-    capacity: event?.capacity || "",
+    capacity: event?.capacity != null ? String(event.capacity) : "",
     image_url: event?.image_url || "",
   });
 
