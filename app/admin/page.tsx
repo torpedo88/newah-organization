@@ -212,6 +212,9 @@ export default async function AdminPage(props: {
             <Link href="/admin/donations" className="underline underline-offset-2 hover:text-white">
               Donations
             </Link>
+            <Link href="/admin/volunteers" className="underline underline-offset-2 hover:text-white">
+              Volunteers
+            </Link>
             <Link href="/admin/board-members" className="underline underline-offset-2 hover:text-white">
               Board
             </Link>

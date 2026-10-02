@@ -181,3 +181,33 @@ CREATE POLICY "Admin full access board_members" ON board_members
 
 CREATE POLICY "Public read active board_members" ON board_members
   FOR SELECT USING (active = true);
+
+-- Create volunteers table
+CREATE TABLE IF NOT EXISTS volunteers (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  volunteer_type VARCHAR(255) NOT NULL,
+  availability TEXT,
+  skills TEXT,
+  interest_area VARCHAR(255),
+  status VARCHAR(50) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'archived')),
+  join_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  hours_logged DECIMAL(10, 2) DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_email ON volunteers(email);
+CREATE INDEX IF NOT EXISTS idx_volunteers_status ON volunteers(status);
+CREATE INDEX IF NOT EXISTS idx_volunteers_area ON volunteers(interest_area);
+
+ALTER TABLE volunteers ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin full access volunteers" ON volunteers
+  FOR ALL USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public read active volunteers" ON volunteers
+  FOR SELECT USING (status = 'active');
