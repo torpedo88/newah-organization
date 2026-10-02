@@ -52,9 +52,14 @@ export default function SiteHeader() {
 
       <NavLinks />
 
-      <GlowButton href="/register/indrajatra" className="shrink-0">
-        Register
-      </GlowButton>
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <GlowButton href="/donate" className="shrink-0">
+          Donate
+        </GlowButton>
+        <GlowButton href="/register/indrajatra" className="shrink-0">
+          Register
+        </GlowButton>
+      </div>
     </header>
   );
 }

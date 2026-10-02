@@ -19,7 +19,6 @@ const LINKS: ReadonlyArray<readonly [label: string, href: string]> = [
   ["Our people", "/newah"],
   ["Events", "/#upcoming"],
   ["Membership", "/membership"],
-  ["Donate", "/donate"],
   ["Board", "/leadership"],
   ["Contact", "/#contact"],
 ];
