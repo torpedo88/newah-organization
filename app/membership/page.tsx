@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/ui/site-header";
-import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import MembershipForm from "./form";
 
 export const metadata: Metadata = {
   title: "Membership - Newah Organization",
@@ -86,12 +84,9 @@ export default function MembershipPage() {
                   ))}
                 </ul>
 
-                <Link href="/register/membership">
-                  <LiquidButton className="w-full text-white">
-                    Join Now
-                    <ArrowRight className="size-4" />
-                  </LiquidButton>
-                </Link>
+                <button className="w-full">
+                  <div className="text-white/50 text-sm">Sign up to join</div>
+                </button>
               </div>
             ))}
           </div>
@@ -124,6 +119,14 @@ export default function MembershipPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="mt-16 rounded-3xl border-2 border-white/20 bg-white/[0.07] p-8">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">Ready to Join?</h2>
+            <p className="text-white/80 text-center mb-8 max-w-2xl mx-auto">
+              Fill out the form below and join our community of dedicated members.
+            </p>
+            <MembershipForm />
           </div>
         </div>
       </div>

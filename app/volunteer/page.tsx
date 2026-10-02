@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import SiteHeader from "@/components/ui/site-header";
-import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import VolunteerForm from "./form";
 
 export const metadata: Metadata = {
   title: "Volunteer - Newah Organization",
@@ -140,74 +140,12 @@ export default function VolunteerPage() {
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-4">Ready to Get Started?</h2>
             <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Fill out the volunteer form below and we'll connect you with opportunities that match your interests and skills.
+              Fill out the form below and we'll connect you with opportunities that match your interests and skills.
             </p>
 
-            <form className="max-w-2xl mx-auto rounded-3xl border-2 border-white/20 bg-white/[0.07] p-8 mb-8">
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Your name"
-                    className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Email *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="your@email.com"
-                    className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
-                  />
-                </div>
-              </div>
+            <VolunteerForm />
 
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">Phone</label>
-                <input
-                  type="tel"
-                  placeholder="(555) 000-0000"
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">Interest Area *</label>
-                <select
-                  required
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white focus:border-white/40 focus:outline-none"
-                >
-                  <option value="">Select an area of interest</option>
-                  <option value="events">Event Coordination</option>
-                  <option value="language">Language Teaching</option>
-                  <option value="culture">Cultural Education</option>
-                  <option value="technology">Technology Support</option>
-                  <option value="documentation">Documentation</option>
-                  <option value="outreach">Community Outreach</option>
-                </select>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">Tell us about yourself</label>
-                <textarea
-                  placeholder="Share your skills, experience, and why you want to volunteer..."
-                  rows={4}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
-                />
-              </div>
-
-              <button type="submit" className="w-full">
-                <LiquidButton className="w-full text-white">
-                  Submit Application
-                  <ArrowRight className="size-4" />
-                </LiquidButton>
-              </button>
-            </form>
-
-            <p className="text-white/60">
+            <p className="text-white/60 mt-8">
               Questions? <Link href="/#contact" className="text-lun hover:text-lun-bright underline">Contact us</Link> directly
             </p>
           </div>
