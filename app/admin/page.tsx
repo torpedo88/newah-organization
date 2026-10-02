@@ -196,7 +196,7 @@ export default async function AdminPage(props: {
       <div className="mb-8 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-          <p className="mt-3 text-sm text-white/60 flex gap-6">
+          <p className="mt-3 text-sm text-white/60 flex flex-wrap gap-6">
             <Link href="/admin" className="underline underline-offset-2 hover:text-white">
               Registrations ({rows.length})
             </Link>
@@ -204,7 +204,16 @@ export default async function AdminPage(props: {
               Events
             </Link>
             <Link href="/admin/community-photos" className="underline underline-offset-2 hover:text-white">
-              Community Photos
+              Photos
+            </Link>
+            <Link href="/admin/memberships" className="underline underline-offset-2 hover:text-white">
+              Memberships
+            </Link>
+            <Link href="/admin/donations" className="underline underline-offset-2 hover:text-white">
+              Donations
+            </Link>
+            <Link href="/admin/board-members" className="underline underline-offset-2 hover:text-white">
+              Board
             </Link>
           </p>
         </div>
