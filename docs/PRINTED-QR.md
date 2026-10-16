@@ -25,6 +25,9 @@ https://www.noancc.org/register/mhapuja
 
 **Source of truth:** `docs/qr-register-mhapuja-print.png` (1960×1960).
 Generated 2026-10-15 when the Mha Puja flow shipped.
+The printable poster at `/poster/mhapuja` serves a byte-identical copy,
+`public/images/qr-register-mhapuja.png`. If the docs file is ever
+regenerated, copy it over the public one too.
 
 ## Shared settings
 

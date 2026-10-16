@@ -11,6 +11,7 @@ them breaches the licence. They are rendered on the site by
 | `public/images/patan-durbar.jpg` | Shadow Ayush | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Big_Bell,_Patan_Durbar_Square_in_the_evening.jpg) |
 | `public/images/mha-puja.jpg` | Kamal Ratna Tuladhar | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Mhapuja_bhoy.jpg) |
 | `public/images/indra-jatra-durbar-square.webp` | Wikimedman | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Start_of_Indra_Jatra.jpg) |
+| `public/images/mhapuja-mandala.webp` | Karrattul (diagram), recoloured to gold line art | Public domain (ineligible for copyright) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Nepalese_Mhapuja_Mandala.jpg) |
 
 ## If you replace a photograph
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarDays, Clock, MapPin, Phone, Ticket } from "lucide-react";
 import SiteHeader from "@/components/ui/site-header";
-import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import LatticeDivider from "@/components/ui/lattice-divider";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG } from "@/lib/legal/org";
@@ -84,7 +84,7 @@ export default function MhaPujaPage() {
 
   return (
     <div className="relative min-h-screen">
-      <FestivalBackdrop />
+      <NhuDayaBackdrop />
       <SiteHeader />
 
       <main className="relative pt-28 pb-24">

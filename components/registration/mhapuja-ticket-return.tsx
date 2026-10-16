@@ -1,5 +1,5 @@
 import Link from "next/link";
-import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import { ORG } from "@/lib/legal/org";
 
 /**
@@ -29,7 +29,7 @@ export default function MhapujaTicketReturn({
 
   return (
     <div className="relative flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      <FestivalBackdrop />
+      <NhuDayaBackdrop />
       <div className="relative mx-auto w-full max-w-2xl">
         <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-8 text-center backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)]">
           <h1 className="mb-2 text-3xl font-bold text-white">
