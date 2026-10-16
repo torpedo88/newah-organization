@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasRegistrations } from "@/lib/admin/event-registrations";
+import { chapterLocalToIso } from "@/lib/constants/time";
 
 /** What every action below returns: either it worked, or it says why not. */
 type ActionResult = { success: true } | { error: string };
@@ -54,12 +56,15 @@ export async function createEvent(data: EventInput): Promise<ActionResult> {
   const gate = await requireAdmin();
   if (!gate.ok) return { error: gate.error };
 
+  const eventDate = chapterLocalToIso(data.event_date);
+  if (!eventDate) return { error: "Enter the event's date and time." };
+
   const { error } = await gate.admin.from("events").insert([
     {
       title: data.title,
       slug: data.slug,
       description: data.description,
-      event_date: data.event_date,
+      event_date: eventDate,
       location: data.location,
       capacity: data.capacity,
       image_url: data.image_url || null,
@@ -77,13 +82,33 @@ export async function updateEvent(id: number, data: EventInput): Promise<ActionR
   const gate = await requireAdmin();
   if (!gate.ok) return { error: gate.error };
 
+  const eventDate = chapterLocalToIso(data.event_date);
+  if (!eventDate) return { error: "Enter the event's date and time." };
+
+  // An event with a registration flow keeps its slug: it is the public
+  // /register/<slug> address, printed QR codes point at it, and it decides
+  // which registration table the admin reads.
+  const { data: existing, error: readError } = await gate.admin
+    .from("events")
+    .select("slug")
+    .eq("id", id)
+    .single();
+  if (readError) return { error: readError.message };
+  if (existing && hasRegistrations(existing.slug) && data.slug !== existing.slug) {
+    return {
+      error:
+        `The address "${existing.slug}" cannot change: registration and printed QR codes ` +
+        `use /register/${existing.slug}.`,
+    };
+  }
+
   const { error } = await gate.admin
     .from("events")
     .update({
       title: data.title,
       slug: data.slug,
       description: data.description,
-      event_date: data.event_date,
+      event_date: eventDate,
       location: data.location,
       capacity: data.capacity,
       image_url: data.image_url || null,
@@ -100,6 +125,13 @@ export async function updateEvent(id: number, data: EventInput): Promise<ActionR
 export async function deleteEvent(id: number): Promise<ActionResult> {
   const gate = await requireAdmin();
   if (!gate.ok) return { error: gate.error };
+
+  const { data: existing } = await gate.admin.from("events").select("slug").eq("id", id).single();
+  if (existing && hasRegistrations(existing.slug)) {
+    return {
+      error: "This event has registrations and a live registration page, so it cannot be deleted.",
+    };
+  }
 
   const { error } = await gate.admin.from("events").delete().eq("id", id);
 

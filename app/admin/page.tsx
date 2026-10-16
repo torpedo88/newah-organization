@@ -9,12 +9,17 @@ import {
 } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import AdminBackdrop from "@/components/ui/admin-backdrop";
 import { EVENT } from "@/lib/constants/event";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import { logIn, logOut } from "./actions";
 import MhaPujaRegistrations from "./mhapuja-registrations";
+import {
+  EVENT_REGISTRATIONS,
+  hasRegistrations,
+  type RegistrationSlug,
+} from "@/lib/admin/event-registrations";
 
 export const metadata: Metadata = {
   title: "Admin - Newah Organization",
@@ -47,7 +52,7 @@ type RegistrationRow = {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
-      <FestivalBackdrop />
+      <AdminBackdrop />
       <div className="relative mx-auto w-full max-w-6xl">{children}</div>
     </div>
   );
@@ -57,15 +62,14 @@ const PANEL_CLASS =
   "rounded-3xl border border-white/10 bg-white/[0.07] p-8 backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)]";
 
 /**
- * The events the board can switch between. Each has its own table: Indra
- * Jatra donations in `registrations`, Mha Puja tickets in
- * `mhapuja_registrations`. Mha Puja is first because it is the next event.
+ * Fallback tab labels for events with a registration flow, used when their
+ * row is missing from `events` (deleted, or a database not yet seeded).
+ * Their registrations exist regardless, so the board must still reach them.
  */
-const ADMIN_EVENTS = [
-  { key: "mhapuja", label: "Mha Puja" },
-  { key: "indrajatra", label: "Indra Jatra" },
-] as const;
-type AdminEventKey = (typeof ADMIN_EVENTS)[number]["key"];
+const FALLBACK_LABELS: Record<RegistrationSlug, string> = {
+  mhapuja: "Mha Puja",
+  indrajatra: "Indra Jatra",
+};
 
 function Panel({ children }: { children: React.ReactNode }) {
   return (
@@ -97,8 +101,7 @@ export default async function AdminPage(props: {
   searchParams: Promise<{ error?: string; locked?: string; page?: string; event?: string }>;
 }) {
   const { error, locked, page, event: eventParam } = await props.searchParams;
-  const event: AdminEventKey =
-    ADMIN_EVENTS.find((e) => e.key === eventParam)?.key ?? ADMIN_EVENTS[0].key;
+
 
   // Missing configuration must explain itself rather than 500 the route.
   if (!adminAuthConfigured()) {
@@ -167,6 +170,24 @@ export default async function AdminPage(props: {
   const currentPage = Math.max(1, Number(page) || 1);
   const pageOffset = (currentPage - 1) * PAGE_SIZE;
 
+  // Registrations hang off events: one tab per event in Events Management,
+  // newest first. Events with a registration flow are always present even if
+  // their row is gone, because their registrations still exist.
+  const { data: eventRows } = await supabase
+    .from("events")
+    .select("title, slug, event_date")
+    .order("event_date", { ascending: false, nullsFirst: false });
+  const tabs: { slug: string; label: string }[] = (eventRows ?? []).map(
+    (e: { title: string; slug: string }) => ({ slug: e.slug, label: e.title }),
+  );
+  for (const slug of Object.keys(EVENT_REGISTRATIONS) as RegistrationSlug[]) {
+    if (!tabs.some((t) => t.slug === slug)) tabs.push({ slug, label: FALLBACK_LABELS[slug] });
+  }
+  const event =
+    tabs.find((t) => t.slug === eventParam)?.slug ??
+    tabs.find((t) => hasRegistrations(t.slug))?.slug ??
+    "mhapuja";
+
   const header = (
     <>
       <div className="mb-8 flex items-center justify-between gap-4">
@@ -191,13 +212,13 @@ export default async function AdminPage(props: {
 
       <h2 className="mb-4 text-2xl font-bold text-white">Registrations</h2>
       <nav aria-label="Event" className="mb-6 flex flex-wrap gap-2">
-        {ADMIN_EVENTS.map((e) => (
+        {tabs.map((e) => (
           <Link
-            key={e.key}
-            href={`/admin?event=${e.key}`}
-            aria-current={e.key === event ? "page" : undefined}
+            key={e.slug}
+            href={`/admin?event=${e.slug}`}
+            aria-current={e.slug === event ? "page" : undefined}
             className={
-              e.key === event
+              e.slug === event
                 ? "rounded-full border border-lun bg-lun/15 px-4 py-1.5 text-sm font-semibold text-white"
                 : "rounded-full border border-white/15 px-4 py-1.5 text-sm text-white/65 hover:border-white/35 hover:text-white"
             }
@@ -208,6 +229,19 @@ export default async function AdminPage(props: {
       </nav>
     </>
   );
+
+  if (!hasRegistrations(event)) {
+    return (
+      <Shell>
+        {header}
+        <Panel>
+          <p className="py-10 text-center text-white/60">
+            This event has no registration form yet, so there are no registrations to show.
+          </p>
+        </Panel>
+      </Shell>
+    );
+  }
 
   if (event === "mhapuja") {
     return (

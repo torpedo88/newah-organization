@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import AdminBackdrop from "@/components/ui/admin-backdrop";
 import EventForm from "../event-form";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function CreateEventPage() {
   if (!isValid) {
     return (
       <div className="relative min-h-screen px-4 py-12">
-        <FestivalBackdrop />
+        <AdminBackdrop />
         <div className="relative mx-auto w-full max-w-6xl text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Unauthorized</h1>
           <Link href="/admin">
@@ -32,7 +32,7 @@ export default async function CreateEventPage() {
 
   return (
     <div className="relative min-h-screen px-4 py-12">
-      <FestivalBackdrop />
+      <AdminBackdrop />
       <div className="relative mx-auto w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-white mb-8">Create Event</h1>
         <EventForm />
