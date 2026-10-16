@@ -14,6 +14,7 @@ import { EVENT } from "@/lib/constants/event";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import { logIn, logOut } from "./actions";
+import MhaPujaRegistrations from "./mhapuja-registrations";
 
 export const metadata: Metadata = {
   title: "Admin - Newah Organization",
@@ -52,9 +53,23 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
+const PANEL_CLASS =
+  "rounded-3xl border border-white/10 bg-white/[0.07] p-8 backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)]";
+
+/**
+ * The events the board can switch between. Each has its own table: Indra
+ * Jatra donations in `registrations`, Mha Puja tickets in
+ * `mhapuja_registrations`. Mha Puja is first because it is the next event.
+ */
+const ADMIN_EVENTS = [
+  { key: "mhapuja", label: "Mha Puja" },
+  { key: "indrajatra", label: "Indra Jatra" },
+] as const;
+type AdminEventKey = (typeof ADMIN_EVENTS)[number]["key"];
+
 function Panel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-8 backdrop-blur-xl shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)]">
+    <div className={PANEL_CLASS}>
       {children}
     </div>
   );
@@ -79,9 +94,11 @@ function Code({ children }: { children: React.ReactNode }) {
 }
 
 export default async function AdminPage(props: {
-  searchParams: Promise<{ error?: string; locked?: string; page?: string }>;
+  searchParams: Promise<{ error?: string; locked?: string; page?: string; event?: string }>;
 }) {
-  const { error, locked, page } = await props.searchParams;
+  const { error, locked, page, event: eventParam } = await props.searchParams;
+  const event: AdminEventKey =
+    ADMIN_EVENTS.find((e) => e.key === eventParam)?.key ?? ADMIN_EVENTS[0].key;
 
   // Missing configuration must explain itself rather than 500 the route.
   if (!adminAuthConfigured()) {
@@ -150,6 +167,61 @@ export default async function AdminPage(props: {
   const currentPage = Math.max(1, Number(page) || 1);
   const pageOffset = (currentPage - 1) * PAGE_SIZE;
 
+  const header = (
+    <>
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+          <p className="mt-3 flex gap-6 text-sm text-white/60">
+            <Link href="/admin" className="underline underline-offset-2 hover:text-white">
+              Registrations
+            </Link>
+            <Link href="/admin/events" className="underline underline-offset-2 hover:text-white">
+              Events
+            </Link>
+          </p>
+        </div>
+        <form action={logOut}>
+          <LiquidButton type="submit" size="default" className="text-white">
+            <LogOut className="size-4" aria-hidden />
+            Sign out
+          </LiquidButton>
+        </form>
+      </div>
+
+      <h2 className="mb-4 text-2xl font-bold text-white">Registrations</h2>
+      <nav aria-label="Event" className="mb-6 flex flex-wrap gap-2">
+        {ADMIN_EVENTS.map((e) => (
+          <Link
+            key={e.key}
+            href={`/admin?event=${e.key}`}
+            aria-current={e.key === event ? "page" : undefined}
+            className={
+              e.key === event
+                ? "rounded-full border border-lun bg-lun/15 px-4 py-1.5 text-sm font-semibold text-white"
+                : "rounded-full border border-white/15 px-4 py-1.5 text-sm text-white/65 hover:border-white/35 hover:text-white"
+            }
+          >
+            {e.label}
+          </Link>
+        ))}
+      </nav>
+    </>
+  );
+
+  if (event === "mhapuja") {
+    return (
+      <Shell>
+        {header}
+        <MhaPujaRegistrations
+          supabase={supabase}
+          currentPage={currentPage}
+          panelClassName={PANEL_CLASS}
+        />
+      </Shell>
+    );
+  }
+
   const { data, error: queryError } = await supabase
     .from("registrations")
     .select(
@@ -193,33 +265,11 @@ export default async function AdminPage(props: {
 
   return (
     <Shell>
-      <div className="mb-8 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-          <p className="mt-3 text-sm text-white/60 flex gap-6">
-            <Link href="/admin" className="underline underline-offset-2 hover:text-white">
-              Registrations ({rows.length})
-            </Link>
-            <Link href="/admin/events" className="underline underline-offset-2 hover:text-white">
-              Events
-            </Link>
-          </p>
-        </div>
-        <form action={logOut}>
-          <LiquidButton type="submit" size="default" className="text-white">
-            <LogOut className="size-4" aria-hidden />
-            Sign out
-          </LiquidButton>
-        </form>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-4">Registrations</h2>
-        <p className="text-sm text-white/60 mb-4">
-          {EVENT.title} &middot; {rows.length} {rows.length === 1 ? "entry" : "entries"}, newest
-          first
-        </p>
-      </div>
+      {header}
+      <p className="mb-4 text-sm text-white/60">
+        {EVENT.name} &middot; {EVENT.title} donations &middot; {rows.length}{" "}
+        {rows.length === 1 ? "entry" : "entries"} on this page, newest first
+      </p>
 
       {queryError ? (
         <Panel>
@@ -348,12 +398,12 @@ export default async function AdminPage(props: {
                   </span>
                   <span className="flex gap-3">
                     {currentPage > 1 && (
-                      <Link href={`/admin?page=${currentPage - 1}`} className="underline underline-offset-4 hover:text-white">
+                      <Link href={`/admin?event=indrajatra&page=${currentPage - 1}`} className="underline underline-offset-4 hover:text-white">
                         Previous
                       </Link>
                     )}
                     {pageOffset + rows.length < (totals?.registrations ?? 0) && (
-                      <Link href={`/admin?page=${currentPage + 1}`} className="underline underline-offset-4 hover:text-white">
+                      <Link href={`/admin?event=indrajatra&page=${currentPage + 1}`} className="underline underline-offset-4 hover:text-white">
                         Next
                       </Link>
                     )}

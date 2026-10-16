@@ -300,6 +300,9 @@ async function createCheckout(args: {
       // Refund events carry the PaymentIntent, not the session, so without
       // this there is nothing to tie a refund back to a registration.
       payment_intent_data: {
+        // What the Dashboard payments list and the receipt show for this
+        // payment. Without it a payment reads as a bare pi_ id.
+        description: mhapujaPaymentDescription(args),
         metadata: { registration_code: args.code, event: "mhapuja" },
       },
       success_url: `${base}/register/mhapuja?ticket=success&code=${encodeURIComponent(args.code)}`,
@@ -311,6 +314,18 @@ async function createCheckout(args: {
     console.error("Could not create Stripe checkout session for Mha Puja:", error);
     return undefined;
   }
+}
+
+/** e.g. "Mha Puja tickets — 2 adults, 1 child (MHP-2026-7K4Q2N)" */
+function mhapujaPaymentDescription(args: {
+  code: string;
+  adultCount: number;
+  childCount: number;
+}): string {
+  const parts: string[] = [];
+  if (args.adultCount > 0) parts.push(`${args.adultCount} adult${args.adultCount === 1 ? "" : "s"}`);
+  if (args.childCount > 0) parts.push(`${args.childCount} child${args.childCount === 1 ? "" : "ren"}`);
+  return `${MHAPUJA_EVENT.name} tickets — ${parts.join(", ")} (${args.code})`;
 }
 
 async function sendPendingConfirmation(args: {
