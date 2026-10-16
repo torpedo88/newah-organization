@@ -37,13 +37,13 @@ export const MHAPUJA_PRINTED_REGISTRATION_URL = "www.noancc.org/register/mhapuja
  * event.ts). This field prints wherever the public page shows "when", so a
  * date that is wrong on the paper is wrong on the site too.
  *
- * The event's Nepal Bhasa title is "Hridaya Bhintuna" ("heartfelt New Year
- * greeting") — kept beside the English name so the authenticity of the
+ * The event's Nepal Bhasa title is "Nhu Daya Bhintuna" ("Happy New
+ * Year" in Nepal Bhasa) — kept beside the English name so the authenticity of the
  * language this is for does not get lost on the landing page.
  */
 export const MHAPUJA_EVENT = {
   name: "Mha Puja",
-  nepalBhasaTitle: "Hridaya Bhintuna",
+  nepalBhasaTitle: "Nhu Daya Bhintuna",
   tagline: "Worship of the self. The night the Newah year begins.",
   nepalSambatYear: 1147,
   date: "Wednesday, October 22, 2026",
