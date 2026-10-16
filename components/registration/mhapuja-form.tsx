@@ -12,7 +12,7 @@ import {
 } from "@/lib/validation/mhapuja-registration";
 import { formatPhoneAsTyped } from "@/lib/validation/contact";
 import { registerMhaPuja } from "@/lib/actions/register-mhapuja";
-import FestivalBackdrop, { FestivalPhotoCredit } from "@/components/ui/festival-backdrop";
+import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
 import { CONSENT_TEXT } from "@/lib/legal/org";
@@ -102,7 +102,7 @@ export default function MhapujaForm() {
 
   return (
     <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
-      <FestivalBackdrop />
+      <NhuDayaBackdrop />
       <div className="relative mx-auto max-w-md">
         <div className="mb-10 text-center">
           <div className="mb-6 flex justify-center">
@@ -271,7 +271,6 @@ export default function MhapujaForm() {
           <Link href="/terms" className="underline underline-offset-2 hover:text-white/80">Terms and Conditions</Link>
         </nav>
 
-        <FestivalPhotoCredit className="mt-4 text-center text-xs text-white/55" />
       </div>
     </div>
   );
