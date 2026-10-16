@@ -8,7 +8,14 @@ import { COMMUNITY_PHOTOS } from "@/lib/constants/community-photos";
 import PhotoCredits from "@/components/ui/photo-credits";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { ORG, formattedAddress } from "@/lib/legal/org";
-import { EVENT, FESTIVALS } from "@/lib/constants/event";
+import { FESTIVALS } from "@/lib/constants/event";
+import {
+  MHAPUJA_ADULT_PRICE_CENTS,
+  MHAPUJA_CHILD_AGE_CEILING,
+  MHAPUJA_CHILD_PRICE_CENTS,
+  MHAPUJA_EVENT,
+  MHAPUJA_FEE_INCLUDES,
+} from "@/lib/constants/mhapuja";
 import { ABOUT_BACKGROUND, ABOUT_INTRO, MISSION_POINTS } from "@/lib/constants/about";
 import { BOARD_TERM, EXECUTIVE_BOARD } from "@/lib/constants/people";
 import { ASTA_MANGAL, FAMOUS_WINDOWS, NEWAR_WINDOWS } from "@/lib/constants/motifs";
@@ -63,9 +70,6 @@ function Heading({ kicker, children }: { kicker: string; children: React.ReactNo
 }
 
 export default function Home() {
-  const hasWhen = EVENT.date !== "";
-  const hasWhere = EVENT.venue !== "" || EVENT.city !== "";
-
   return (
     <main>
       <SiteHeader />
@@ -78,8 +82,8 @@ export default function Home() {
           </>
         }
         description={`The ${ORG.chapter} of the ${ORG.name} \u2014 keeping Newah language, festivals and craft alive on this side of the world.`}
-        ctaText="Register for Indra Jatra"
-        ctaHref="/register/indrajatra"
+        ctaText="Register for Mha Puja"
+        ctaHref="/register/mhapuja"
         secondaryText="See our year"
         secondaryHref="#our-year"
         images={COMMUNITY_PHOTOS}
@@ -188,59 +192,54 @@ export default function Home() {
 
           <div className="mt-8 overflow-hidden rounded-3xl border-2 border-patasi bg-patasi/12">
             <div className="grid md:grid-cols-5">
-              <div className="relative min-h-52 md:col-span-2">
+              <div className="relative min-h-52 bg-[radial-gradient(60%_60%_at_50%_50%,rgba(227,196,99,0.18),#0E0E11_80%)] md:col-span-2">
                 <Image
-                  src="/images/community/indra-jatra-2023-kumari.jpg"
-                  alt="The Kumari at the chapter's Indra Jatra in Berkeley, 2023"
+                  src="/images/mhapuja-mandala.webp"
+                  alt="The eight-petal Mha Puja mandala"
                   fill
                   sizes="(max-width: 768px) 100vw, 400px"
-                  className="object-cover"
+                  className="object-contain p-6 opacity-80"
                 />
               </div>
               <div className="p-7 sm:p-9 md:col-span-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lun-bright">
-                  Next up
+                  Next up &middot; Nepal Sambat {MHAPUJA_EVENT.nepalSambatYear}
                 </p>
                 <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
-                  {EVENT.name}: {EVENT.title}
+                  {MHAPUJA_EVENT.name}: {MHAPUJA_EVENT.nepalBhasaTitle}
                 </h2>
+                <p className="mt-1 text-white/70">{MHAPUJA_EVENT.tagline}</p>
 
-                {!hasWhen && !hasWhere && (
-                  <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-lun/40 bg-lun/10 px-4 py-1.5 text-sm text-lun">
-                    <CalendarDays className="size-4 shrink-0" aria-hidden />
-                    Date and venue to be announced
-                  </p>
-                )}
+                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-white/85">
+                  <span className="inline-flex items-center gap-2">
+                    <CalendarDays className="size-4 shrink-0 text-lun" aria-hidden />
+                    {MHAPUJA_EVENT.date}
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <MapPin className="size-4 shrink-0 text-lun" aria-hidden />
+                    {MHAPUJA_EVENT.venue}, {MHAPUJA_EVENT.city}
+                  </span>
+                </div>
 
-                {(hasWhen || hasWhere) && (
-                  <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-white/85">
-                    {hasWhen && (
-                      <span className="inline-flex items-center gap-2">
-                        <CalendarDays className="size-4 shrink-0 text-lun" aria-hidden />
-                        {EVENT.date}
-                      </span>
-                    )}
-                    {hasWhere && (
-                      <span className="inline-flex items-center gap-2">
-                        <MapPin className="size-4 shrink-0 text-lun" aria-hidden />
-                        {[EVENT.venue, EVENT.city].filter(Boolean).join(", ")}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                <p className="mt-4 text-pretty leading-relaxed text-white/80">
-                  {EVENT.promise}{" "}
-                  <strong className="font-semibold text-white">{EVENT.fundName}</strong>.
-                </p>
-
-                <LiquidButton asChild size="xl" className="mt-6 text-white">
-                  <Link href="/register/indrajatra">
-                    Register
-                    <ArrowRight className="size-4" aria-hidden />
+                <div className="mt-6 flex flex-wrap items-center gap-4">
+                  <LiquidButton asChild size="xl" className="text-white">
+                    <Link href="/register/mhapuja">
+                      Register
+                      <ArrowRight className="size-4" aria-hidden />
+                    </Link>
+                  </LiquidButton>
+                  <Link
+                    href="/mhapuja"
+                    className="text-sm font-semibold text-lun underline-offset-4 hover:underline"
+                  >
+                    About the evening
                   </Link>
-                </LiquidButton>
-                <p className="mt-3 text-sm text-white/55">Free to attend &middot; donations optional</p>
+                </div>
+                <p className="mt-3 text-sm text-white/55">
+                  Adults ${MHAPUJA_ADULT_PRICE_CENTS / 100} &middot; children under{" "}
+                  {MHAPUJA_CHILD_AGE_CEILING} ${MHAPUJA_CHILD_PRICE_CENTS / 100} &middot;{" "}
+                  {MHAPUJA_FEE_INCLUDES}
+                </p>
               </div>
             </div>
           </div>
@@ -373,7 +372,7 @@ export default function Home() {
         <footer className="mx-auto w-full max-w-6xl 2xl:max-w-7xl px-5 pb-14 sm:px-8">
           <div className="border-t border-white/10 pt-7">
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/55">
-              <Link href="/register/indrajatra" className="underline-offset-4 hover:text-white/85 hover:underline">Register</Link>
+              <Link href="/register/mhapuja" className="underline-offset-4 hover:text-white/85 hover:underline">Register</Link>
               <Link href="/privacy" className="underline-offset-4 hover:text-white/85 hover:underline">Privacy Policy</Link>
               <Link href="/terms" className="underline-offset-4 hover:text-white/85 hover:underline">Terms and Conditions</Link>
             </nav>
