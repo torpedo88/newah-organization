@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "./actions";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import { isoToChapterLocal } from "@/lib/constants/time";
 
 type Event = {
   id: number;
   title: string;
   slug: string;
   description: string | null;
-  event_date: string;
+  event_date: string | null;
   location: string | null;
   capacity: number | null;
   image_url: string | null;
@@ -25,7 +26,8 @@ export default function EventForm({ event }: { event?: Event }) {
     title: event?.title || "",
     slug: event?.slug || "",
     description: event?.description || "",
-    event_date: event?.event_date ? new Date(event.event_date).toISOString().slice(0, 16) : "",
+    // Shown and entered in Pacific time; the action converts it back.
+    event_date: isoToChapterLocal(event?.event_date),
     location: event?.location || "",
     capacity: event?.capacity != null ? String(event.capacity) : "",
     image_url: event?.image_url || "",
@@ -102,7 +104,7 @@ export default function EventForm({ event }: { event?: Event }) {
 
       <div>
         <label className="block text-sm font-medium text-white mb-2">
-          Date & Time *
+          Date &amp; Time (Pacific) *
         </label>
         <input
           type="datetime-local"
