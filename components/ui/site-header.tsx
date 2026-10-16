@@ -52,7 +52,7 @@ export default function SiteHeader() {
 
       <NavLinks />
 
-      <GlowButton href="/register/indrajatra" className="shrink-0">
+      <GlowButton href="/register/mhapuja" className="shrink-0">
         Register
       </GlowButton>
     </header>
