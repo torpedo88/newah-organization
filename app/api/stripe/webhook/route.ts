@@ -23,6 +23,27 @@ function matchFor(event: Stripe.Event): { column: string; value: string } | null
 }
 
 /**
+ * Which table this event is about.
+ *
+ * Each event source (checkout session, PaymentIntent) carries a metadata.event
+ * tag written at session creation. "mhapuja" => mhapuja_registrations;
+ * anything else, including the historical case where no tag is set, routes to
+ * the original Indra Jatra `registrations` table. That default keeps every
+ * old delivery during a replay or a dashboard resend addressed to the only
+ * table it could ever have belonged to.
+ *
+ * Both tables deliberately share the same column names used above
+ * (stripe_session_id, registration_code, payment_status, charged_cents),
+ * so the UPDATE below does not need to know which table it is writing to.
+ */
+function tableFor(event: Stripe.Event): "registrations" | "mhapuja_registrations" {
+  const object = event.data.object as unknown as Record<string, unknown>;
+  const metadata = (object.metadata ?? {}) as Record<string, string>;
+  if (metadata.event === "mhapuja") return "mhapuja_registrations";
+  return "registrations";
+}
+
+/**
  * Stripe webhook: the only thing permitted to mark a donation paid.
  *
  * The browser is never trusted for this. A visitor returning to the success
@@ -68,6 +89,8 @@ export async function POST(request: NextRequest) {
   const match = matchFor(event);
   if (!match) return NextResponse.json({ received: true, ignored: "nothing to match on" });
 
+  const table = tableFor(event);
+
   const supabase = createAdminClient();
   if (!supabase) {
     // 500 makes Stripe retry, which is what we want: the payment happened and
@@ -81,7 +104,7 @@ export async function POST(request: NextRequest) {
   // whichever writes last wins regardless of what it means. Encoding the
   // allowed predecessors in the WHERE clause makes the database decide.
   const { data: updated, error } = await supabase
-    .from("registrations")
+    .from(table)
     .update({ payment_status: status })
     .eq(match.column, match.value)
     .in("payment_status", replaceableFrom(status))
@@ -112,7 +135,7 @@ export async function POST(request: NextRequest) {
   // state — a redelivery, or a late event that must not move it backwards —
   // or no row carries this session at all, which is money we cannot attribute.
   const { data: existing } = await supabase
-    .from("registrations")
+    .from(table)
     .select("id, payment_status")
     .eq(match.column, match.value)
     .limit(1);

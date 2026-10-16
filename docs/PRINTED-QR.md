@@ -1,21 +1,37 @@
-# The printed QR code — do not break this URL
+# The printed QR codes — do not break these URLs
 
-The current code encodes:
+Two events, two printed QR codes. Each one has to keep resolving **forever**,
+because a printed code cannot be updated. Once posters, flyers or signs are
+out, the URL on them is a commitment.
+
+## Indra Jatra
+
+Encodes:
 
 ```
 https://www.noancc.org/register/indrajatra
 ```
 
-Version 5, error correction level **H** — roughly 30% of the code can be
-creased, stained or obscured and still scan, which is what a poster actually
-endures.
-
 **Source of truth:** `docs/qr-register-print.png` (1960×1960).
 Regenerated 2026-09-23 when the site moved to its own domain.
 
-A printed QR code cannot be updated. Once posters, flyers or signs are out,
-that URL has to keep resolving **forever**, or every printed code is dead with
-no way to fix it.
+## Mha Puja
+
+Encodes:
+
+```
+https://www.noancc.org/register/mhapuja
+```
+
+**Source of truth:** `docs/qr-register-mhapuja-print.png` (1960×1960).
+Generated 2026-10-15 when the Mha Puja flow shipped.
+
+## Shared settings
+
+Both codes use **version 5**, error correction level **H** — roughly 30% of
+the code can be creased, stained or obscured and still scan, which is what a
+poster actually endures. They are also both 1960×1960 so a printer swapping
+sheets between the two events gets the same look.
 
 ## Codes printed before 2026-09-23
 
@@ -51,8 +67,8 @@ confirm what it points at.
   `www.noancc.org` from it.
 - **Letting `noancc.org` lapse.** Domain registration is now load-bearing for
   printed material; a missed renewal kills every current code.
-- Removing or renaming the `/register/indrajatra` route without leaving a
-  redirect behind.
+- Removing or renaming the `/register/indrajatra` or `/register/mhapuja`
+  route without leaving a redirect behind.
 
 ## Before printing a new batch
 
