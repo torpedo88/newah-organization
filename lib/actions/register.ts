@@ -313,12 +313,19 @@ async function createCheckout(args: {
       ],
       metadata: {
         registration_code: args.code,
+        // The webhook routes anything not tagged "mhapuja" here, so this tag
+        // is for people reading the Stripe Dashboard, not for routing.
+        event: "indrajatra",
         donation_cents: String(args.donationCents),
       },
       // Refund events carry the PaymentIntent, not the session, so without
       // this there is nothing to tie a refund back to a registration.
       payment_intent_data: {
-        metadata: { registration_code: args.code },
+        // The Dashboard payments list and the receipt show the PaymentIntent's
+        // description; without one a payment reads as a bare pi_ id and the
+        // board cannot tell a donation from a Mha Puja ticket.
+        description: `${EVENT.name} — ${EVENT.title} donation (${args.code})`,
+        metadata: { registration_code: args.code, event: "indrajatra" },
       },
       success_url: `${base}/register/indrajatra?donation=success&code=${encodeURIComponent(args.code)}`,
       cancel_url: `${base}/register/indrajatra?donation=cancelled&code=${encodeURIComponent(args.code)}`,
