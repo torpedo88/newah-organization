@@ -22,7 +22,7 @@ values
     'Mha Puja — Nhu Daya Bhintuna',
     'mhapuja',
     'Mha Puja and dinner for Nepal Sambat 1147. Bhintuna 3:00 PM, Mha Puja 5:00 PM onwards. Adults $40, children under 10 $15.',
-    '2026-10-22 15:00:00-07',
+    '2026-11-10 15:00:00-07',
     'Nepali Community Center, 369 Chesley Ave, Richmond, CA 94801',
     null,
     true
