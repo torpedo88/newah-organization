@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Eye, EyeOff, Users } from "lucide-react";
 import {
   ADMIN_COOKIE,
   sessionTokenIsValid,
 } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import FestivalBackdrop from "@/components/ui/festival-backdrop";
+import AdminBackdrop from "@/components/ui/admin-backdrop";
 import { formatDate } from "@/lib/constants/time";
-import { deleteEvent, togglePublish } from "./actions";
+import { togglePublish } from "./actions";
+import DeleteEventButton from "./delete-event-button";
+import { hasRegistrations } from "@/lib/admin/event-registrations";
 
 export const metadata: Metadata = {
   title: "Manage Events - Admin",
@@ -22,7 +24,7 @@ type Event = {
   title: string;
   slug: string;
   description: string | null;
-  event_date: string;
+  event_date: string | null;
   location: string | null;
   capacity: number | null;
   published: boolean;
@@ -37,7 +39,7 @@ export default async function AdminEventsPage() {
   if (!isValid) {
     return (
       <div className="relative min-h-screen px-4 py-12">
-        <FestivalBackdrop />
+        <AdminBackdrop />
         <div className="relative mx-auto w-full max-w-6xl text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Unauthorized</h1>
           <p className="text-white/70 mb-8">Please log in from the admin panel.</p>
@@ -50,14 +52,31 @@ export default async function AdminEventsPage() {
   }
 
   const admin = createAdminClient();
+  if (!admin) {
+    return (
+      <div className="relative min-h-screen px-4 py-12">
+        <AdminBackdrop />
+        <div className="relative mx-auto w-full max-w-6xl text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Cannot read events</h1>
+          <p className="text-white/70 mb-8">
+            SUPABASE_SERVICE_ROLE_KEY is not set, so the events table cannot be reached.
+          </p>
+          <Link href="/admin">
+            <LiquidButton>Back to Admin</LiquidButton>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const { data: events, error } = await admin
     .from("events")
     .select("*")
-    .order("event_date", { ascending: true });
+    .order("event_date", { ascending: false, nullsFirst: false });
 
   return (
     <div className="relative min-h-screen px-4 py-12">
-      <FestivalBackdrop />
+      <AdminBackdrop />
       <div className="relative mx-auto w-full max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -127,6 +146,22 @@ export default async function AdminEventsPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
+                          {hasRegistrations(event.slug) ? (
+                            <Link
+                              href={`/admin?event=${event.slug}`}
+                              className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold text-lun hover:bg-lun/10 transition-colors"
+                            >
+                              <Users className="size-3" />
+                              Registrations
+                            </Link>
+                          ) : (
+                            <span
+                              className="px-2 py-1 text-xs text-white/40"
+                              title="No registration form is built for this event yet"
+                            >
+                              No registration form
+                            </span>
+                          )}
                           <Link
                             href={`/admin/events/${event.id}/edit`}
                             className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-blue-400 hover:bg-blue-400/10 transition-colors"
@@ -134,24 +169,7 @@ export default async function AdminEventsPage() {
                             <Edit className="size-3" />
                             Edit
                           </Link>
-                          <form
-                            action={async () => {
-                              "use server";
-                              await deleteEvent(event.id);
-                            }}
-                            className="inline"
-                          >
-                            <button
-                              type="submit"
-                              className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-red-400 hover:bg-red-400/10 transition-colors"
-                              onClick={(e) => {
-                                if (!confirm("Delete this event?")) e.preventDefault();
-                              }}
-                            >
-                              <Trash2 className="size-3" />
-                              Delete
-                            </button>
-                          </form>
+                          {!hasRegistrations(event.slug) && <DeleteEventButton id={event.id} />}
                         </div>
                       </td>
                     </tr>

@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
-import FestivalBackdrop from "@/components/ui/festival-backdrop";
-import EventForm from "../event-form";
+import AdminBackdrop from "@/components/ui/admin-backdrop";
+import EventForm from "../../event-form";
 
 export const metadata: Metadata = {
   title: "Edit Event - Admin",
@@ -15,8 +15,9 @@ export const metadata: Metadata = {
 export default async function EditEventPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get(ADMIN_COOKIE)?.value;
   const isValid = token && sessionTokenIsValid(token);
@@ -24,7 +25,7 @@ export default async function EditEventPage({
   if (!isValid) {
     return (
       <div className="relative min-h-screen px-4 py-12">
-        <FestivalBackdrop />
+        <AdminBackdrop />
         <div className="relative mx-auto w-full max-w-6xl text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Unauthorized</h1>
           <Link href="/admin">
@@ -36,16 +37,33 @@ export default async function EditEventPage({
   }
 
   const admin = createAdminClient();
+  if (!admin) {
+    return (
+      <div className="relative min-h-screen px-4 py-12">
+        <AdminBackdrop />
+        <div className="relative mx-auto w-full max-w-6xl text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Cannot read that event</h1>
+          <p className="text-white/70 mb-8">
+            SUPABASE_SERVICE_ROLE_KEY is not set, so the events table cannot be reached.
+          </p>
+          <Link href="/admin">
+            <LiquidButton>Back to Admin</LiquidButton>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const { data: event, error } = await admin
     .from("events")
     .select("*")
-    .eq("id", parseInt(params.id))
+    .eq("id", Number(id))
     .single();
 
   if (error || !event) {
     return (
       <div className="relative min-h-screen px-4 py-12">
-        <FestivalBackdrop />
+        <AdminBackdrop />
         <div className="relative mx-auto w-full max-w-6xl text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Event Not Found</h1>
           <Link href="/admin/events">
@@ -58,7 +76,7 @@ export default async function EditEventPage({
 
   return (
     <div className="relative min-h-screen px-4 py-12">
-      <FestivalBackdrop />
+      <AdminBackdrop />
       <div className="relative mx-auto w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-white mb-8">Edit Event</h1>
         <EventForm event={event} />

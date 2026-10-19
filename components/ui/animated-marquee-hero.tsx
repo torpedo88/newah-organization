@@ -39,7 +39,6 @@ import AstaMangalWatermark from "@/components/ui/asta-mangal-watermark";
 export type MarqueeImage = {
   src: string;
   alt: string;
-  slug?: string;
 };
 
 interface AnimatedMarqueeHeroProps {
@@ -291,8 +290,8 @@ export function AnimatedMarqueeHero({
           {marqueeImages.map((image, index) => (
             <Link
               key={`${image.src}-${index}`}
-              href={image.slug ? `/gallery/${image.slug}` : "/#upcoming"}
-              className="group pointer-events-auto relative aspect-[3/4] h-44 flex-shrink-0 overflow-hidden rounded-2xl transition-opacity hover:opacity-80 md:h-60"
+              href="/#upcoming"
+              className="group relative aspect-[3/4] h-44 flex-shrink-0 overflow-hidden rounded-2xl transition-opacity hover:opacity-80 md:h-60"
               style={{ rotate: `${index % 2 === 0 ? -2 : 5}deg` }}
             >
               <Image
