@@ -41,7 +41,8 @@ const CHILD_PRICE = MHAPUJA_CHILD_PRICE_CENTS / 100;
 
 export default function MhapujaForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [coversFee, setCoversFee] = useState(false);
+  // Registrant always covers processing fee
+  const coversFee = true;
 
   const form = useForm<MhapujaRegistration>({
     resolver: zodResolver(mhapujaRegistrationSchema),
@@ -210,32 +211,14 @@ export default function MhapujaForm() {
                     <span>${toDollars(totalCents)}</span>
                   </div>
                   <div className="flex justify-between text-sm text-white/70">
-                    <span>Processing fee:</span>
+                    <span>Card processing fee:</span>
                     <span>${toDollars(feeCents)}</span>
                   </div>
                   <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
-                    <span>You will be charged:</span>
+                    <span>Total to be charged:</span>
                     <span>${toDollars(chargedCents)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-white/70">
-                    <span>Organization receives:</span>
-                    <span>${toDollars(toOrganizationCents)}</span>
-                  </div>
                 </div>
-
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={coversFee}
-                    onChange={(e) => setCoversFee(e.target.checked)}
-                    className="size-4 rounded accent-patasi cursor-pointer"
-                  />
-                  <span className="text-sm text-white/80">
-                    {coversFee
-                      ? "I'm covering the processing fee so the organization gets the full amount"
-                      : "Deduct processing fee from the organization's portion"}
-                  </span>
-                </label>
 
                 <p className="text-xs text-white/55">
                   Payment is taken securely by Stripe at the next step. Card only. Prices are
