@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { submitDonation } from "./actions";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import { settlement, toDollars } from "@/lib/payments/fees";
 
 export default function DonationForm() {
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,11 @@ export default function DonationForm() {
     amount: "50",
     donation_type: "",
     anonymous: false,
+    covers_fee: false,
   });
+
+  const amountCents = Math.round(parseFloat(formData.amount) * 100) || 0;
+  const { chargedCents, toOrganizationCents, feeCents } = settlement(amountCents, formData.covers_fee);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,6 +47,7 @@ export default function DonationForm() {
           amount,
           donation_type: formData.donation_type || "general",
           anonymous: formData.anonymous,
+          covers_fee: formData.covers_fee,
         }),
       });
 
@@ -164,6 +170,43 @@ export default function DonationForm() {
             className="size-4 rounded"
           />
           <span className="text-sm text-white/80">Make this donation anonymous</span>
+        </label>
+      </div>
+
+      <div className="rounded-lg bg-white/5 border border-white/10 p-4">
+        <div className="space-y-3">
+          <div className="flex justify-between text-sm text-white">
+            <span>Donation amount:</span>
+            <span>${toDollars(amountCents)}</span>
+          </div>
+          <div className="flex justify-between text-sm text-white/70">
+            <span>Processing fee:</span>
+            <span>${toDollars(feeCents)}</span>
+          </div>
+          <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
+            <span>You will be charged:</span>
+            <span>${toDollars(chargedCents)}</span>
+          </div>
+          <div className="flex justify-between text-sm text-white/70">
+            <span>Organization receives:</span>
+            <span>${toDollars(toOrganizationCents)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            checked={formData.covers_fee}
+            onChange={(e) => setFormData({ ...formData, covers_fee: e.target.checked })}
+            className="size-4 rounded"
+          />
+          <span className="text-sm text-white/80">
+            {formData.covers_fee
+              ? "I'm covering the processing fee so the organization gets my full donation"
+              : "Deduct processing fee from my donation"}
+          </span>
         </label>
       </div>
 

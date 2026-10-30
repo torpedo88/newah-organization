@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
+import { settlement } from "@/lib/payments/fees";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-15.acacia",
@@ -9,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { donor_name, donor_email, donor_phone, amount, donation_type, anonymous } = body;
+    const { donor_name, donor_email, donor_phone, amount, donation_type, anonymous, covers_fee } = body;
 
     if (!amount || amount < 1) {
       return NextResponse.json(
@@ -17,6 +18,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const donationCents = Math.round(amount * 100);
+    const { chargedCents, toOrganizationCents } = settlement(donationCents, covers_fee ?? false);
 
     // Save donation to database first
     const supabase = await createClient();
@@ -27,10 +31,11 @@ export async function POST(request: NextRequest) {
           donor_name: anonymous ? "Anonymous" : donor_name,
           donor_email,
           donor_phone: donor_phone || null,
-          amount,
+          amount: donationCents,
           donation_type,
           payment_status: "pending",
           anonymous,
+          covers_fee: covers_fee ?? false,
         },
       ])
       .select()
@@ -43,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session with correct amount
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -52,8 +57,11 @@ export async function POST(request: NextRequest) {
             currency: "usd",
             product_data: {
               name: `Donation to Newah Organization - ${donation_type}`,
+              description: covers_fee
+                ? `$${(donationCents / 100).toFixed(2)} donation + $${((chargedCents - donationCents) / 100).toFixed(2)} processing fee`
+                : `$${(donationCents / 100).toFixed(2)} donation (org receives $${(toOrganizationCents / 100).toFixed(2)} after fees)`,
             },
-            unit_amount: Math.round(amount * 100),
+            unit_amount: chargedCents,
           },
           quantity: 1,
         },
@@ -66,6 +74,7 @@ export async function POST(request: NextRequest) {
         donation_id: donation.id.toString(),
         donor_name,
         donation_type,
+        covers_fee: covers_fee ? "true" : "false",
       },
     });
 
