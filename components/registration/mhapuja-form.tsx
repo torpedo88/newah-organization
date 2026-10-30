@@ -16,6 +16,7 @@ import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
 import { CONSENT_TEXT } from "@/lib/legal/org";
+import { settlement, toDollars } from "@/lib/payments/fees";
 import {
   MHAPUJA_ADULT_PRICE_CENTS,
   MHAPUJA_CHILD_PRICE_CENTS,
@@ -40,6 +41,7 @@ const CHILD_PRICE = MHAPUJA_CHILD_PRICE_CENTS / 100;
 
 export default function MhapujaForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [coversFee, setCoversFee] = useState(false);
 
   const form = useForm<MhapujaRegistration>({
     resolver: zodResolver(mhapujaRegistrationSchema),
@@ -60,7 +62,9 @@ export default function MhapujaForm() {
   const childCount = useWatch({ control: form.control, name: "childCount" }) ?? 0;
   const consentGiven = useWatch({ control: form.control, name: "consentGiven" }) === true;
 
-  const total = adultCount * ADULT_PRICE + childCount * CHILD_PRICE;
+  const totalCents = (adultCount * MHAPUJA_ADULT_PRICE_CENTS + childCount * MHAPUJA_CHILD_PRICE_CENTS);
+  const total = totalCents / 100;
+  const { chargedCents, toOrganizationCents, feeCents } = settlement(totalCents, coversFee);
 
   // Split so the two document names can be links while every character of
   // the sentence still comes from CONSENT_TEXT.
@@ -74,7 +78,7 @@ export default function MhapujaForm() {
   const onSubmit = async (data: MhapujaRegistration) => {
     setIsSubmitting(true);
     try {
-      const result = await registerMhaPuja({ ...data, submissionId });
+      const result = await registerMhaPuja({ ...data, submissionId, coversFee });
       if (!result.success) {
         if (result.error?.toLowerCase().includes("email")) {
           form.setError("email", { message: result.error });
@@ -200,10 +204,38 @@ export default function MhapujaForm() {
                   <p className="-mt-3 text-sm text-alert">{form.formState.errors.childCount.message}</p>
                 )}
 
-                <div className="flex items-center justify-between rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3">
-                  <span className="text-sm font-semibold text-white">Total</span>
-                  <span className="text-xl font-bold text-white">${total.toFixed(2)}</span>
+                <div className="rounded-lg bg-white/5 border border-white/10 p-4 space-y-3">
+                  <div className="flex justify-between text-sm text-white">
+                    <span>Ticket subtotal:</span>
+                    <span>${toDollars(totalCents)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-white/70">
+                    <span>Processing fee:</span>
+                    <span>${toDollars(feeCents)}</span>
+                  </div>
+                  <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
+                    <span>You will be charged:</span>
+                    <span>${toDollars(chargedCents)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-white/70">
+                    <span>Organization receives:</span>
+                    <span>${toDollars(toOrganizationCents)}</span>
+                  </div>
                 </div>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={coversFee}
+                    onChange={(e) => setCoversFee(e.target.checked)}
+                    className="size-4 rounded accent-patasi cursor-pointer"
+                  />
+                  <span className="text-sm text-white/80">
+                    {coversFee
+                      ? "I'm covering the processing fee so the organization gets the full amount"
+                      : "Deduct processing fee from the organization's portion"}
+                  </span>
+                </label>
 
                 <p className="text-xs text-white/55">
                   Payment is taken securely by Stripe at the next step. Card only. Prices are
@@ -259,7 +291,7 @@ export default function MhapujaForm() {
                     <span>Taking you to payment&hellip;</span>
                   </>
                 ) : (
-                  <span>Pay ${total.toFixed(2)} and register</span>
+                  <span>Pay ${toDollars(chargedCents)} and register</span>
                 )}
               </LiquidButton>
             </form>
