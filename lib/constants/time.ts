@@ -49,7 +49,7 @@ export function formatDate(iso: string | null | undefined): string {
   return Number.isNaN(d.getTime()) ? "—" : dateOnly.format(d);
 }
 
-// A <input type="datetime-local"> value ("2026-11-10T15:00") carries no zone.
+// A <input type="datetime-local"> value ("2026-10-22T15:00") carries no zone.
 // Sent to Postgres as is, a timestamptz column reads it as UTC, so an event
 // entered as 3:00 PM was stored as 8:00 AM Pacific. These two convert
 // between that input format and an instant, in the chapter's zone.
@@ -75,7 +75,7 @@ function chapterOffsetMinutes(d: Date): number {
   return Math.round((asUtc - Math.floor(d.getTime() / 60000) * 60000) / 60000);
 }
 
-/** "2026-11-10T15:00" read as Pacific wall-clock time -> ISO instant. Null if unparseable. */
+/** "2026-10-22T15:00" read as Pacific wall-clock time -> ISO instant. Null if unparseable. */
 export function chapterLocalToIso(local: string): string | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(local);
   if (!m) return null;
@@ -86,7 +86,7 @@ export function chapterLocalToIso(local: string): string | null {
   return new Date(instant).toISOString();
 }
 
-/** ISO instant -> "2026-11-10T15:00" in Pacific, for a datetime-local input. */
+/** ISO instant -> "2026-10-22T15:00" in Pacific, for a datetime-local input. */
 export function isoToChapterLocal(iso: string | null | undefined): string {
   if (!iso) return "";
   const d = new Date(iso);

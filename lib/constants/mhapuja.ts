@@ -29,10 +29,12 @@ export const MHAPUJA_PRINTED_REGISTRATION_URL = "www.noancc.org/register/mhapuja
 /**
  * What the chapter is putting on.
  *
- * Date, venue and schedule for 2026, confirmed with the owner. Mha Puja is a
- * lunar festival whose actual date drifts year to year. The astronomical
- * Nepal Sambat 1147 rollover is 10 November 2026 (see event.ts).
- * This field prints wherever the public page shows "when", so a
+ * Date, venue and schedule carried from the chapter's 2025 flyer with the
+ * year rolled to 2026 at the owner's instruction (2026-10-15). Mha Puja is a
+ * lunar festival whose actual date drifts year to year, so Oct 22 2026 may
+ * need adjusting against this year's panchang before anything is printed —
+ * the astronomical Nepal Sambat 1147 rollover is 10 November 2026 (see
+ * event.ts). This field prints wherever the public page shows "when", so a
  * date that is wrong on the paper is wrong on the site too.
  *
  * The event's Nepal Bhasa title is "Nhu Daya Bhintuna" ("Happy New
@@ -44,7 +46,7 @@ export const MHAPUJA_EVENT = {
   nepalBhasaTitle: "Nhu Daya Bhintuna",
   tagline: "Worship of the self. The night the Newah year begins.",
   nepalSambatYear: 1147,
-  date: "Tuesday, November 10, 2026",
+  date: "Wednesday, October 22, 2026",
   schedule: "Bhintuna 3:00 PM · Mha Puja 5:00 PM onwards",
   venue: "Nepali Community Center",
   city: "369 Chesley Ave, Richmond, CA 94801",
