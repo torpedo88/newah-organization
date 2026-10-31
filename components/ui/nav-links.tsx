@@ -18,9 +18,8 @@ const LINKS: ReadonlyArray<readonly [label: string, href: string]> = [
   ["Home", "/"],
   ["Our people", "/newah"],
   ["Events", "/#upcoming"],
-  ["Membership", "/membership"],
   ["Board", "/leadership"],
-  ["Contact", "/contact"],
+  ["Contact", "/#contact"],
 ];
 
 export default function NavLinks() {

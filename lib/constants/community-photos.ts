@@ -18,51 +18,42 @@ import type { MarqueeImage } from "@/components/ui/animated-marquee-hero";
  * who cannot see the photograph would want — not "image of festival".
  */
 export type CommunityPhoto = MarqueeImage & {
-  slug: string;
   /** Photographer, where the photograph carries their mark. */
   credit?: string;
 };
 
 export const COMMUNITY_PHOTOS: CommunityPhoto[] = [
   {
-    slug: "indra-jatra-kumari",
     src: "/images/community/indra-jatra-2023-kumari.jpg",
     alt: "A young girl dressed as the Kumari in red and gold, hands joined, at the chapter's Indra Jatra in Berkeley",
   },
   {
-    slug: "nepal-day-banner",
     src: "/images/community/nepal-day-parade-banner.jpg",
     alt: "Members holding the Newah Organization of America Northern California Chapter banner at the Nepal Day Parade in San Francisco, a Lakhey dancing behind them",
     credit: "Bharat Adhikari Photography",
   },
   {
-    slug: "indra-jatra-lakhey",
     src: "/images/community/indra-jatra-2023-lakhey.jpg",
     alt: "A Lakhey dancer in a red mask with white mane, dancing among the crowd at Berkeley Marina",
   },
   {
-    slug: "dhime-drummers",
     src: "/images/community/dhime-drummers-sf.jpg",
     alt: "Dhime drummers with the chapter's own drums, standing with the Kumari at San Francisco Civic Center",
     credit: "Bharat Adhikari Photography",
   },
   {
-    slug: "ihi-ceremony",
     src: "/images/community/ihi-ceremony.jpg",
     alt: "Hands in red and gold bangles tying the sacred thread during an Ihi ceremony",
   },
   {
-    slug: "haku-patasi",
     src: "/images/community/haku-patasi-market-street.jpg",
     alt: "Five members in haku patasi, the black and red Newar sari, on Market Street in San Francisco",
   },
   {
-    slug: "lakhey-crowd",
     src: "/images/community/indra-jatra-2023-lakhey-crowd.jpg",
     alt: "The Lakhey dancing before families and children on the grass at Berkeley Marina",
   },
   {
-    slug: "nepal-day-group",
     src: "/images/community/nepal-day-parade-group.jpg",
     alt: "The chapter gathered in front of San Francisco City Hall at the Nepal Day Parade, with Nepali and American flags and two Lakhey",
     credit: "Bharat Adhikari Photography",

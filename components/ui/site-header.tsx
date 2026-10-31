@@ -33,8 +33,12 @@ export default function SiteHeader() {
           priority
           className="size-16 shrink-0 object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:size-20"
         />
-        {/* The wordmark breaks onto two lines by design — the chapter is the
-            second line because the organization is the first. */}
+        {/* At 390px the logo, a twenty-nine character name and the Register
+            button cannot all have what they want, and flexbox resolves that by
+            shrinking the logo — which is the thing that must not shrink. So the
+            chapter line is the header's on a phone and the organization's name
+            above sm; both are rendered, one is hidden, and the accessible name
+            on the link is always the full one. */}
         <span className="text-[0.6875rem] font-semibold uppercase leading-[1.3] tracking-[0.1em] text-lun sm:text-sm sm:tracking-[0.12em]">
           <span className="block max-w-[8.5rem] sm:hidden">Northern California</span>
           <span className="hidden sm:block">
@@ -48,8 +52,8 @@ export default function SiteHeader() {
 
       <NavLinks />
 
-      <GlowButton href="/donate" className="shrink-0">
-        Donate
+      <GlowButton href="/register/mhapuja" className="shrink-0">
+        Register
       </GlowButton>
     </header>
   );
