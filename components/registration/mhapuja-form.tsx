@@ -16,6 +16,7 @@ import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
 import { CONSENT_TEXT } from "@/lib/legal/org";
+import { settlement, toDollars } from "@/lib/payments/fees";
 import {
   MHAPUJA_ADULT_PRICE_CENTS,
   MHAPUJA_CHILD_PRICE_CENTS,
@@ -40,6 +41,8 @@ const CHILD_PRICE = MHAPUJA_CHILD_PRICE_CENTS / 100;
 
 export default function MhapujaForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Registrant always covers processing fee
+  const coversFee = true;
 
   const form = useForm<MhapujaRegistration>({
     resolver: zodResolver(mhapujaRegistrationSchema),
@@ -60,7 +63,9 @@ export default function MhapujaForm() {
   const childCount = useWatch({ control: form.control, name: "childCount" }) ?? 0;
   const consentGiven = useWatch({ control: form.control, name: "consentGiven" }) === true;
 
-  const total = adultCount * ADULT_PRICE + childCount * CHILD_PRICE;
+  const totalCents = (adultCount * MHAPUJA_ADULT_PRICE_CENTS + childCount * MHAPUJA_CHILD_PRICE_CENTS);
+  const total = totalCents / 100;
+  const { chargedCents, toOrganizationCents, feeCents } = settlement(totalCents, coversFee);
 
   // Split so the two document names can be links while every character of
   // the sentence still comes from CONSENT_TEXT.
@@ -74,7 +79,7 @@ export default function MhapujaForm() {
   const onSubmit = async (data: MhapujaRegistration) => {
     setIsSubmitting(true);
     try {
-      const result = await registerMhaPuja({ ...data, submissionId });
+      const result = await registerMhaPuja({ ...data, submissionId, coversFee });
       if (!result.success) {
         if (result.error?.toLowerCase().includes("email")) {
           form.setError("email", { message: result.error });
@@ -200,9 +205,19 @@ export default function MhapujaForm() {
                   <p className="-mt-3 text-sm text-alert">{form.formState.errors.childCount.message}</p>
                 )}
 
-                <div className="flex items-center justify-between rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3">
-                  <span className="text-sm font-semibold text-white">Total</span>
-                  <span className="text-xl font-bold text-white">${total.toFixed(2)}</span>
+                <div className="rounded-lg bg-white/5 border border-white/10 p-4 space-y-3">
+                  <div className="flex justify-between text-sm text-white">
+                    <span>Ticket subtotal:</span>
+                    <span>${toDollars(totalCents)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-white/70">
+                    <span>Card processing fee:</span>
+                    <span>${toDollars(feeCents)}</span>
+                  </div>
+                  <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
+                    <span>Total to be charged:</span>
+                    <span>${toDollars(chargedCents)}</span>
+                  </div>
                 </div>
 
                 <p className="text-xs text-white/55">
@@ -259,7 +274,7 @@ export default function MhapujaForm() {
                     <span>Taking you to payment&hellip;</span>
                   </>
                 ) : (
-                  <span>Pay ${total.toFixed(2)} and register</span>
+                  <span>Pay ${toDollars(chargedCents)} and register</span>
                 )}
               </LiquidButton>
             </form>

@@ -1,0 +1,113 @@
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+
+export type CheckinResult = {
+  success: boolean;
+  name?: string;
+  checkedInAt?: string;
+  guestCount?: number;
+  error?: string;
+};
+
+export async function checkInRegistration(
+  identifier: string,
+  adultCount: number,
+  childCount: number,
+): Promise<CheckinResult> {
+  try {
+    if (!identifier || identifier.length === 0) {
+      return { success: false, error: "Registration code, phone, or email is required" };
+    }
+
+    if (adultCount < 0 || childCount < 0) {
+      return { success: false, error: "Guest counts must be non-negative" };
+    }
+
+    if (adultCount + childCount < 1) {
+      return { success: false, error: "At least one guest must be present" };
+    }
+
+    const supabase = await createClient();
+
+    // Try to find by registration code first
+    let { data: registration, error: lookupError } = await supabase
+      .from("mhapuja_registrations")
+      .select("id, full_name")
+      .eq("registration_code", identifier.toUpperCase())
+      .single();
+
+    // If not found by code, try by phone
+    if (!registration && lookupError) {
+      const { data: phoneReg, error: phoneError } = await supabase
+        .from("mhapuja_registrations")
+        .select("id, full_name")
+        .eq("phone", identifier)
+        .single();
+      registration = phoneReg;
+      lookupError = phoneError;
+    }
+
+    // If not found by phone, try by email
+    if (!registration && lookupError) {
+      const { data: emailReg, error: emailError } = await supabase
+        .from("mhapuja_registrations")
+        .select("id, full_name")
+        .eq("email", identifier)
+        .single();
+      registration = emailReg;
+      lookupError = emailError;
+    }
+
+    if (lookupError || !registration) {
+      return {
+        success: false,
+        error: "Registration not found. Please check your code, phone number, or email and try again.",
+      };
+    }
+
+    const now = new Date().toISOString();
+
+    // Try to record check-in. Note: checked_in_at, adults_present, children_present columns must exist in DB.
+    // If migration hasn't been applied yet, this will fail - apply migration 0020_checkin.sql
+    try {
+      const { error: updateError } = await supabase
+        .from("mhapuja_registrations")
+        .update({
+          checked_in_at: now,
+          adults_present: adultCount,
+          children_present: childCount,
+        })
+        .eq("id", registration.id);
+
+      if (updateError) {
+        // If columns don't exist, provide helpful error
+        if (
+          updateError.message?.includes("checked_in_at") ||
+          updateError.message?.includes("adults_present") ||
+          updateError.message?.includes("children_present")
+        ) {
+          return {
+            success: false,
+            error: "Check-in system not yet initialized. Please contact support.",
+          };
+        }
+        console.error("Check-in update error:", updateError);
+        return { success: false, error: "Failed to record check-in" };
+      }
+    } catch (err) {
+      console.error("Check-in exception:", err);
+      return { success: false, error: "Failed to record check-in" };
+    }
+
+    return {
+      success: true,
+      name: registration.full_name,
+      checkedInAt: now,
+      guestCount: adultCount + childCount,
+    };
+  } catch (error) {
+    console.error("Check-in error:", error);
+    return { success: false, error: "An unexpected error occurred" };
+  }
+}

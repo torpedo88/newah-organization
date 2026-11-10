@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase/client";
 import { MhapujaConfirmationEmail } from "@/lib/emails/mhapuja-confirmation";
 import { sendEmail } from "@/lib/emails/send";
 import { CONSENT_TEXT, CONSENT_VERSION } from "@/lib/legal/org";
+import { settlement } from "@/lib/payments/fees";
 import {
   MHAPUJA_ADULT_PRICE_CENTS,
   MHAPUJA_CHILD_PRICE_CENTS,
@@ -62,7 +63,7 @@ export type MhapujaRegisterResult = {
 };
 
 export async function registerMhaPuja(
-  input: MhapujaRegistration,
+  input: MhapujaRegistration & { coversFee?: boolean; submissionId?: string },
 ): Promise<MhapujaRegisterResult> {
   try {
     const validated = mhapujaRegistrationSchema.parse(input);
@@ -105,14 +106,17 @@ export async function registerMhaPuja(
       return { success: false, error: "Ticket pricing is misconfigured. Please contact us." };
     }
 
-    const chargedCents = adultCount * adultPrice + childCount * childPrice;
-    if (chargedCents <= 0) {
+    const ticketCents = adultCount * adultPrice + childCount * childPrice;
+    if (ticketCents <= 0) {
       // At-least-one is enforced in the schema too. The database check also
       // guards it. Belt and braces, because the money is why this flow exists.
       return { success: false, error: "At least one ticket is needed." };
     }
 
-    const code = registrationCode(validated.submissionId);
+    const coversFee = input.coversFee ?? false;
+    const { chargedCents, toOrganizationCents, feeCents } = settlement(ticketCents, coversFee);
+
+    const code = registrationCode(input.submissionId);
 
     // Stripe FIRST. The session id goes onto the row at insert; writing it
     // afterwards would need an UPDATE policy for anon, and anon has none on
@@ -130,7 +134,9 @@ export async function registerMhaPuja(
       childCount,
       adultPrice,
       childPrice,
+      ticketCents,
       chargedCents,
+      coversFee,
     });
     if (!session?.url) {
       return {
@@ -147,7 +153,7 @@ export async function registerMhaPuja(
     const { error } = await supabase.rpc("create_mhapuja_registration", {
       payload: {
         registration_code: code,
-        submission_id: validated.submissionId ?? null,
+        submission_id: input.submissionId ?? null,
         full_name: validated.fullName ?? "",
         phone: e164Phone,
         email: normalizedEmail,
@@ -158,6 +164,7 @@ export async function registerMhaPuja(
         charged_cents: chargedCents,
         stripe_session_id: session.id,
         payment_status: "pending",
+        covers_fee: coversFee,
         consent_given: validated.consentGiven === true,
         consent_text: CONSENT_TEXT,
         consent_version: CONSENT_VERSION,
@@ -232,7 +239,9 @@ async function createCheckout(args: {
   childCount: number;
   adultPrice: number;
   childPrice: number;
+  ticketCents: number;
   chargedCents: number;
+  coversFee: boolean;
 }): Promise<{ id: string; url?: string } | undefined> {
   const stripe = getStripe();
   if (!stripe) {
@@ -242,8 +251,8 @@ async function createCheckout(args: {
 
   try {
     const base = siteUrl();
-    // One line item per non-zero tier. Zero quantities are omitted rather
-    // than sent as 0, because Stripe rejects a line item with quantity 0.
+    // One line item: all tickets bundled. The total includes processing fee if
+    // the registrant chose to cover it.
     const line_items: Array<{
       quantity: number;
       price_data: {
@@ -252,36 +261,23 @@ async function createCheckout(args: {
         product_data: { name: string; description: string };
       };
     }> = [];
-    if (args.adultCount > 0) {
-      line_items.push({
-        quantity: args.adultCount,
-        price_data: {
-          currency: "usd",
-          unit_amount: args.adultPrice,
-          product_data: {
-            name: `${MHAPUJA_EVENT.name} — adult ticket`,
-            description:
-              `Entry for one adult (10 and over), ${MHAPUJA_FEE_INCLUDES}. ` +
-              `$${(args.adultPrice / 100).toFixed(2)} per ticket.`,
-          },
+
+    const totalTickets = args.adultCount + args.childCount;
+    const description = args.coversFee
+      ? `Mha Puja tickets (${args.adultCount} adult, ${args.childCount} child) + processing fee`
+      : `Mha Puja tickets (${args.adultCount} adult, ${args.childCount} child)`;
+
+    line_items.push({
+      quantity: 1,
+      price_data: {
+        currency: "usd",
+        unit_amount: args.chargedCents,
+        product_data: {
+          name: `${MHAPUJA_EVENT.name} — ${totalTickets} ticket${totalTickets === 1 ? "" : "s"}`,
+          description,
         },
-      });
-    }
-    if (args.childCount > 0) {
-      line_items.push({
-        quantity: args.childCount,
-        price_data: {
-          currency: "usd",
-          unit_amount: args.childPrice,
-          product_data: {
-            name: `${MHAPUJA_EVENT.name} — child ticket`,
-            description:
-              `Entry for one child (under 10), ${MHAPUJA_FEE_INCLUDES}. ` +
-              `$${(args.childPrice / 100).toFixed(2)} per ticket.`,
-          },
-        },
-      });
-    }
+      },
+    });
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -296,6 +292,7 @@ async function createCheckout(args: {
         registration_code: args.code,
         event: "mhapuja",
         charged_cents: String(args.chargedCents),
+        covers_fee: args.coversFee ? "true" : "false",
       },
       // Refund events carry the PaymentIntent, not the session, so without
       // this there is nothing to tie a refund back to a registration.
@@ -303,7 +300,7 @@ async function createCheckout(args: {
         // What the Dashboard payments list and the receipt show for this
         // payment. Without it a payment reads as a bare pi_ id.
         description: mhapujaPaymentDescription(args),
-        metadata: { registration_code: args.code, event: "mhapuja" },
+        metadata: { registration_code: args.code, event: "mhapuja", covers_fee: args.coversFee ? "true" : "false" },
       },
       success_url: `${base}/register/mhapuja?ticket=success&code=${encodeURIComponent(args.code)}`,
       cancel_url: `${base}/register/mhapuja?ticket=cancelled&code=${encodeURIComponent(args.code)}`,
