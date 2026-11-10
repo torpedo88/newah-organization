@@ -37,23 +37,24 @@ export async function checkInRegistration(
       .eq("registration_code", identifier.toUpperCase())
       .single();
 
-    // If not found by code, try by phone
+    // If not found by code, try by phone (normalize by removing non-digits)
     if (!registration && lookupError) {
+      const normalizedPhone = identifier.replace(/\D/g, "");
       const { data: phoneReg, error: phoneError } = await supabase
         .from("mhapuja_registrations")
         .select("id, full_name, payment_status, stripe_session_id")
-        .eq("phone", identifier)
+        .or(`phone.eq.${normalizedPhone},phone.eq.${identifier}`)
         .single();
       registration = phoneReg;
       lookupError = phoneError;
     }
 
-    // If not found by phone, try by email
+    // If not found by phone, try by email (case-insensitive)
     if (!registration && lookupError) {
       const { data: emailReg, error: emailError } = await supabase
         .from("mhapuja_registrations")
         .select("id, full_name, payment_status, stripe_session_id")
-        .eq("email", identifier)
+        .eq("email", identifier.toLowerCase())
         .single();
       registration = emailReg;
       lookupError = emailError;
