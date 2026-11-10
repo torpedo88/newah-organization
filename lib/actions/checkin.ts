@@ -62,7 +62,7 @@ export async function checkInRegistration(
     if (lookupError || !registration) {
       return {
         success: false,
-        error: "Registration not found. Please check your code, phone number, or email and try again.",
+        error: "Registration not found. Please register first at /register/mhapuja, then come back to check in.",
       };
     }
 
