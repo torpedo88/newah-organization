@@ -48,6 +48,10 @@ export default function SiteHeader() {
 
       <NavLinks />
 
+      <GlowButton href="/checkin/mhapuja" className="shrink-0">
+        Check In
+      </GlowButton>
+
       <GlowButton href="/donate" className="shrink-0">
         Donate
       </GlowButton>
