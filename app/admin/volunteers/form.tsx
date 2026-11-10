@@ -47,7 +47,7 @@ export default function VolunteerForm({ volunteer }: { volunteer?: Volunteer }) 
       : await createVolunteer(formData);
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       router.push("/admin/volunteers");

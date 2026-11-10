@@ -5,7 +5,7 @@ import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
-import PhotoForm from "../photo-form";
+import PhotoForm from "../../photo-form";
 
 export const metadata: Metadata = {
   title: "Edit Photo - Admin",
@@ -36,6 +36,8 @@ export default async function EditPhotoPage({
   }
 
   const admin = createAdminClient();
+
+  if (!admin) throw new Error("Admin database is not configured.");
   const { data: photo, error } = await admin
     .from("community_photos")
     .select("*")

@@ -33,7 +33,7 @@ export default function VolunteerForm() {
     });
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       setSuccess(true);
@@ -59,7 +59,7 @@ export default function VolunteerForm() {
 
       {success && (
         <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-          <p className="text-green-400 text-sm">Thank you for your interest! We'll review your application and get back to you soon.</p>
+          <p className="text-green-400 text-sm">Thank you for your interest! We&apos;ll review your application and get back to you soon.</p>
         </div>
       )}
 

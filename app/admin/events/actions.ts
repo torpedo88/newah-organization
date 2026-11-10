@@ -1,10 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/admin/require-admin";
 import { hasRegistrations } from "@/lib/admin/event-registrations";
 import { chapterLocalToIso } from "@/lib/constants/time";
 
@@ -20,37 +17,6 @@ type EventInput = {
   capacity: number;
   image_url?: string;
 };
-
-/**
- * Re-establish the admin session before touching the database.
- *
- * A server action is its own endpoint. Anyone who knows its id can post to it
- * directly, and the cookie check on the page that renders the form does
- * nothing to stop them — that check only decides what gets painted. Without
- * the gate below these four actions would let any visitor create, edit,
- * publish or delete the chapter's events.
- *
- * The service-role client is handed back from here so that a caller cannot
- * reach the database without having passed the check first.
- */
-async function requireAdmin(): Promise<
-  { ok: true; admin: SupabaseClient } | { ok: false; error: string }
-> {
-  const token = (await cookies()).get(ADMIN_COOKIE)?.value;
-  if (!token || !sessionTokenIsValid(token)) {
-    return { ok: false, error: "Your session has expired. Sign in again." };
-  }
-
-  const admin = createAdminClient();
-  if (!admin) {
-    return {
-      ok: false,
-      error: "SUPABASE_SERVICE_ROLE_KEY is not set, so events cannot be edited.",
-    };
-  }
-
-  return { ok: true, admin };
-}
 
 export async function createEvent(data: EventInput): Promise<ActionResult> {
   const gate = await requireAdmin();
