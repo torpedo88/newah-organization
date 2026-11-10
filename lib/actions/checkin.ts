@@ -12,15 +12,20 @@ export type CheckinResult = {
 
 export async function checkInRegistration(
   identifier: string,
-  guestCount: number,
+  adultCount: number,
+  childCount: number,
 ): Promise<CheckinResult> {
   try {
     if (!identifier || identifier.length === 0) {
-      return { success: false, error: "Registration code or phone number is required" };
+      return { success: false, error: "Registration code, phone, or email is required" };
     }
 
-    if (guestCount < 1 || guestCount > 20) {
-      return { success: false, error: "Guest count must be between 1 and 20" };
+    if (adultCount < 0 || childCount < 0) {
+      return { success: false, error: "Guest counts must be non-negative" };
+    }
+
+    if (adultCount + childCount < 1) {
+      return { success: false, error: "At least one guest must be present" };
     }
 
     const supabase = await createClient();
@@ -63,20 +68,25 @@ export async function checkInRegistration(
 
     const now = new Date().toISOString();
 
-    // Try to record check-in. Note: checked_in_at and guests_present columns must exist in DB.
+    // Try to record check-in. Note: checked_in_at, adults_present, children_present columns must exist in DB.
     // If migration hasn't been applied yet, this will fail - apply migration 0020_checkin.sql
     try {
       const { error: updateError } = await supabase
         .from("mhapuja_registrations")
         .update({
           checked_in_at: now,
-          guests_present: guestCount,
+          adults_present: adultCount,
+          children_present: childCount,
         })
         .eq("id", registration.id);
 
       if (updateError) {
         // If columns don't exist, provide helpful error
-        if (updateError.message?.includes("checked_in_at") || updateError.message?.includes("guests_present")) {
+        if (
+          updateError.message?.includes("checked_in_at") ||
+          updateError.message?.includes("adults_present") ||
+          updateError.message?.includes("children_present")
+        ) {
           return {
             success: false,
             error: "Check-in system not yet initialized. Please contact support.",
@@ -94,7 +104,7 @@ export async function checkInRegistration(
       success: true,
       name: registration.full_name,
       checkedInAt: now,
-      guestCount,
+      guestCount: adultCount + childCount,
     };
   } catch (error) {
     console.error("Check-in error:", error);

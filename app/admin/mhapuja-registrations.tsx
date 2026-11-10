@@ -19,6 +19,8 @@ type MhaPujaRow = {
   consent_at: string | null;
   created_at: string;
   checked_in_at: string | null;
+  adults_present: number | null;
+  children_present: number | null;
 };
 
 type TotalsRow = Pick<MhaPujaRow, "adult_count" | "child_count" | "charged_cents" | "payment_status">;
@@ -85,7 +87,8 @@ export default async function MhaPujaRegistrations({
       .from("mhapuja_registrations")
       .select(
         "id, registration_code, full_name, phone, email, adult_count, child_count, " +
-          "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at, checked_in_at",
+          "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at, " +
+          "checked_in_at, adults_present, children_present",
       )
       .order("created_at", { ascending: false })
       .range(pageOffset, pageOffset + PAGE_SIZE - 1),
@@ -187,7 +190,18 @@ export default async function MhaPujaRegistrations({
                       {row.consent_given ? (row.consent_at ? formatDate(row.consent_at) : "yes") : "—"}
                     </td>
                     <td className="py-3 pr-4 text-white/60">
-                      {row.checked_in_at ? formatDateTime(row.checked_in_at) : "—"}
+                      {row.checked_in_at ? (
+                        <div>
+                          <div className="text-white/80">{formatDateTime(row.checked_in_at)}</div>
+                          <div className="text-white/50 text-xs">
+                            {row.adults_present !== null || row.children_present !== null
+                              ? `${row.adults_present ?? 0} adult${row.adults_present === 1 ? "" : "s"}, ${row.children_present ?? 0} child${row.children_present === 1 ? "" : "ren"}`
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className="py-3 text-white/55">{formatDateTime(row.created_at)}</td>
                   </tr>

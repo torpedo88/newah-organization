@@ -11,7 +11,8 @@ const fieldClass =
 
 export default function CheckinForm() {
   const [identifier, setIdentifier] = useState("");
-  const [guestCount, setGuestCount] = useState("1");
+  const [adultCount, setAdultCount] = useState("1");
+  const [childCount, setChildCount] = useState("0");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,8 +26,9 @@ export default function CheckinForm() {
     setCheckedInName(null);
 
     try {
-      const count = parseInt(guestCount) || 1;
-      const result = await checkInRegistration(identifier.trim(), count);
+      const adults = parseInt(adultCount) || 1;
+      const children = parseInt(childCount) || 0;
+      const result = await checkInRegistration(identifier.trim(), adults, children);
 
       if (!result.success) {
         setError(result.error || "Check-in failed");
@@ -37,7 +39,8 @@ export default function CheckinForm() {
       setSuccess(true);
       setCheckedInName(result.name || null);
       setIdentifier("");
-      setGuestCount("1");
+      setAdultCount("1");
+      setChildCount("0");
 
       // Clear success message after 5 seconds
       setTimeout(() => {
@@ -96,24 +99,41 @@ export default function CheckinForm() {
             </p>
           </div>
 
-          <div>
-            <label htmlFor="guests" className="mb-2 block text-sm font-semibold text-white">
-              Number of Guests Present
-            </label>
-            <input
-              id="guests"
-              type="number"
-              min="1"
-              max="20"
-              value={guestCount}
-              onChange={(e) => setGuestCount(e.target.value)}
-              className={fieldClass}
-              disabled={loading}
-            />
-            <p className="mt-1 text-xs text-white/50">
-              Include yourself in the count
-            </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="adults" className="mb-2 block text-sm font-semibold text-white">
+                Adults Present
+              </label>
+              <input
+                id="adults"
+                type="number"
+                min="0"
+                max="20"
+                value={adultCount}
+                onChange={(e) => setAdultCount(e.target.value)}
+                className={fieldClass}
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label htmlFor="children" className="mb-2 block text-sm font-semibold text-white">
+                Children Present
+              </label>
+              <input
+                id="children"
+                type="number"
+                min="0"
+                max="20"
+                value={childCount}
+                onChange={(e) => setChildCount(e.target.value)}
+                className={fieldClass}
+                disabled={loading}
+              />
+            </div>
           </div>
+          <p className="text-xs text-white/50">
+            Ages 10+ count as adults, under 10 as children
+          </p>
 
           <LiquidButton
             type="submit"
