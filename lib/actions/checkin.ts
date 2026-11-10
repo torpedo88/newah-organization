@@ -33,23 +33,31 @@ export async function checkInRegistration(
       .single();
 
     // If not found by code, try by phone
-    if (!registration && !lookupError) {
-      const phoneMatch = identifier.replace(/\D/g, "");
-      if (phoneMatch.length >= 10) {
-        const { data: phoneReg, error: phoneError } = await supabase
-          .from("mhapuja_registrations")
-          .select("id, full_name")
-          .eq("phone", identifier)
-          .single();
-        registration = phoneReg;
-        lookupError = phoneError;
-      }
+    if (!registration && lookupError) {
+      const { data: phoneReg, error: phoneError } = await supabase
+        .from("mhapuja_registrations")
+        .select("id, full_name")
+        .eq("phone", identifier)
+        .single();
+      registration = phoneReg;
+      lookupError = phoneError;
+    }
+
+    // If not found by phone, try by email
+    if (!registration && lookupError) {
+      const { data: emailReg, error: emailError } = await supabase
+        .from("mhapuja_registrations")
+        .select("id, full_name")
+        .eq("email", identifier)
+        .single();
+      registration = emailReg;
+      lookupError = emailError;
     }
 
     if (lookupError || !registration) {
       return {
         success: false,
-        error: "Registration not found. Please check your code or phone number and try again.",
+        error: "Registration not found. Please check your code, phone number, or email and try again.",
       };
     }
 

@@ -79,12 +79,12 @@ export default function CheckinForm() {
 
           <div>
             <label htmlFor="identifier" className="mb-2 block text-sm font-semibold text-white">
-              Registration Code or Phone Number
+              Registration Code, Phone Number, or Email
             </label>
             <input
               id="identifier"
               type="text"
-              placeholder="e.g., MHP-2026-ABC123 or (555) 123-4567"
+              placeholder="e.g., MHP-2026-ABC123 or (555) 123-4567 or email@example.com"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               className={fieldClass}
@@ -92,7 +92,7 @@ export default function CheckinForm() {
               autoFocus
             />
             <p className="mt-1 text-xs text-white/50">
-              Enter either your registration code or phone number from your confirmation email
+              Enter your registration code, phone number, or email from your confirmation
             </p>
           </div>
 
