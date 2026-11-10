@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/admin/require-admin";
 
 export async function createDonation(data: {
   donor_name: string;
@@ -13,8 +13,9 @@ export async function createDonation(data: {
   payment_status: string;
   anonymous: boolean;
 }) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("donations").insert([{
     donor_name: data.donor_name,
@@ -43,8 +44,9 @@ export async function updateDonation(id: number, data: {
   payment_status: string;
   anonymous: boolean;
 }) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("donations").update({
     donor_name: data.donor_name,
@@ -65,8 +67,9 @@ export async function updateDonation(id: number, data: {
 }
 
 export async function deleteDonation(id: number) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("donations").delete().eq("id", id);
 

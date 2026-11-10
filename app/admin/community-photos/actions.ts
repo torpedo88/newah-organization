@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/admin/require-admin";
 
 export async function createPhoto(data: {
   slug: string;
@@ -11,8 +11,9 @@ export async function createPhoto(data: {
   display_order: number;
   published: boolean;
 }) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("community_photos").insert([
     {
@@ -44,8 +45,9 @@ export async function updatePhoto(
     published: boolean;
   }
 ) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("community_photos").update({
     slug: data.slug,
@@ -66,8 +68,9 @@ export async function updatePhoto(
 }
 
 export async function deletePhoto(id: number) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("community_photos").delete().eq("id", id);
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/admin/require-admin";
 
 export async function createMembership(data: {
   name: string;
@@ -12,8 +12,9 @@ export async function createMembership(data: {
   annual_fee?: number;
   paid: boolean;
 }) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("memberships").insert([{
     name: data.name,
@@ -40,8 +41,9 @@ export async function updateMembership(id: number, data: {
   annual_fee?: number;
   paid: boolean;
 }) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("memberships").update({
     name: data.name,
@@ -61,8 +63,9 @@ export async function updateMembership(id: number, data: {
 }
 
 export async function deleteMembership(id: number) {
-  const admin = createAdminClient();
-  if (!admin) return { error: "Admin database is not configured." };
+  const gate = await requireAdmin();
+  if (!gate.ok) return { error: gate.error };
+  const admin = gate.admin;
 
   const { error } = await admin.from("memberships").delete().eq("id", id);
 

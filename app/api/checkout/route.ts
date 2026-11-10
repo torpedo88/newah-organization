@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import type Stripe from "stripe";
+import { getStripe } from "@/lib/payments/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { settlement } from "@/lib/payments/fees";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
-
 export async function POST(request: NextRequest) {
+  const stripe = getStripe();
+  if (!stripe) {
+    return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
+  }
   try {
     const body = await request.json();
     const { donor_name, donor_email, donor_phone, amount, donation_type, anonymous, covers_fee } = body;
