@@ -33,7 +33,7 @@ export async function checkInRegistration(
     // Try to find by registration code first
     let { data: registration, error: lookupError } = await supabase
       .from("mhapuja_registrations")
-      .select("id, full_name, payment_status, stripe_session_id")
+      .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
       .eq("registration_code", identifier.toUpperCase())
       .single();
 
@@ -42,7 +42,7 @@ export async function checkInRegistration(
       const normalizedPhone = identifier.replace(/\D/g, "");
       const { data: phoneReg, error: phoneError } = await supabase
         .from("mhapuja_registrations")
-        .select("id, full_name, payment_status, stripe_session_id")
+        .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
         .or(`phone.eq.${normalizedPhone},phone.eq.${identifier}`)
         .single();
       registration = phoneReg;
@@ -53,7 +53,7 @@ export async function checkInRegistration(
     if (!registration && lookupError) {
       const { data: emailReg, error: emailError } = await supabase
         .from("mhapuja_registrations")
-        .select("id, full_name, payment_status, stripe_session_id")
+        .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
         .eq("email", identifier.toLowerCase())
         .single();
       registration = emailReg;
@@ -67,11 +67,19 @@ export async function checkInRegistration(
       };
     }
 
-    // Check if payment is pending
+    // Verify adult and child counts match registration
+    if (registration.adult_count !== adultCount || registration.child_count !== childCount) {
+      return {
+        success: false,
+        error: `Guest count mismatch. You registered ${registration.adult_count} adult${registration.adult_count === 1 ? "" : "s"} and ${registration.child_count} child${registration.child_count === 1 ? "" : "ren"}. Please enter the correct count.`,
+      };
+    }
+
+    // Check if payment is pending - offer cash option
     if (registration.payment_status === "pending") {
       return {
         success: false,
-        error: "Payment pending. Please complete payment before checking in. Contact organizer for cash payment option.",
+        error: "Payment pending. Complete payment now or contact organizer to pay in cash at the event.",
       };
     }
 
