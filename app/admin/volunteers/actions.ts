@@ -16,6 +16,7 @@ export async function createVolunteer(data: {
   notes?: string;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("volunteers").insert([{
     name: data.name,
@@ -49,6 +50,7 @@ export async function updateVolunteer(id: number, data: {
   notes?: string;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("volunteers").update({
     name: data.name,
@@ -72,6 +74,7 @@ export async function updateVolunteer(id: number, data: {
 
 export async function deleteVolunteer(id: number) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("volunteers").delete().eq("id", id);
 

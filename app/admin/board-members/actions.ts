@@ -16,6 +16,7 @@ export async function createBoardMember(data: {
   display_order: number;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("board_members").insert([{
     name: data.name,
@@ -49,6 +50,7 @@ export async function updateBoardMember(id: number, data: {
   display_order: number;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("board_members").update({
     name: data.name,
@@ -72,6 +74,7 @@ export async function updateBoardMember(id: number, data: {
 
 export async function deleteBoardMember(id: number) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("board_members").delete().eq("id", id);
 

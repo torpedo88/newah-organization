@@ -12,6 +12,7 @@ export async function createPhoto(data: {
   published: boolean;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("community_photos").insert([
     {
@@ -44,6 +45,7 @@ export async function updatePhoto(
   }
 ) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("community_photos").update({
     slug: data.slug,
@@ -65,6 +67,7 @@ export async function updatePhoto(
 
 export async function deletePhoto(id: number) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("community_photos").delete().eq("id", id);
 

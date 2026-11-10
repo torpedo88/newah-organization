@@ -14,6 +14,7 @@ export async function createDonation(data: {
   anonymous: boolean;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("donations").insert([{
     donor_name: data.donor_name,
@@ -43,6 +44,7 @@ export async function updateDonation(id: number, data: {
   anonymous: boolean;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("donations").update({
     donor_name: data.donor_name,
@@ -64,6 +66,7 @@ export async function updateDonation(id: number, data: {
 
 export async function deleteDonation(id: number) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("donations").delete().eq("id", id);
 

@@ -39,7 +39,7 @@ export default function PhotoForm({ photo }: { photo?: Photo }) {
       : await createPhoto(formData);
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       router.push("/admin/community-photos");

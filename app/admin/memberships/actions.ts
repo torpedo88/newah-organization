@@ -13,6 +13,7 @@ export async function createMembership(data: {
   paid: boolean;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("memberships").insert([{
     name: data.name,
@@ -40,6 +41,7 @@ export async function updateMembership(id: number, data: {
   paid: boolean;
 }) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("memberships").update({
     name: data.name,
@@ -60,6 +62,7 @@ export async function updateMembership(id: number, data: {
 
 export async function deleteMembership(id: number) {
   const admin = createAdminClient();
+  if (!admin) return { error: "Admin database is not configured." };
 
   const { error } = await admin.from("memberships").delete().eq("id", id);
 

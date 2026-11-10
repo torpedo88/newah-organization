@@ -38,7 +38,7 @@ export default function MembershipForm({ membership }: { membership?: Membership
 
     const data = {
       ...formData,
-      annual_fee: formData.annual_fee ? parseFloat(formData.annual_fee as any) : undefined,
+      annual_fee: formData.annual_fee ? parseFloat(String(formData.annual_fee)) : undefined,
     };
 
     const result = membership
@@ -46,7 +46,7 @@ export default function MembershipForm({ membership }: { membership?: Membership
       : await createMembership(data);
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       router.push("/admin/memberships");

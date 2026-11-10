@@ -35,7 +35,7 @@ export default async function ContactsPage() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {contacts && contacts.length > 0 ? (
-                contacts.map((contact: any) => (
+                contacts.map((contact: { id: number; name: string; email: string; subject: string; status: string; created_at: string }) => (
                   <tr key={contact.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-900">{contact.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{contact.email}</td>
@@ -52,18 +52,18 @@ export default async function ContactsPage() {
                           type="submit"
                           className="inline-block px-3 py-1 rounded text-xs font-medium"
                           style={{
-                            backgroundColor: {
+                            backgroundColor: ({
                               "new": "#fecaca",
                               "read": "#fef08a",
                               "responded": "#bbf7d0",
                               "archived": "#d1d5db",
-                            }[contact.status] || "#e5e7eb",
-                            color: {
+                            } as Record<string, string>)[contact.status] || "#e5e7eb",
+                            color: ({
                               "new": "#7f1d1d",
                               "read": "#78350f",
                               "responded": "#065f46",
                               "archived": "#374151",
-                            }[contact.status] || "#1f2937",
+                            } as Record<string, string>)[contact.status] || "#1f2937",
                           }}
                         >
                           {contact.status}

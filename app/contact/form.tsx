@@ -26,7 +26,7 @@ export default function ContactForm() {
     const result = await submitContactForm(formData);
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       setSuccess(true);
@@ -46,7 +46,7 @@ export default function ContactForm() {
 
       {success && (
         <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-          <p className="text-green-400 text-sm">Message sent successfully! We'll get back to you soon.</p>
+          <p className="text-green-400 text-sm">Message sent successfully! We&apos;ll get back to you soon.</p>
         </div>
       )}
 

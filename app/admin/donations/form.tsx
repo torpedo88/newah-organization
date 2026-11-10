@@ -40,7 +40,7 @@ export default function DonationForm({ donation }: { donation?: Donation }) {
 
     const data = {
       ...formData,
-      amount: parseFloat(formData.amount as any),
+      amount: parseFloat(String(formData.amount)),
     };
 
     const result = donation
@@ -48,7 +48,7 @@ export default function DonationForm({ donation }: { donation?: Donation }) {
       : await createDonation(data);
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       router.push("/admin/donations");

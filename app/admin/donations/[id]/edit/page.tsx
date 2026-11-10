@@ -5,7 +5,7 @@ import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
-import DonationForm from "../form";
+import DonationForm from "../../form";
 
 export const metadata: Metadata = {
   title: "Edit Donation - Admin",
@@ -32,6 +32,8 @@ export default async function EditDonationPage({ params }: { params: { id: strin
   }
 
   const admin = createAdminClient();
+
+  if (!admin) throw new Error("Admin database is not configured.");
   const { data: donation, error } = await admin
     .from("donations")
     .select("*")
