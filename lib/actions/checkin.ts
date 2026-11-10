@@ -33,7 +33,7 @@ export async function checkInRegistration(
     // Try to find by registration code first
     let { data: registration, error: lookupError } = await supabase
       .from("mhapuja_registrations")
-      .select("id, full_name")
+      .select("id, full_name, payment_status, stripe_session_id")
       .eq("registration_code", identifier.toUpperCase())
       .single();
 
@@ -41,7 +41,7 @@ export async function checkInRegistration(
     if (!registration && lookupError) {
       const { data: phoneReg, error: phoneError } = await supabase
         .from("mhapuja_registrations")
-        .select("id, full_name")
+        .select("id, full_name, payment_status, stripe_session_id")
         .eq("phone", identifier)
         .single();
       registration = phoneReg;
@@ -52,7 +52,7 @@ export async function checkInRegistration(
     if (!registration && lookupError) {
       const { data: emailReg, error: emailError } = await supabase
         .from("mhapuja_registrations")
-        .select("id, full_name")
+        .select("id, full_name, payment_status, stripe_session_id")
         .eq("email", identifier)
         .single();
       registration = emailReg;
@@ -63,6 +63,30 @@ export async function checkInRegistration(
       return {
         success: false,
         error: "Registration not found. Please check your code, phone number, or email and try again.",
+      };
+    }
+
+    // Check if payment is pending
+    if (registration.payment_status === "pending") {
+      return {
+        success: false,
+        error: "Payment pending. Please complete payment before checking in. Contact organizer for cash payment option.",
+      };
+    }
+
+    // Check if payment failed
+    if (registration.payment_status === "failed") {
+      return {
+        success: false,
+        error: "Payment failed. Please retry payment or contact organizer for assistance.",
+      };
+    }
+
+    // Only allow check-in if paid
+    if (registration.payment_status !== "paid") {
+      return {
+        success: false,
+        error: "Registration payment not confirmed. Please contact organizer.",
       };
     }
 
