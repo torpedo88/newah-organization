@@ -10,7 +10,7 @@ const fieldClass =
   "w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder-white/50 focus:outline-none focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] transition-all";
 
 export default function CheckinForm() {
-  const [registrationCode, setRegistrationCode] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [guestCount, setGuestCount] = useState("1");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -26,7 +26,7 @@ export default function CheckinForm() {
 
     try {
       const count = parseInt(guestCount) || 1;
-      const result = await checkInRegistration(registrationCode.trim().toUpperCase(), count);
+      const result = await checkInRegistration(identifier.trim(), count);
 
       if (!result.success) {
         setError(result.error || "Check-in failed");
@@ -36,7 +36,7 @@ export default function CheckinForm() {
 
       setSuccess(true);
       setCheckedInName(result.name || null);
-      setRegistrationCode("");
+      setIdentifier("");
       setGuestCount("1");
 
       // Clear success message after 5 seconds
@@ -78,21 +78,21 @@ export default function CheckinForm() {
           )}
 
           <div>
-            <label htmlFor="code" className="mb-2 block text-sm font-semibold text-white">
-              Registration Code
+            <label htmlFor="identifier" className="mb-2 block text-sm font-semibold text-white">
+              Registration Code or Phone Number
             </label>
             <input
-              id="code"
+              id="identifier"
               type="text"
-              placeholder="e.g., MHP-2026-ABC123"
-              value={registrationCode}
-              onChange={(e) => setRegistrationCode(e.target.value)}
+              placeholder="e.g., MHP-2026-ABC123 or (555) 123-4567"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               className={fieldClass}
               disabled={loading}
               autoFocus
             />
             <p className="mt-1 text-xs text-white/50">
-              Check your confirmation email for your registration code
+              Enter either your registration code or phone number from your confirmation email
             </p>
           </div>
 
@@ -117,7 +117,7 @@ export default function CheckinForm() {
 
           <LiquidButton
             type="submit"
-            disabled={loading || !registrationCode.trim()}
+            disabled={loading || !identifier.trim()}
             size="xxl"
             className="w-full text-white"
           >

@@ -18,6 +18,7 @@ type MhaPujaRow = {
   consent_given: boolean;
   consent_at: string | null;
   created_at: string;
+  checked_in_at: string | null;
 };
 
 type TotalsRow = Pick<MhaPujaRow, "adult_count" | "child_count" | "charged_cents" | "payment_status">;
@@ -84,7 +85,7 @@ export default async function MhaPujaRegistrations({
       .from("mhapuja_registrations")
       .select(
         "id, registration_code, full_name, phone, email, adult_count, child_count, " +
-          "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at",
+          "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at, checked_in_at",
       )
       .order("created_at", { ascending: false })
       .range(pageOffset, pageOffset + PAGE_SIZE - 1),
@@ -148,6 +149,7 @@ export default async function MhaPujaRegistrations({
                   <th className="py-3 pr-4 font-semibold">Tickets</th>
                   <th className="py-3 pr-4 font-semibold">Payment</th>
                   <th className="py-3 pr-4 font-semibold">Consent</th>
+                  <th className="py-3 pr-4 font-semibold">Check-in</th>
                   <th className="py-3 font-semibold">Registered</th>
                 </tr>
               </thead>
@@ -183,6 +185,9 @@ export default async function MhaPujaRegistrations({
                     </td>
                     <td className="py-3 pr-4 text-white/60">
                       {row.consent_given ? (row.consent_at ? formatDate(row.consent_at) : "yes") : "—"}
+                    </td>
+                    <td className="py-3 pr-4 text-white/60">
+                      {row.checked_in_at ? formatDateTime(row.checked_in_at) : "—"}
                     </td>
                     <td className="py-3 text-white/55">{formatDateTime(row.created_at)}</td>
                   </tr>
