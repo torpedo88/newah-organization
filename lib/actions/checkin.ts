@@ -33,27 +33,28 @@ export async function checkInRegistration(
     // Try to find by registration code first
     let { data: registration, error: lookupError } = await supabase
       .from("mhapuja_registrations")
-      .select("id, full_name")
+      .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
       .eq("registration_code", identifier.toUpperCase())
       .single();
 
-    // If not found by code, try by phone
+    // If not found by code, try by phone (normalize by removing non-digits)
     if (!registration && lookupError) {
+      const normalizedPhone = identifier.replace(/\D/g, "");
       const { data: phoneReg, error: phoneError } = await supabase
         .from("mhapuja_registrations")
-        .select("id, full_name")
-        .eq("phone", identifier)
+        .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
+        .or(`phone.eq.${normalizedPhone},phone.eq.${identifier}`)
         .single();
       registration = phoneReg;
       lookupError = phoneError;
     }
 
-    // If not found by phone, try by email
+    // If not found by phone, try by email (case-insensitive)
     if (!registration && lookupError) {
       const { data: emailReg, error: emailError } = await supabase
         .from("mhapuja_registrations")
-        .select("id, full_name")
-        .eq("email", identifier)
+        .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
+        .eq("email", identifier.toLowerCase())
         .single();
       registration = emailReg;
       lookupError = emailError;
@@ -62,7 +63,39 @@ export async function checkInRegistration(
     if (lookupError || !registration) {
       return {
         success: false,
-        error: "Registration not found. Please check your code, phone number, or email and try again.",
+        error: "Registration not found. Please register first at /register/mhapuja, then come back to check in.",
+      };
+    }
+
+    // Verify adult and child counts match registration
+    if (registration.adult_count !== adultCount || registration.child_count !== childCount) {
+      return {
+        success: false,
+        error: `Guest count mismatch. You registered ${registration.adult_count} adult${registration.adult_count === 1 ? "" : "s"} and ${registration.child_count} child${registration.child_count === 1 ? "" : "ren"}. Please enter the correct count.`,
+      };
+    }
+
+    // Check if payment is pending - offer cash option
+    if (registration.payment_status === "pending") {
+      return {
+        success: false,
+        error: "Payment pending. Complete payment now or contact organizer to pay in cash at the event.",
+      };
+    }
+
+    // Check if payment failed
+    if (registration.payment_status === "failed") {
+      return {
+        success: false,
+        error: "Payment failed. Please retry payment or contact organizer for assistance.",
+      };
+    }
+
+    // Only allow check-in if paid
+    if (registration.payment_status !== "paid") {
+      return {
+        success: false,
+        error: "Registration payment not confirmed. Please contact organizer.",
       };
     }
 
