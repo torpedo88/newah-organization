@@ -77,7 +77,7 @@ export default function DonationForm() {
 
       {success && (
         <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-          <p className="text-green-400 text-sm">Thank you for your donation! We'll send you a receipt shortly.</p>
+          <p className="text-green-400 text-sm">Thank you for your donation! We&apos;ll send you a receipt shortly.</p>
         </div>
       )}
 

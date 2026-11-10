@@ -41,8 +41,9 @@ const CHILD_PRICE = MHAPUJA_CHILD_PRICE_CENTS / 100;
 
 export default function MhapujaForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Registrant always covers processing fee
-  const coversFee = true;
+  // Off until create_mhapuja_registration accepts a fee: the database rejects
+  // any charge other than tickets x price, so an added fee fails every registration.
+  const coversFee: boolean = false;
 
   const form = useForm<MhapujaRegistration>({
     resolver: zodResolver(mhapujaRegistrationSchema),
@@ -210,10 +211,12 @@ export default function MhapujaForm() {
                     <span>Ticket subtotal:</span>
                     <span>${toDollars(totalCents)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-white/70">
-                    <span>Card processing fee:</span>
-                    <span>${toDollars(feeCents)}</span>
-                  </div>
+                  {coversFee && (
+                    <div className="flex justify-between text-sm text-white/70">
+                      <span>Card processing fee:</span>
+                      <span>${toDollars(feeCents)}</span>
+                    </div>
+                  )}
                   <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
                     <span>Total to be charged:</span>
                     <span>${toDollars(chargedCents)}</span>

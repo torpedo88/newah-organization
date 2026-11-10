@@ -5,7 +5,7 @@ import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import FestivalBackdrop from "@/components/ui/festival-backdrop";
-import VolunteerForm from "../form";
+import VolunteerForm from "../../form";
 
 export const metadata: Metadata = {
   title: "Edit Volunteer - Admin",
@@ -32,6 +32,8 @@ export default async function EditVolunteerPage({ params }: { params: { id: stri
   }
 
   const admin = createAdminClient();
+
+  if (!admin) throw new Error("Admin database is not configured.");
   const { data: volunteer, error } = await admin
     .from("volunteers")
     .select("*")

@@ -47,7 +47,7 @@ export default function BoardMemberForm({ member }: { member?: BoardMember }) {
       : await createBoardMember(formData);
 
     if ("error" in result) {
-      setError(result.error);
+      setError(result.error ?? "Something went wrong.");
       setLoading(false);
     } else {
       router.push("/admin/board-members");

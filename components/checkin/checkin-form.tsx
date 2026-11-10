@@ -74,7 +74,7 @@ export default function CheckinForm() {
                 <CheckCircle2 className="h-5 w-5 shrink-0 text-green-400" />
                 <div className="text-sm text-green-400">
                   <p className="font-semibold">Welcome, {checkedInName}!</p>
-                  <p className="mt-1">You're checked in. Enjoy Mha Puja!</p>
+                  <p className="mt-1">You&apos;re checked in. Enjoy Mha Puja!</p>
                 </div>
               </div>
             </div>
