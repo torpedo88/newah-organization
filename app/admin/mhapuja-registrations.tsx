@@ -4,6 +4,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import CheckinRowButton from "@/components/checkin/checkin-row-button";
+import DoorRegistrationForm from "@/components/admin/door-registration-form";
+import DoorRegistrations from "./door-registrations";
 
 type MhaPujaRow = {
   id: number;
@@ -102,6 +104,19 @@ export default async function MhaPujaRegistrations({
       .range(pageOffset, pageOffset + PAGE_SIZE - 1),
     readAllTotals(supabase),
   ]);
+  // Walk-ins: few rows on one night, so one query is enough. A missing table
+  // (migration not applied) shows as zero rather than failing the tab.
+  const { data: doorRows } = await supabase
+    .from("door_registrations")
+    .select("adult_count, child_count, charged_cents, payment_method");
+  const door = (doorRows ?? []) as {
+    adult_count: number;
+    child_count: number;
+    charged_cents: number;
+    payment_method: string;
+  }[];
+  const doorCents = (method: string) =>
+    door.filter((d) => d.payment_method === method).reduce((n, d) => n + d.charged_cents, 0);
 
   if (error || "error" in totals) {
     const message = error?.message ?? ("error" in totals ? totals.error : "");
@@ -125,6 +140,8 @@ export default async function MhaPujaRegistrations({
     { label: "Cash at door", value: `$${toDollars(totals.cashCents)}` },
     { label: "Awaiting payment", value: `$${toDollars(totals.pendingCents)}` },
     { label: "Checked in", value: `${totals.checkedIn} of ${totals.paidRegistrations}` },
+    { label: "Walk-in cash", value: `$${toDollars(doorCents("cash"))}` },
+    { label: "Walk-in Zelle", value: `$${toDollars(doorCents("zelle"))}` },
   ];
 
   return (
@@ -148,7 +165,12 @@ export default async function MhaPujaRegistrations({
         </span>
       </p>
 
-      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
+      <div className="mb-8 space-y-6">
+        <DoorRegistrationForm />
+        <DoorRegistrations supabase={supabase} panelClassName={panelClassName} />
+      </div>
+
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
         {stats.map((stat) => (
           <div
             key={stat.label}
