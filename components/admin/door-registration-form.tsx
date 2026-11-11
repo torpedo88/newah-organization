@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { doorRegisterAttendee } from "@/lib/actions/door-registration";
 import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
+import { toDollars } from "@/lib/payments/fees";
+import { MHAPUJA_ADULT_PRICE_CENTS, MHAPUJA_CHILD_PRICE_CENTS } from "@/lib/constants/mhapuja";
 
 const fieldClass =
   "w-full px-4 py-2 rounded-lg border border-white/20 bg-white/5 text-white placeholder-white/50 focus:border-patasi focus:outline-none focus:bg-white/10";
@@ -24,6 +26,8 @@ export default function DoorRegistrationForm({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [registrationCode, setRegistrationCode] = useState<string | null>(null);
+  const [registeredName, setRegisteredName] = useState<string | null>(null);
+  const [registeredCents, setRegisteredCents] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "zelle" | null>(null);
 
   const handleSubmit = async (paymentMethod: "cash" | "zelle") => {
@@ -33,8 +37,8 @@ export default function DoorRegistrationForm({
     setRegistrationCode(null);
 
     try {
-      const adults = parseInt(adultCount) || 1;
-      const children = parseInt(childCount) || 0;
+      const adults = parseInt(adultCount, 10) || 0;
+      const children = parseInt(childCount, 10) || 0;
 
       const result = await doorRegisterAttendee(fullName, phone, email, adults, children, paymentMethod);
 
@@ -46,6 +50,8 @@ export default function DoorRegistrationForm({
 
       setSuccess(true);
       setRegistrationCode(result.registrationCode || null);
+      setRegisteredName(result.name ?? null);
+      setRegisteredCents(result.chargedCents ?? 0);
       setFullName("");
       setPhone("");
       setEmail("");
@@ -57,7 +63,7 @@ export default function DoorRegistrationForm({
         setRegistrationCode(null);
         if (onSuccess) onSuccess();
       }, 5000);
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
       setLoading(false);
     } finally {
@@ -83,10 +89,10 @@ export default function DoorRegistrationForm({
           <div className="flex gap-2">
             <CheckCircle2 className="h-5 w-5 shrink-0 text-green-400 mt-0.5" />
             <div className="text-sm text-green-400">
-              <p className="font-semibold">{fullName} registered!</p>
+              <p className="font-semibold">{registeredName} registered and checked in.</p>
               <p className="text-xs text-green-400/80">Code: {registrationCode}</p>
               <p className="text-xs text-green-400/60">
-                Payment: {paymentMethod === "cash" ? "Cash at door" : "Zelle"}
+                ${toDollars(registeredCents)} by {paymentMethod === "cash" ? "cash" : "Zelle"}
               </p>
             </div>
           </div>
@@ -157,6 +163,21 @@ export default function DoorRegistrationForm({
           />
         </div>
       </div>
+
+      <p className="text-sm text-white">
+        Collect{" "}
+        <span className="font-semibold">
+          $
+          {toDollars(
+            (parseInt(adultCount, 10) || 0) * MHAPUJA_ADULT_PRICE_CENTS +
+              (parseInt(childCount, 10) || 0) * MHAPUJA_CHILD_PRICE_CENTS,
+          )}
+        </span>{" "}
+        <span className="text-white/55">
+          (${toDollars(MHAPUJA_ADULT_PRICE_CENTS)} per adult, ${toDollars(MHAPUJA_CHILD_PRICE_CENTS)} per
+          child under 10)
+        </span>
+      </p>
 
       <div className="flex gap-2">
         <button

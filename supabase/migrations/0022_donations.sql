@@ -1,4 +1,6 @@
--- Donations table for tracking charitable contributions
+-- Donations table for tracking charitable contributions.
+-- Was 0019_donations.sql, which shared its number with 0019_mhapuja_date_november.sql.
+-- Not yet applied to production.
 
 create table public.donations (
   id bigint primary key generated always as identity,
@@ -20,18 +22,10 @@ create index donations_email_created_at_idx on public.donations (donor_email, cr
 create index donations_created_at_idx on public.donations (created_at desc);
 create index donations_payment_status_idx on public.donations (payment_status);
 
--- RLS: Allow inserts from anon (donation form), select/update from admin
+-- RLS on, no policies, like the registration tables: only the service role,
+-- used by server code after its own checks, can read or write. The earlier
+-- draft let anon insert any row and gave every authenticated user full access.
 alter table public.donations enable row level security;
-
-create policy "Anon can insert donations" on public.donations
-  for insert with check (true);
-
-create policy "Anon cannot read donations" on public.donations
-  for select using (false);
-
-create policy "Admin can manage donations" on public.donations
-  using (
-    (select auth.jwt() ->> 'role' = 'authenticated')
-  );
+revoke all on table public.donations from anon, authenticated;
 
 notify pgrst, 'reload schema';

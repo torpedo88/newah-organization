@@ -1,12 +1,26 @@
 import CheckinForm from "@/components/checkin/checkin-form";
 import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import Image from "next/image";
+import { cookies } from "next/headers";
+import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
+import { logIn } from "@/app/admin/actions";
+import { LiquidButton } from "@/components/ui/liquid-glass-button";
 
 export const metadata = {
   title: "Mha Puja Check-In",
+  robots: { index: false },
 };
 
-export default function CheckinPage() {
+export default async function CheckinPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; locked?: string }>;
+}) {
+  const { error, locked } = await searchParams;
+  // Volunteers sign in here with the board password; the check-in action
+  // re-checks the session, this only decides what to show.
+  const signedIn = sessionTokenIsValid((await cookies()).get(ADMIN_COOKIE)?.value);
+
   return (
     <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
       <NhuDayaBackdrop />
@@ -30,7 +44,37 @@ export default function CheckinPage() {
           </p>
         </div>
 
-        <CheckinForm />
+        {signedIn ? (
+          <CheckinForm />
+        ) : (
+          <form
+            action={logIn}
+            className="space-y-4 rounded-xl border border-white/15 bg-white/[0.06] p-6"
+          >
+            <input type="hidden" name="next" value="/checkin/mhapuja" />
+            <label htmlFor="password" className="block text-sm font-semibold text-white">
+              Volunteer password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="w-full rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] focus:outline-none"
+            />
+            {error && <p className="text-sm text-alert">That password was not correct.</p>}
+            {locked && (
+              <p className="text-sm text-alert">
+                Too many attempts. Try again in {Math.ceil(Number(locked) / 60) || 1} minute
+                {Math.ceil(Number(locked) / 60) === 1 ? "" : "s"}.
+              </p>
+            )}
+            <LiquidButton type="submit" size="xl" className="w-full text-white">
+              Sign in
+            </LiquidButton>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { checkInRegistration } from "@/lib/actions/checkin";
+import { checkInRegistration, type CheckinResult } from "@/lib/actions/checkin";
+import { toDollars } from "@/lib/payments/fees";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import PatasiFrame from "@/components/ui/patasi-frame";
 import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
@@ -17,27 +18,34 @@ export default function CheckinForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [checkedInName, setCheckedInName] = useState<string | null>(null);
+  const [cashDue, setCashDue] = useState<CheckinResult["cashDue"] | null>(null);
+  const [cashTaken, setCashTaken] = useState<number | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async (cashCollected: boolean) => {
     setLoading(true);
+    setCashDue(null);
+    setCashTaken(null);
     setError(null);
     setSuccess(false);
     setCheckedInName(null);
 
     try {
-      const adults = parseInt(adultCount) || 1;
-      const children = parseInt(childCount) || 0;
-      const result = await checkInRegistration(identifier.trim(), adults, children);
+      const adults = parseInt(adultCount, 10) || 0;
+      const children = parseInt(childCount, 10) || 0;
+      // With cash, look up by the code the server offered, not what was typed.
+      const lookup = cashCollected && cashDue ? cashDue.code : identifier.trim();
+      const result = await checkInRegistration(lookup, adults, children, cashCollected);
 
       if (!result.success) {
         setError(result.error || "Check-in failed");
+        setCashDue(result.cashDue ?? null);
         setLoading(false);
         return;
       }
 
       setSuccess(true);
       setCheckedInName(result.name || null);
+      setCashTaken(result.cashCents ?? null);
       setIdentifier("");
       setAdultCount("1");
       setChildCount("0");
@@ -47,12 +55,17 @@ export default function CheckinForm() {
         setSuccess(false);
         setCheckedInName(null);
       }, 5000);
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
       setLoading(false);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void submit(false);
   };
 
   return (
@@ -65,6 +78,16 @@ export default function CheckinForm() {
                 <AlertCircle className="h-5 w-5 shrink-0 text-alert" />
                 <p className="text-sm text-alert">{error}</p>
               </div>
+              {cashDue && (
+                <button
+                  type="button"
+                  onClick={() => void submit(true)}
+                  disabled={loading}
+                  className="mt-3 w-full rounded-lg bg-white px-4 py-3 text-sm font-semibold text-haku hover:bg-white/90 disabled:opacity-50"
+                >
+                  Took ${toDollars(cashDue.cents)} cash &mdash; mark paid and check in
+                </button>
+              )}
             </div>
           )}
 
@@ -73,8 +96,11 @@ export default function CheckinForm() {
               <div className="flex gap-3">
                 <CheckCircle2 className="h-5 w-5 shrink-0 text-green-400" />
                 <div className="text-sm text-green-400">
-                  <p className="font-semibold">Welcome, {checkedInName}!</p>
-                  <p className="mt-1">You&apos;re checked in. Enjoy Mha Puja!</p>
+                  <p className="font-semibold">Checked in: {checkedInName}</p>
+                  {cashTaken != null && (
+                    <p className="mt-1">Cash recorded: ${toDollars(cashTaken)}</p>
+                  )}
+                  <p className="mt-1">Welcome them in. Enjoy Mha Puja!</p>
                 </div>
               </div>
             </div>
@@ -151,9 +177,6 @@ export default function CheckinForm() {
             )}
           </LiquidButton>
 
-          <p className="text-center text-xs text-white/50">
-            Check-in is recorded at {new Date().toLocaleTimeString()}
-          </p>
         </form>
       </div>
     </PatasiFrame>

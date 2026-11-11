@@ -1,146 +1,189 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/admin/require-admin";
+import { formatDateTime } from "@/lib/constants/time";
+import { normalizePhone } from "@/lib/validation/contact";
 
 export type CheckinResult = {
   success: boolean;
   name?: string;
   checkedInAt?: string;
   guestCount?: number;
+  /** Set when cash was taken for this check-in. */
+  cashCents?: number;
   error?: string;
+  /** Registered but unpaid: the volunteer may take this much cash and retry. */
+  cashDue?: { code: string; name: string; cents: number };
 };
 
+type Row = {
+  id: number;
+  registration_code: string;
+  full_name: string;
+  payment_status: string;
+  adult_count: number;
+  child_count: number;
+  checked_in_at: string | null;
+  charged_cents: number;
+};
+
+const COLUMNS =
+  "id, registration_code, full_name, payment_status, adult_count, child_count, checked_in_at, charged_cents";
+
+/**
+ * Volunteer check-in at the door.
+ *
+ * Registrations hold names, phones and emails and anon has no access to the
+ * table, so this runs only for a signed-in admin session, with the service-role
+ * client requireAdmin hands back. Lookups use .eq() only: what the volunteer
+ * types never becomes part of a filter string.
+ */
 export async function checkInRegistration(
   identifier: string,
   adultCount: number,
   childCount: number,
+  cashCollected = false,
 ): Promise<CheckinResult> {
-  try {
-    if (!identifier || identifier.length === 0) {
-      return { success: false, error: "Registration code, phone, or email is required" };
-    }
+  const gate = await requireAdmin();
+  if (!gate.ok) return { success: false, error: gate.error };
+  const db = gate.admin;
 
-    if (adultCount < 0 || childCount < 0) {
-      return { success: false, error: "Guest counts must be non-negative" };
-    }
-
-    if (adultCount + childCount < 1) {
-      return { success: false, error: "At least one guest must be present" };
-    }
-
-    const supabase = await createClient();
-
-    // Try to find by registration code first
-    let { data: registration, error: lookupError } = await supabase
-      .from("mhapuja_registrations")
-      .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
-      .eq("registration_code", identifier.toUpperCase())
-      .single();
-
-    // If not found by code, try by phone (normalize by removing non-digits)
-    if (!registration && lookupError) {
-      const normalizedPhone = identifier.replace(/\D/g, "");
-      const { data: phoneReg, error: phoneError } = await supabase
-        .from("mhapuja_registrations")
-        .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
-        .or(`phone.eq.${normalizedPhone},phone.eq.${identifier}`)
-        .single();
-      registration = phoneReg;
-      lookupError = phoneError;
-    }
-
-    // If not found by phone, try by email (case-insensitive)
-    if (!registration && lookupError) {
-      const { data: emailReg, error: emailError } = await supabase
-        .from("mhapuja_registrations")
-        .select("id, full_name, payment_status, stripe_session_id, adult_count, child_count")
-        .eq("email", identifier.toLowerCase())
-        .single();
-      registration = emailReg;
-      lookupError = emailError;
-    }
-
-    if (lookupError || !registration) {
-      return {
-        success: false,
-        error: "Registration not found. Please register first at /register/mhapuja, then come back to check in.",
-      };
-    }
-
-    // Verify adult and child counts match registration
-    if (registration.adult_count !== adultCount || registration.child_count !== childCount) {
-      return {
-        success: false,
-        error: `Guest count mismatch. You registered ${registration.adult_count} adult${registration.adult_count === 1 ? "" : "s"} and ${registration.child_count} child${registration.child_count === 1 ? "" : "ren"}. Please enter the correct count.`,
-      };
-    }
-
-    // Check if payment is pending - offer cash option
-    if (registration.payment_status === "pending") {
-      return {
-        success: false,
-        error: "Payment pending. Complete payment now or contact organizer to pay in cash at the event.",
-      };
-    }
-
-    // Check if payment failed
-    if (registration.payment_status === "failed") {
-      return {
-        success: false,
-        error: "Payment failed. Please retry payment or contact organizer for assistance.",
-      };
-    }
-
-    // Only allow check-in if paid
-    if (registration.payment_status !== "paid") {
-      return {
-        success: false,
-        error: "Registration payment not confirmed. Please contact organizer.",
-      };
-    }
-
-    const now = new Date().toISOString();
-
-    // Try to record check-in. Note: checked_in_at, adults_present, children_present columns must exist in DB.
-    // If migration hasn't been applied yet, this will fail - apply migration 0020_checkin.sql
-    try {
-      const { error: updateError } = await supabase
-        .from("mhapuja_registrations")
-        .update({
-          checked_in_at: now,
-          adults_present: adultCount,
-          children_present: childCount,
-        })
-        .eq("id", registration.id);
-
-      if (updateError) {
-        // If columns don't exist, provide helpful error
-        if (
-          updateError.message?.includes("checked_in_at") ||
-          updateError.message?.includes("adults_present") ||
-          updateError.message?.includes("children_present")
-        ) {
-          return {
-            success: false,
-            error: "Check-in system not yet initialized. Please contact support.",
-          };
-        }
-        console.error("Check-in update error:", updateError);
-        return { success: false, error: "Failed to record check-in" };
-      }
-    } catch (err) {
-      console.error("Check-in exception:", err);
-      return { success: false, error: "Failed to record check-in" };
-    }
-
-    return {
-      success: true,
-      name: registration.full_name,
-      checkedInAt: now,
-      guestCount: adultCount + childCount,
-    };
-  } catch (error) {
-    console.error("Check-in error:", error);
-    return { success: false, error: "An unexpected error occurred" };
+  const input = (identifier ?? "").trim();
+  if (!input) {
+    return { success: false, error: "Enter a registration code, phone number, or email." };
   }
+  if (
+    !Number.isInteger(adultCount) ||
+    !Number.isInteger(childCount) ||
+    adultCount < 0 ||
+    childCount < 0 ||
+    adultCount + childCount < 1
+  ) {
+    return { success: false, error: "At least one guest must be present." };
+  }
+
+  // Pick the column from the shape of the input. Phones are stored as +1XXXXXXXXXX.
+  const digits = normalizePhone(input);
+  let query = db.from("mhapuja_registrations").select(COLUMNS);
+  if (input.includes("@")) {
+    query = query.eq("email", input.toLowerCase());
+  } else if (/^MHP-/i.test(input)) {
+    query = query.eq("registration_code", input.toUpperCase());
+  } else if (digits.length === 10) {
+    query = query.eq("phone", `+1${digits}`);
+  } else {
+    return { success: false, error: "That isn't a registration code, 10-digit phone, or email." };
+  }
+
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(20);
+  if (error) {
+    console.error("Check-in lookup error:", error);
+    return { success: false, error: "Could not look up registrations. Try again." };
+  }
+
+  const rows = (data ?? []) as Row[];
+  if (rows.length === 0) {
+    return { success: false, error: "No registration found. Check the spelling, or send them to an organizer." };
+  }
+
+  // One phone or email can hold several registrations, including abandoned
+  // unpaid ones. Paid rows come first; an unpaid one is only offered for cash
+  // when nothing under this lookup has been paid.
+  const paid = rows.filter((r) => r.payment_status === "paid");
+  let reg: Row;
+  let takingCash = false;
+
+  if (paid.length === 0) {
+    const unpaid = rows.filter((r) => r.payment_status === "pending" || r.payment_status === "failed");
+    if (unpaid.length === 0) {
+      return { success: false, error: `Payment is ${rows[0].payment_status}. Send them to an organizer.` };
+    }
+    if (unpaid.length > 1) {
+      return {
+        success: false,
+        error: `Several unpaid registrations match: ${unpaid.map((r) => r.registration_code).join(", ")}. Enter the code instead.`,
+      };
+    }
+    reg = unpaid[0];
+    if (!cashCollected) {
+      return {
+        success: false,
+        error: `${reg.full_name} registered but did not pay.`,
+        cashDue: { code: reg.registration_code, name: reg.full_name, cents: reg.charged_cents },
+      };
+    }
+    takingCash = true;
+  } else {
+    const open = paid.filter((r) => !r.checked_in_at);
+    if (open.length === 0) {
+      const r = paid[0];
+      return {
+        success: false,
+        error: `${r.full_name} (${r.registration_code}) is already checked in, at ${formatDateTime(r.checked_in_at)}.`,
+      };
+    }
+    if (open.length > 1) {
+      return {
+        success: false,
+        error: `Several paid registrations match: ${open.map((r) => r.registration_code).join(", ")}. Enter the code instead.`,
+      };
+    }
+    reg = open[0];
+  }
+
+  // Part of a group may stay home; more people than were paid for may not.
+  if (adultCount > reg.adult_count || childCount > reg.child_count) {
+    return {
+      success: false,
+      error: `Paid for ${reg.adult_count} adult${reg.adult_count === 1 ? "" : "s"} and ${reg.child_count} child${reg.child_count === 1 ? "" : "ren"}. Extra guests need a new registration.`,
+    };
+  }
+
+  const now = new Date().toISOString();
+  // checked_in_at is null in the filter so two volunteers can't both admit the same ticket.
+  // Cash charges what was registered: the row's price check ties charged_cents
+  // to the ticket counts, and the counts are what the money was due for.
+  const update = takingCash
+    ? { checked_in_at: now, adults_present: adultCount, children_present: childCount, payment_status: "paid", paid_cash_at: now }
+    : { checked_in_at: now, adults_present: adultCount, children_present: childCount };
+  let write = db.from("mhapuja_registrations").update(update).eq("id", reg.id).is("checked_in_at", null);
+  // Only from the status the volunteer saw, so cash is never taken twice.
+  write = takingCash ? write.eq("payment_status", reg.payment_status) : write.eq("payment_status", "paid");
+  const { data: updated, error: updateError } = await write.select("id");
+  if (updateError) {
+    console.error("Check-in update error:", updateError);
+    return { success: false, error: "Could not record check-in. Try again." };
+  }
+  if (!updated || updated.length === 0) {
+    return { success: false, error: `${reg.full_name} was just checked in by someone else.` };
+  }
+
+  return {
+    success: true,
+    name: reg.full_name,
+    checkedInAt: now,
+    guestCount: adultCount + childCount,
+    cashCents: takingCash ? reg.charged_cents : undefined,
+  };
+}
+
+/**
+ * Check in a whole party from the admin registrations table: everyone the
+ * registration covers. Partial groups use the check-in page instead.
+ */
+export async function checkInWholeParty(code: string, cashCollected: boolean): Promise<CheckinResult> {
+  const gate = await requireAdmin();
+  if (!gate.ok) return { success: false, error: gate.error };
+
+  const { data, error } = await gate.admin
+    .from("mhapuja_registrations")
+    .select("adult_count, child_count")
+    .eq("registration_code", code)
+    .maybeSingle();
+  if (error || !data) return { success: false, error: "Registration not found." };
+
+  const result = await checkInRegistration(code, data.adult_count, data.child_count, cashCollected);
+  if (result.success) revalidatePath("/admin");
+  return result;
 }

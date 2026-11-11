@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/payments/stripe";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { siteUrl } from "@/lib/site";
+import { emailProblem, normalizeEmail } from "@/lib/validation/contact";
 import { settlement } from "@/lib/payments/fees";
 
 export async function POST(request: NextRequest) {
@@ -13,24 +15,32 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { donor_name, donor_email, donor_phone, amount, donation_type, anonymous, covers_fee } = body;
 
-    if (!amount || amount < 1) {
+    // Whole dollars from $1 to $10,000; anything else is a typo or abuse.
+    if (typeof amount !== "number" || !Number.isFinite(amount) || amount < 1 || amount > 10_000) {
       return NextResponse.json(
         { error: "Invalid donation amount" },
         { status: 400 }
       );
     }
 
+    if (typeof donor_email !== "string" || emailProblem(donor_email)) {
+      return NextResponse.json({ error: "A valid email is needed for the receipt" }, { status: 400 });
+    }
+
     const donationCents = Math.round(amount * 100);
     const { chargedCents, toOrganizationCents } = settlement(donationCents, covers_fee ?? false);
 
     // Save donation to database first
-    const supabase = await createClient();
+    const supabase = createAdminClient();
+    if (!supabase) {
+      return NextResponse.json({ error: "Donations are not configured" }, { status: 503 });
+    }
     const { data: donation, error: dbError } = await supabase
       .from("donations")
       .insert([
         {
           donor_name: anonymous ? "Anonymous" : donor_name,
-          donor_email,
+          donor_email: normalizeEmail(donor_email),
           donor_phone: donor_phone || null,
           amount: donationCents,
           donation_type,
@@ -68,8 +78,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"}/donate?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"}/donate?canceled=true`,
+      success_url: `${siteUrl()}/donate?success=true`,
+      cancel_url: `${siteUrl()}/donate?canceled=true`,
       customer_email: donor_email,
       metadata: {
         donation_id: donation.id.toString(),
