@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import MhaPujaCheckInTable from "@/components/admin/mhapuja-checkin-table";
+import DoorRegistrationForm from "@/components/admin/door-registration-form";
 
 type MhaPujaRow = {
   id: number;
@@ -137,6 +138,10 @@ export default async function MhaPujaRegistrations({
             <p className="text-sm text-white/60">{stat.label}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mb-8">
+        <DoorRegistrationForm />
       </div>
 
       <div className={panelClassName}>
