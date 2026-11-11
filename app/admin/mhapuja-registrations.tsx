@@ -18,12 +18,16 @@ type MhaPujaRow = {
   consent_given: boolean;
   consent_at: string | null;
   created_at: string;
+  paid_cash_at: string | null;
   checked_in_at: string | null;
   adults_present: number | null;
   children_present: number | null;
 };
 
-type TotalsRow = Pick<MhaPujaRow, "adult_count" | "child_count" | "charged_cents" | "payment_status">;
+type TotalsRow = Pick<
+  MhaPujaRow,
+  "adult_count" | "child_count" | "charged_cents" | "payment_status" | "paid_cash_at" | "checked_in_at"
+>;
 
 const PAGE_SIZE = 200;
 /** PostgREST's default response cap; totals are read in pages of this size. */
@@ -41,7 +45,7 @@ async function readAllTotals(supabase: SupabaseClient) {
   for (let from = 0; ; from += TOTALS_CHUNK) {
     const { data, error } = await supabase
       .from("mhapuja_registrations")
-      .select("adult_count, child_count, charged_cents, payment_status")
+      .select("adult_count, child_count, charged_cents, payment_status, paid_cash_at, checked_in_at")
       .order("id")
       .range(from, from + TOTALS_CHUNK - 1);
     if (error) return { error: error.message };
@@ -56,7 +60,10 @@ async function readAllTotals(supabase: SupabaseClient) {
     paidRegistrations: paid.length,
     adults: paid.reduce((n, r) => n + r.adult_count, 0),
     children: paid.reduce((n, r) => n + r.child_count, 0),
-    paidCents: paid.reduce((n, r) => n + r.charged_cents, 0),
+    // Card money is what Stripe holds; cash was handed to a volunteer at the door.
+    paidCents: paid.filter((r) => !r.paid_cash_at).reduce((n, r) => n + r.charged_cents, 0),
+    cashCents: paid.filter((r) => r.paid_cash_at).reduce((n, r) => n + r.charged_cents, 0),
+    checkedIn: all.filter((r) => r.checked_in_at).length,
     pendingCents: all
       .filter((r) => r.payment_status === "pending")
       .reduce((n, r) => n + r.charged_cents, 0),
@@ -88,7 +95,7 @@ export default async function MhaPujaRegistrations({
       .select(
         "id, registration_code, full_name, phone, email, adult_count, child_count, " +
           "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at, " +
-          "checked_in_at, adults_present, children_present",
+          "paid_cash_at, checked_in_at, adults_present, children_present",
       )
       .order("created_at", { ascending: false })
       .range(pageOffset, pageOffset + PAGE_SIZE - 1),
@@ -113,8 +120,10 @@ export default async function MhaPujaRegistrations({
     { label: "Registrations", value: String(totals.registrations) },
     { label: "Paid adults", value: String(totals.adults) },
     { label: "Paid children", value: String(totals.children) },
-    { label: "Received", value: `$${toDollars(totals.paidCents)}` },
+    { label: "Received by card", value: `$${toDollars(totals.paidCents)}` },
+    { label: "Cash at door", value: `$${toDollars(totals.cashCents)}` },
     { label: "Awaiting payment", value: `$${toDollars(totals.pendingCents)}` },
+    { label: "Checked in", value: `${totals.checkedIn} of ${totals.paidRegistrations}` },
   ];
 
   return (
@@ -122,11 +131,11 @@ export default async function MhaPujaRegistrations({
       <p className="mb-4 text-sm text-white/60">
         Mha Puja tickets &middot; {totals.registrations}{" "}
         {totals.registrations === 1 ? "entry" : "entries"} ({totals.paidRegistrations} paid), newest
-        first. Seats count paid registrations only. &ldquo;Received&rdquo; is before Stripe&rsquo;s
+        first. Seats count paid registrations only, cash included. &ldquo;Received by card&rdquo; is before Stripe&rsquo;s
         card fee.
       </p>
 
-      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -177,6 +186,7 @@ export default async function MhaPujaRegistrations({
                       <span className="font-medium text-white">${toDollars(row.charged_cents)}</span>
                       <span className={`ml-2 ${statusClass(row.payment_status)}`}>
                         {row.payment_status}
+                        {row.paid_cash_at && " (cash)"}
                       </span>
                       {/* Pending with no session: checkout never started, and
                           nothing will ever mark this row paid on its own. */}
