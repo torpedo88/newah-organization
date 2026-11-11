@@ -1,8 +1,23 @@
-import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+import { cookies } from "next/headers";
+import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { deleteContact, updateContactStatus } from "./actions";
 
 export default async function ContactsPage() {
-  const supabase = await createClient();
+  // Contact submissions are personal details: admin session only, read with
+  // the service-role client since anon has no access to the table.
+  if (!sessionTokenIsValid((await cookies()).get(ADMIN_COOKIE)?.value)) {
+    return (
+      <p className="p-8 text-gray-900">
+        Unauthorized. <Link href="/admin" className="underline">Sign in</Link>
+      </p>
+    );
+  }
+  const supabase = createAdminClient();
+  if (!supabase) {
+    return <p className="p-8 text-gray-900">SUPABASE_SERVICE_ROLE_KEY is not set.</p>;
+  }
 
   const { data: contacts, error } = await supabase
     .from("contacts")
