@@ -36,9 +36,9 @@ export async function doorRegisterAttendee(
     // Generate registration code
     const code = `MHP-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
-    // Create registration with payment method
+    // Create registration in door_registrations table
     const { data, error } = await supabase
-      .from("mhapuja_registrations")
+      .from("door_registrations")
       .insert({
         registration_code: code,
         full_name: fullName.trim(),
@@ -46,11 +46,7 @@ export async function doorRegisterAttendee(
         email: email.trim(),
         adult_count: adultCount,
         child_count: childCount,
-        payment_status: "pending",
         payment_method: paymentMethod,
-        charged_cents: 0,
-        consent_given: true,
-        consent_at: new Date().toISOString(),
         checked_in_at: new Date().toISOString(),
         adults_present: adultCount,
         children_present: childCount,
