@@ -5,6 +5,7 @@ import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import CheckinRowButton from "@/components/checkin/checkin-row-button";
 import DoorRegistrationForm from "@/components/admin/door-registration-form";
+import DoorRegistrations from "./door-registrations";
 
 type MhaPujaRow = {
   id: number;
@@ -139,10 +140,6 @@ export default async function MhaPujaRegistrations({
     { label: "Cash at door", value: `$${toDollars(totals.cashCents)}` },
     { label: "Awaiting payment", value: `$${toDollars(totals.pendingCents)}` },
     { label: "Checked in", value: `${totals.checkedIn} of ${totals.paidRegistrations}` },
-    {
-      label: `Walk-ins (${door.reduce((n, d) => n + d.adult_count, 0)} adults, ${door.reduce((n, d) => n + d.child_count, 0)} children)`,
-      value: String(door.length),
-    },
     { label: "Walk-in cash", value: `$${toDollars(doorCents("cash"))}` },
     { label: "Walk-in Zelle", value: `$${toDollars(doorCents("zelle"))}` },
   ];
@@ -168,8 +165,9 @@ export default async function MhaPujaRegistrations({
         </span>
       </p>
 
-      <div className="mb-8">
+      <div className="mb-8 space-y-6">
         <DoorRegistrationForm />
+        <DoorRegistrations supabase={supabase} panelClassName={panelClassName} />
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
