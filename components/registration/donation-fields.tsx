@@ -178,6 +178,23 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
               <span>${toDollars(toOrganizationCents)}</span>
             </div>
           </div>
+
+          <div>
+            <label htmlFor="donationNotes" className="mb-2 block text-sm font-semibold text-white">
+              Add a note (optional)
+            </label>
+            <textarea
+              id="donationNotes"
+              {...form.register("donationNotes")}
+              placeholder="Share any message or dedication for your donation..."
+              maxLength={500}
+              rows={3}
+              className="w-full rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 transition-all focus:border-patasi focus:bg-white/[0.12] focus:shadow-[0_0_0_4px_rgba(192,16,43,0.35)] focus:outline-none resize-none"
+            />
+            {form.formState.errors.donationNotes && (
+              <p className="mt-1 text-sm text-alert">{form.formState.errors.donationNotes.message}</p>
+            )}
+          </div>
         </>
       )}
     </div>

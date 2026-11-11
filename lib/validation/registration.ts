@@ -52,6 +52,8 @@ export const registrationSchema = z
     donationChoice: z.enum(["none", "amount"]).optional(),
     /** Whether the donor pays the card processing fee on top. */
     coversFee: z.boolean().optional(),
+    /** Optional notes or message from the donor. */
+    donationNotes: z.string().max(500, "Please keep notes under 500 characters").trim().optional(),
 
     consentGiven: z.boolean().optional(),
 
