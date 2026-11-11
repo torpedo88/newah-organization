@@ -1,12 +1,20 @@
 import CheckinForm from "@/components/checkin/checkin-form";
 import NhuDayaBackdrop from "@/components/ui/nhu-daya-backdrop";
 import Image from "next/image";
+import Link from "next/link";
+import { cookies } from "next/headers";
+import { ADMIN_COOKIE, sessionTokenIsValid } from "@/lib/admin/session";
 
 export const metadata = {
   title: "Mha Puja Check-In",
+  robots: { index: false },
 };
 
-export default function CheckinPage() {
+export default async function CheckinPage() {
+  // Volunteers sign in with the board password at /admin first; the action
+  // re-checks the session, this only decides what to show.
+  const signedIn = sessionTokenIsValid((await cookies()).get(ADMIN_COOKIE)?.value);
+
   return (
     <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
       <NhuDayaBackdrop />
@@ -30,7 +38,17 @@ export default function CheckinPage() {
           </p>
         </div>
 
-        <CheckinForm />
+        {signedIn ? (
+          <CheckinForm />
+        ) : (
+          <p className="rounded-xl border border-white/15 bg-white/[0.06] p-6 text-center text-white/80">
+            Check-in is for volunteers.{" "}
+            <Link href="/admin" className="font-semibold text-white underline underline-offset-4">
+              Sign in at /admin
+            </Link>
+            , then come back to this page.
+          </p>
+        )}
       </div>
     </div>
   );
