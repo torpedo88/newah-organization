@@ -10,10 +10,12 @@ type Totals = {
 };
 
 async function fetchTotals(supabase: SupabaseClient): Promise<Totals> {
-  // Fetch online registrations (mhapuja_registrations)
+  // Online registrations that hold seats: paid only (card or cash at the door).
+  // Pending and failed checkouts are not attendees.
   const { data: mhapujaData } = await supabase
     .from("mhapuja_registrations")
-    .select("adult_count, child_count");
+    .select("adult_count, child_count")
+    .eq("payment_status", "paid");
 
   const onlineRegistrations = mhapujaData?.length ?? 0;
   const onlineAdults = mhapujaData?.reduce((sum, r) => sum + (r.adult_count ?? 0), 0) ?? 0;
@@ -53,7 +55,7 @@ export default async function RegistrationTotals({
     {
       label: "Total Registrations",
       value: String(totalRegistrations),
-      subtext: `${totals.onlineRegistrations} online, ${totals.doorRegistrations} walk-in`,
+      subtext: `${totals.onlineRegistrations} paid online, ${totals.doorRegistrations} walk-in`,
     },
     {
       label: "Total Adults",
