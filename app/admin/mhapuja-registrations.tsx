@@ -3,6 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
+import MhaPujaCheckInTable from "@/components/admin/mhapuja-checkin-table";
 
 type MhaPujaRow = {
   id: number;
@@ -142,98 +143,7 @@ export default async function MhaPujaRegistrations({
         {rows.length === 0 ? (
           <p className="py-10 text-center text-white/60">No Mha Puja registrations yet.</p>
         ) : (
-          <div className="-mx-8 overflow-x-auto px-8">
-            <table className="w-full min-w-[900px] text-left text-sm">
-              <thead>
-                <tr className="border-b border-white/15 text-xs uppercase tracking-wide text-white/55">
-                  <th className="py-3 pr-4 font-semibold">Code</th>
-                  <th className="py-3 pr-4 font-semibold">Name</th>
-                  <th className="py-3 pr-4 font-semibold">Contact</th>
-                  <th className="py-3 pr-4 font-semibold">Tickets</th>
-                  <th className="py-3 pr-4 font-semibold">Payment</th>
-                  <th className="py-3 pr-4 font-semibold">Consent</th>
-                  <th className="py-3 pr-4 font-semibold">Check-in</th>
-                  <th className="py-3 font-semibold">Registered</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => (
-                  <tr key={row.id} className="border-b border-white/10 last:border-0">
-                    <td className="py-3 pr-4 font-mono text-white/90">{row.registration_code}</td>
-                    <td className="py-3 pr-4 font-medium text-white">{row.full_name}</td>
-                    <td className="py-3 pr-4 text-white/70">
-                      <div>{row.email}</div>
-                      <div className="text-white/50">{row.phone}</div>
-                    </td>
-                    <td className="py-3 pr-4 text-white/70">
-                      {row.adult_count} adult{row.adult_count === 1 ? "" : "s"}
-                      {row.child_count > 0 && (
-                        <>
-                          , {row.child_count} child{row.child_count === 1 ? "" : "ren"}
-                        </>
-                      )}
-                    </td>
-                    <td className="py-3 pr-4 text-white/70">
-                      <span className="font-medium text-white">${toDollars(row.charged_cents)}</span>
-                      <span className={`ml-2 ${statusClass(row.payment_status)}`}>
-                        {row.payment_status}
-                      </span>
-                      {/* Pending with no session: checkout never started, and
-                          nothing will ever mark this row paid on its own. */}
-                      {row.payment_status === "pending" && !row.stripe_session_id && (
-                        <span className="ml-2 rounded bg-alert/20 px-1.5 py-0.5 text-xs font-semibold text-alert">
-                          checkout never started &mdash; follow up
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 pr-4 text-white/60">
-                      {row.consent_given ? (row.consent_at ? formatDate(row.consent_at) : "yes") : "—"}
-                    </td>
-                    <td className="py-3 pr-4 text-white/60">
-                      {row.checked_in_at ? (
-                        <div>
-                          <div className="text-white/80">{formatDateTime(row.checked_in_at)}</div>
-                          <div className="text-white/50 text-xs">
-                            {row.adults_present !== null || row.children_present !== null
-                              ? `${row.adults_present ?? 0} adult${row.adults_present === 1 ? "" : "s"}, ${row.children_present ?? 0} child${row.children_present === 1 ? "" : "ren"}`
-                              : ""}
-                          </div>
-                        </div>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                    <td className="py-3 text-white/55">{formatDateTime(row.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {totals.registrations > PAGE_SIZE && (
-              <div className="mt-4 flex items-center justify-between text-sm text-white/70">
-                <span>
-                  Showing {pageOffset + 1}&ndash;{pageOffset + rows.length} of {totals.registrations}
-                </span>
-                <span className="flex gap-3">
-                  {currentPage > 1 && (
-                    <Link
-                      href={`/admin?event=mhapuja&page=${currentPage - 1}`}
-                      className="underline underline-offset-4 hover:text-white"
-                    >
-                      Previous
-                    </Link>
-                  )}
-                  {pageOffset + rows.length < totals.registrations && (
-                    <Link
-                      href={`/admin?event=mhapuja&page=${currentPage + 1}`}
-                      className="underline underline-offset-4 hover:text-white"
-                    >
-                      Next
-                    </Link>
-                  )}
-                </span>
-              </div>
-            )}
-          </div>
+          <MhaPujaCheckInTable registrations={rows} />
         )}
       </div>
     </>
