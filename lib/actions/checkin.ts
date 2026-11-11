@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { formatDateTime } from "@/lib/constants/time";
 import { normalizePhone } from "@/lib/validation/contact";
@@ -165,4 +166,24 @@ export async function checkInRegistration(
     guestCount: adultCount + childCount,
     cashCents: takingCash ? reg.charged_cents : undefined,
   };
+}
+
+/**
+ * Check in a whole party from the admin registrations table: everyone the
+ * registration covers. Partial groups use the check-in page instead.
+ */
+export async function checkInWholeParty(code: string, cashCollected: boolean): Promise<CheckinResult> {
+  const gate = await requireAdmin();
+  if (!gate.ok) return { success: false, error: gate.error };
+
+  const { data, error } = await gate.admin
+    .from("mhapuja_registrations")
+    .select("adult_count, child_count")
+    .eq("registration_code", code)
+    .maybeSingle();
+  if (error || !data) return { success: false, error: "Registration not found." };
+
+  const result = await checkInRegistration(code, data.adult_count, data.child_count, cashCollected);
+  if (result.success) revalidatePath("/admin");
+  return result;
 }

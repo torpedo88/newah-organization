@@ -3,6 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
+import CheckinRowButton from "@/components/checkin/checkin-row-button";
 
 type MhaPujaRow = {
   id: number;
@@ -134,6 +135,18 @@ export default async function MhaPujaRegistrations({
         first. Seats count paid registrations only, cash included. &ldquo;Received by card&rdquo; is before Stripe&rsquo;s
         card fee.
       </p>
+      <p className="mb-6">
+        <Link
+          href="/checkin/mhapuja"
+          className="inline-block rounded-xl bg-patasi px-5 py-3 text-sm font-semibold text-white hover:bg-patasi/90"
+        >
+          Open check-in page
+        </Link>
+        <span className="ml-3 text-sm text-white/55">
+          For the door, or when only part of a group arrives. The buttons below check in everyone
+          registered.
+        </span>
+      </p>
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
         {stats.map((stat) => (
@@ -209,6 +222,14 @@ export default async function MhaPujaRegistrations({
                               : ""}
                           </div>
                         </div>
+                      ) : row.payment_status === "paid" ||
+                        row.payment_status === "pending" ||
+                        row.payment_status === "failed" ? (
+                        <CheckinRowButton
+                          code={row.registration_code}
+                          paid={row.payment_status === "paid"}
+                          cents={row.charged_cents}
+                        />
                       ) : (
                         "—"
                       )}
