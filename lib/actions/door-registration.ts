@@ -16,6 +16,7 @@ export async function doorRegisterAttendee(
   email: string,
   adultCount: number,
   childCount: number,
+  paymentMethod: "cash" | "zelle",
 ): Promise<DoorRegistrationResult> {
   try {
     if (!fullName?.trim()) {
@@ -35,7 +36,7 @@ export async function doorRegisterAttendee(
     // Generate registration code
     const code = `MHP-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
-    // Create registration with cash payment pending
+    // Create registration with payment method
     const { data, error } = await supabase
       .from("mhapuja_registrations")
       .insert({
@@ -46,6 +47,7 @@ export async function doorRegisterAttendee(
         adult_count: adultCount,
         child_count: childCount,
         payment_status: "pending",
+        payment_method: paymentMethod,
         charged_cents: 0,
         consent_given: true,
         consent_at: new Date().toISOString(),

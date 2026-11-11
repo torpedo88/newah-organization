@@ -24,9 +24,9 @@ export default function DoorRegistrationForm({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [registrationCode, setRegistrationCode] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "zelle" | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (paymentMethod: "cash" | "zelle") => {
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -36,7 +36,7 @@ export default function DoorRegistrationForm({
       const adults = parseInt(adultCount) || 1;
       const children = parseInt(childCount) || 0;
 
-      const result = await doorRegisterAttendee(fullName, phone, email, adults, children);
+      const result = await doorRegisterAttendee(fullName, phone, email, adults, children, paymentMethod);
 
       if (!result.success) {
         setError(result.error || "Registration failed");
@@ -66,8 +66,8 @@ export default function DoorRegistrationForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-white/20 bg-white/5 p-6">
-      <h3 className="text-lg font-semibold text-white">Register Walk-In Attendee (Cash)</h3>
+    <form onSubmit={(e) => e.preventDefault()} className="space-y-4 rounded-lg border border-white/20 bg-white/5 p-6">
+      <h3 className="text-lg font-semibold text-white">Register Walk-In Attendee</h3>
 
       {error && (
         <div className="rounded-lg border border-alert bg-alert/10 p-3">
@@ -85,7 +85,9 @@ export default function DoorRegistrationForm({
             <div className="text-sm text-green-400">
               <p className="font-semibold">{fullName} registered!</p>
               <p className="text-xs text-green-400/80">Code: {registrationCode}</p>
-              <p className="text-xs text-green-400/60">Payment: Cash at door</p>
+              <p className="text-xs text-green-400/60">
+                Payment: {paymentMethod === "cash" ? "Cash at door" : "Zelle"}
+              </p>
             </div>
           </div>
         </div>
@@ -156,20 +158,44 @@ export default function DoorRegistrationForm({
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading || !fullName.trim()}
-        className={buttonClass}
-      >
-        {loading ? (
-          <>
-            <Loader className="inline size-4 animate-spin mr-2" aria-hidden />
-            Registering...
-          </>
-        ) : (
-          "Register Attendee"
-        )}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setPaymentMethod("cash");
+            handleSubmit("cash");
+          }}
+          disabled={loading || !fullName.trim()}
+          className={buttonClass}
+        >
+          {loading ? (
+            <>
+              <Loader className="inline size-4 animate-spin mr-2" aria-hidden />
+              Registering...
+            </>
+          ) : (
+            "Register with Cash"
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setPaymentMethod("zelle");
+            handleSubmit("zelle");
+          }}
+          disabled={loading || !fullName.trim()}
+          className={buttonClass}
+        >
+          {loading ? (
+            <>
+              <Loader className="inline size-4 animate-spin mr-2" aria-hidden />
+              Registering...
+            </>
+          ) : (
+            "Register with Zelle"
+          )}
+        </button>
+      </div>
     </form>
   );
 }
