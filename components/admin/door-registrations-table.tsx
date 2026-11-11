@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { formatDateTime } from "@/lib/constants/time";
 
 type DoorRegistration = {
   id: number;
   registration_code: string;
   full_name: string;
-  phone: string;
-  email: string;
+  phone: string | null;
+  email: string | null;
   adult_count: number;
   child_count: number;
   payment_method: "cash" | "zelle";
@@ -23,31 +22,8 @@ export default function DoorRegistrationsTable({
 }: {
   registrations: DoorRegistration[];
 }) {
-  const [search, setSearch] = useState("");
-
-  const filtered = registrations.filter(
-    (r) =>
-      r.full_name.toLowerCase().includes(search.toLowerCase()) ||
-      r.email.toLowerCase().includes(search.toLowerCase()) ||
-      r.phone.includes(search) ||
-      r.registration_code.toUpperCase().includes(search.toUpperCase()),
-  );
-
   return (
     <div className="space-y-4">
-      <div>
-        <input
-          type="text"
-          placeholder="Search by name, email, phone, or code..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder-white/50 focus:border-patasi focus:outline-none"
-        />
-        <p className="mt-1 text-sm text-white/50">
-          Found {filtered.length} of {registrations.length} walk-in registrations
-        </p>
-      </div>
-
       <div className="-mx-8 overflow-x-auto px-8">
         <table className="w-full min-w-[1200px] text-left text-sm">
           <thead>
@@ -62,7 +38,7 @@ export default function DoorRegistrationsTable({
             </tr>
           </thead>
           <tbody>
-            {filtered.map((row) => (
+            {registrations.map((row) => (
               <tr key={row.id} className="border-b border-white/10 last:border-0">
                 <td className="py-3 pr-4 font-mono text-white/70">{row.registration_code}</td>
                 <td className="py-3 pr-4 font-medium text-white">{row.full_name}</td>
@@ -108,7 +84,7 @@ export default function DoorRegistrationsTable({
         </table>
       </div>
 
-      {filtered.length === 0 && (
+      {registrations.length === 0 && (
         <p className="py-10 text-center text-white/60">No walk-in registrations found.</p>
       )}
     </div>

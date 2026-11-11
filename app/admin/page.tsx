@@ -98,9 +98,9 @@ function Code({ children }: { children: React.ReactNode }) {
 }
 
 export default async function AdminPage(props: {
-  searchParams: Promise<{ error?: string; locked?: string; page?: string; event?: string }>;
+  searchParams: Promise<{ error?: string; locked?: string; page?: string; event?: string; q?: string }>;
 }) {
-  const { error, locked, page, event: eventParam } = await props.searchParams;
+  const { error, locked, page, event: eventParam, q } = await props.searchParams;
 
 
   // Missing configuration must explain itself rather than 500 the route.
@@ -254,6 +254,7 @@ export default async function AdminPage(props: {
           supabase={supabase}
           currentPage={currentPage}
           panelClassName={PANEL_CLASS}
+          query={q}
         />
       </Shell>
     );
