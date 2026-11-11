@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatDateTime } from "@/lib/constants/time";
 import DoorRegistrationsTable from "@/components/admin/door-registrations-table";
 import { applySearch, hasSearch } from "@/lib/admin/search";
+import { toDollars } from "@/lib/payments/fees";
 
 type DoorRegistration = {
   id: number;
@@ -13,6 +14,7 @@ type DoorRegistration = {
   adult_count: number;
   child_count: number;
   payment_method: "cash" | "zelle";
+  charged_cents: number;
   created_at: string;
   checked_in_at: string | null;
   adults_present: number | null;
@@ -55,18 +57,23 @@ export default async function DoorRegistrations({
     );
   }
 
+  const byMethod = (m: string) => registrations.filter((r) => r.payment_method === m);
   const stats = [
     {
       label: "Total Walk-Ins",
       value: String(registrations.length),
     },
     {
-      label: "Cash",
-      value: String(registrations.filter((r) => r.payment_method === "cash").length),
+      label: `Cash (${byMethod("cash").length})`,
+      value: `$${toDollars(byMethod("cash").reduce((n, r) => n + r.charged_cents, 0))}`,
     },
     {
-      label: "Zelle",
-      value: String(registrations.filter((r) => r.payment_method === "zelle").length),
+      label: `Zelle (${byMethod("zelle").length})`,
+      value: `$${toDollars(byMethod("zelle").reduce((n, r) => n + r.charged_cents, 0))}`,
+    },
+    {
+      label: "Walk-in total",
+      value: `$${toDollars(registrations.reduce((n, r) => n + r.charged_cents, 0))}`,
     },
     {
       label: "Checked In",
@@ -80,7 +87,7 @@ export default async function DoorRegistrations({
         Walk-in door registrations &middot; {registrations.length} registered
       </p>
 
-      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
         {stats.map((stat) => (
           <div
             key={stat.label}

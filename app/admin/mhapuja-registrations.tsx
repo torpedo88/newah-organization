@@ -178,6 +178,18 @@ export default async function MhaPujaRegistrations({
         <DoorRegistrationForm />
       </div>
 
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl"
+          >
+            <p className="text-2xl font-bold text-white">{stat.value}</p>
+            <p className="text-sm text-white/60">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
       <form method="get" action="/admin" className="mb-6 flex flex-wrap items-center gap-3">
         <input type="hidden" name="event" value="mhapuja" />
         <input
@@ -206,18 +218,6 @@ export default async function MhaPujaRegistrations({
           </p>
         )}
       </form>
-
-      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl"
-          >
-            <p className="text-2xl font-bold text-white">{stat.value}</p>
-            <p className="text-sm text-white/60">{stat.label}</p>
-          </div>
-        ))}
-      </div>
 
       <div className={panelClassName}>
         {rows.length === 0 ? (
