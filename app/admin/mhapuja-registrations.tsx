@@ -6,6 +6,7 @@ import { formatDate, formatDateTime } from "@/lib/constants/time";
 import CheckinRowButton from "@/components/checkin/checkin-row-button";
 import DoorRegistrationForm from "@/components/admin/door-registration-form";
 import DoorRegistrations from "./door-registrations";
+import { applySearch, hasSearch } from "@/lib/admin/search";
 
 type MhaPujaRow = {
   id: number;
@@ -85,25 +86,33 @@ export default async function MhaPujaRegistrations({
   supabase,
   currentPage,
   panelClassName,
+  query,
 }: {
   supabase: SupabaseClient;
   currentPage: number;
   panelClassName: string;
+  query?: string;
 }) {
   const pageOffset = (currentPage - 1) * PAGE_SIZE;
+  const q = hasSearch(query) ? (query ?? "").trim() : "";
+  const qParam = q ? `&q=${encodeURIComponent(q)}` : "";
 
-  const [{ data, error }, totals] = await Promise.all([
-    supabase
-      .from("mhapuja_registrations")
-      .select(
-        "id, registration_code, full_name, phone, email, adult_count, child_count, " +
-          "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at, " +
-          "paid_cash_at, checked_in_at, adults_present, children_present",
-      )
-      .order("created_at", { ascending: false })
-      .range(pageOffset, pageOffset + PAGE_SIZE - 1),
+  let listQuery = supabase
+    .from("mhapuja_registrations")
+    .select(
+      "id, registration_code, full_name, phone, email, adult_count, child_count, " +
+        "charged_cents, payment_status, stripe_session_id, consent_given, consent_at, created_at, " +
+        "paid_cash_at, checked_in_at, adults_present, children_present",
+      { count: "exact" },
+    );
+  listQuery = applySearch(listQuery, q);
+
+  const [{ data, error, count }, totals] = await Promise.all([
+    listQuery.order("created_at", { ascending: false }).range(pageOffset, pageOffset + PAGE_SIZE - 1),
     readAllTotals(supabase),
   ]);
+  // Rows matching the search (all rows when there is none), for paging.
+  const matching = count ?? 0;
   // Walk-ins: few rows on one night, so one query is enough. A missing table
   // (migration not applied) shows as zero rather than failing the tab.
   const { data: doorRows } = await supabase
@@ -165,10 +174,38 @@ export default async function MhaPujaRegistrations({
         </span>
       </p>
 
-      <div className="mb-8 space-y-6">
+      <div className="mb-8">
         <DoorRegistrationForm />
-        <DoorRegistrations supabase={supabase} panelClassName={panelClassName} />
       </div>
+
+      <form method="get" action="/admin" className="mb-6 flex flex-wrap items-center gap-3">
+        <input type="hidden" name="event" value="mhapuja" />
+        <input
+          type="search"
+          name="q"
+          defaultValue={q}
+          placeholder="Search name, email, phone, or code (MHP-… / MHD-…)"
+          aria-label="Search registrations"
+          className="min-w-64 flex-1 rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-white placeholder-white/50 focus:border-patasi focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-haku hover:bg-white/90"
+        >
+          Search
+        </button>
+        {q && (
+          <Link href="/admin?event=mhapuja" className="text-sm text-white/70 underline underline-offset-4">
+            Clear
+          </Link>
+        )}
+        {q && (
+          <p className="w-full text-sm text-white/60">
+            {matching} online registration{matching === 1 ? "" : "s"} match &ldquo;{q}&rdquo;. Walk-ins
+            matching it are listed below the online table.
+          </p>
+        )}
+      </form>
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
         {stats.map((stat) => (
@@ -184,7 +221,9 @@ export default async function MhaPujaRegistrations({
 
       <div className={panelClassName}>
         {rows.length === 0 ? (
-          <p className="py-10 text-center text-white/60">No Mha Puja registrations yet.</p>
+          <p className="py-10 text-center text-white/60">
+            {q ? `No online registrations match “${q}”.` : "No Mha Puja registrations yet."}
+          </p>
         ) : (
           <div className="-mx-8 overflow-x-auto px-8">
             <table className="w-full min-w-[900px] text-left text-sm">
@@ -261,23 +300,23 @@ export default async function MhaPujaRegistrations({
                 ))}
               </tbody>
             </table>
-            {totals.registrations > PAGE_SIZE && (
+            {matching > PAGE_SIZE && (
               <div className="mt-4 flex items-center justify-between text-sm text-white/70">
                 <span>
-                  Showing {pageOffset + 1}&ndash;{pageOffset + rows.length} of {totals.registrations}
+                  Showing {pageOffset + 1}&ndash;{pageOffset + rows.length} of {matching}
                 </span>
                 <span className="flex gap-3">
                   {currentPage > 1 && (
                     <Link
-                      href={`/admin?event=mhapuja&page=${currentPage - 1}`}
+                      href={`/admin?event=mhapuja&page=${currentPage - 1}${qParam}`}
                       className="underline underline-offset-4 hover:text-white"
                     >
                       Previous
                     </Link>
                   )}
-                  {pageOffset + rows.length < totals.registrations && (
+                  {pageOffset + rows.length < matching && (
                     <Link
-                      href={`/admin?event=mhapuja&page=${currentPage + 1}`}
+                      href={`/admin?event=mhapuja&page=${currentPage + 1}${qParam}`}
                       className="underline underline-offset-4 hover:text-white"
                     >
                       Next
@@ -288,6 +327,10 @@ export default async function MhaPujaRegistrations({
             )}
           </div>
         )}
+      </div>
+
+      <div className="mt-8">
+        <DoorRegistrations supabase={supabase} panelClassName={panelClassName} query={query} />
       </div>
     </>
   );

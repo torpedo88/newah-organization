@@ -2,6 +2,7 @@ import { TriangleAlert } from "lucide-react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatDateTime } from "@/lib/constants/time";
 import DoorRegistrationsTable from "@/components/admin/door-registrations-table";
+import { applySearch, hasSearch } from "@/lib/admin/search";
 
 type DoorRegistration = {
   id: number;
@@ -18,11 +19,11 @@ type DoorRegistration = {
   children_present: number | null;
 };
 
-async function fetchDoorRegistrations(supabase: SupabaseClient) {
-  const { data, error } = await supabase
-    .from("door_registrations")
-    .select("*")
-    .order("created_at", { ascending: false });
+async function fetchDoorRegistrations(supabase: SupabaseClient, query?: string) {
+  const { data, error } = await applySearch(supabase.from("door_registrations").select("*"), query).order(
+    "created_at",
+    { ascending: false },
+  );
 
   if (error) {
     return { error: error.message, data: null };
@@ -34,11 +35,13 @@ async function fetchDoorRegistrations(supabase: SupabaseClient) {
 export default async function DoorRegistrations({
   supabase,
   panelClassName,
+  query,
 }: {
   supabase: SupabaseClient;
   panelClassName: string;
+  query?: string;
 }) {
-  const { data: registrations, error } = await fetchDoorRegistrations(supabase);
+  const { data: registrations, error } = await fetchDoorRegistrations(supabase, query);
 
   if (error || !registrations) {
     return (
@@ -91,7 +94,7 @@ export default async function DoorRegistrations({
 
       <div className={panelClassName}>
         {registrations.length === 0 ? (
-          <p className="py-10 text-center text-white/60">No door registrations yet.</p>
+          <p className="py-10 text-center text-white/60">{hasSearch(query) ? "No walk-ins match the search." : "No door registrations yet."}</p>
         ) : (
           <DoorRegistrationsTable registrations={registrations} />
         )}
