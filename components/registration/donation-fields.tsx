@@ -143,6 +143,11 @@ export default function DonationFields({ form }: { form: UseFormReturn<Registrat
 
       {choice === "amount" && cents > 0 && (
         <>
+          <div className="rounded-xl border border-patasi/50 bg-patasi/20 p-4 text-center">
+            <p className="text-sm text-white/70">Your custom donation amount</p>
+            <p className="text-3xl font-bold text-white">${toDollars(cents)}</p>
+          </div>
+
           {/* The choice, and its consequence, stated before they reach the card page. */}
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/12 bg-white/[0.04] p-4">
             <input
