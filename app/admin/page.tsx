@@ -16,6 +16,7 @@ import { formatDate, formatDateTime } from "@/lib/constants/time";
 import { logIn, logOut } from "./actions";
 import MhaPujaRegistrations from "./mhapuja-registrations";
 import ComprehensiveTotals from "@/components/admin/comprehensive-totals";
+import SidebarNav from "@/components/admin/sidebar-nav";
 import {
   EVENT_REGISTRATIONS,
   hasRegistrations,
@@ -52,9 +53,12 @@ type RegistrationRow = {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
-      <AdminBackdrop />
-      <div className="relative mx-auto w-full max-w-6xl">{children}</div>
+    <div className="relative min-h-screen">
+      <SidebarNav />
+      <div className="relative ml-64 px-4 py-12 sm:px-6 lg:px-8">
+        <AdminBackdrop />
+        <div className="relative mx-auto w-full max-w-6xl">{children}</div>
+      </div>
     </div>
   );
 }
