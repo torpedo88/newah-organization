@@ -15,8 +15,10 @@ import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import { logIn, logOut } from "./actions";
 import MhaPujaRegistrations from "./mhapuja-registrations";
+import DoorRegistrations from "./door-registrations";
 import ComprehensiveTotals from "@/components/admin/comprehensive-totals";
 import SidebarNav from "@/components/admin/sidebar-nav";
+import RegistrationTotals from "@/components/admin/registration-totals";
 import {
   EVENT_REGISTRATIONS,
   hasRegistrations,
@@ -255,7 +257,11 @@ export default async function AdminPage(props: {
     return (
       <Shell>
         {header}
+<<<<<<< HEAD
         <ComprehensiveTotals supabase={supabase} />
+=======
+        <RegistrationTotals supabase={supabase} />
+>>>>>>> door-register
         <MhaPujaRegistrations
           supabase={supabase}
           currentPage={currentPage}
