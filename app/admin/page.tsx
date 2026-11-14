@@ -19,6 +19,7 @@ import ComprehensiveTotals from "@/components/admin/comprehensive-totals";
 import SidebarNav from "@/components/admin/sidebar-nav";
 import RegistrationTotals from "@/components/admin/registration-totals";
 import RegistrationActions from "@/components/admin/registration-actions";
+import DoorRegistrations from "./door-registrations";
 import {
   EVENT_REGISTRATIONS,
   hasRegistrations,
@@ -264,6 +265,10 @@ export default async function AdminPage(props: {
           currentPage={currentPage}
           panelClassName={PANEL_CLASS}
         />
+        <div className="mt-12">
+          <h2 className="mb-6 text-2xl font-bold text-white">Walk-In Registrations</h2>
+          <DoorRegistrations supabase={supabase} panelClassName={PANEL_CLASS} />
+        </div>
       </Shell>
     );
   }
