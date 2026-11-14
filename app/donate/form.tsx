@@ -64,7 +64,28 @@ export default function DonationForm() {
         // Redirect to Stripe checkout
         window.location.href = data.url;
       } else {
-        // Cash or Zelle - show success message with instructions
+        // Cash or Zelle - save to database for admin approval
+        const response = await fetch("/api/donations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            donor_name: formData.donor_name,
+            donor_email: formData.donor_email,
+            donor_phone: formData.donor_phone,
+            amount: amount,
+            payment_method: formData.payment_method,
+            donation_type: formData.donation_type || "general",
+            anonymous: formData.anonymous,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          setError(data.error || "Failed to save donation");
+          setLoading(false);
+          return;
+        }
+
         setSuccess(true);
         setLoading(false);
       }
