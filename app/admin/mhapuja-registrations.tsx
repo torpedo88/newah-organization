@@ -4,8 +4,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { toDollars } from "@/lib/payments/fees";
 import { formatDate, formatDateTime } from "@/lib/constants/time";
 import CheckinRowButton from "@/components/checkin/checkin-row-button";
-import DoorRegistrationForm from "@/components/admin/door-registration-form";
-import DoorRegistrations from "./door-registrations";
 
 type MhaPujaRow = {
   id: number;
@@ -152,11 +150,6 @@ export default async function MhaPujaRegistrations({
         first. Seats count paid registrations only, cash included. &ldquo;Received by card&rdquo; is before Stripe&rsquo;s
         card fee.
       </p>
-
-      <div className="mb-8 space-y-6">
-        <DoorRegistrationForm />
-        <DoorRegistrations supabase={supabase} panelClassName={panelClassName} />
-      </div>
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
         {stats.map((stat) => (
