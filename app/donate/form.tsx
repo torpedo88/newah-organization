@@ -15,6 +15,7 @@ export default function DonationForm() {
     donor_phone: "",
     amount: "50",
     amountType: "preset",
+    payment_method: "card",
     donation_type: "",
     anonymous: false,
     covers_fee: false,
@@ -37,30 +38,36 @@ export default function DonationForm() {
         return;
       }
 
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          donor_name: formData.donor_name,
-          donor_email: formData.donor_email,
-          donor_phone: formData.donor_phone,
-          amount,
-          donation_type: formData.donation_type || "general",
-          anonymous: formData.anonymous,
-          covers_fee: formData.covers_fee,
-        }),
-      });
+      if (formData.payment_method === "card") {
+        const response = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            donor_name: formData.donor_name,
+            donor_email: formData.donor_email,
+            donor_phone: formData.donor_phone,
+            amount,
+            donation_type: formData.donation_type || "general",
+            anonymous: formData.anonymous,
+            covers_fee: formData.covers_fee,
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok || !data.url) {
-        setError(data.error || "Failed to create checkout session");
+        if (!response.ok || !data.url) {
+          setError(data.error || "Failed to create checkout session");
+          setLoading(false);
+          return;
+        }
+
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        // Cash or Zelle - show success message with instructions
+        setSuccess(true);
         setLoading(false);
-        return;
       }
-
-      // Redirect to Stripe checkout
-      window.location.href = data.url;
     } catch (err) {
       setError("An error occurred. Please try again.");
       setLoading(false);
@@ -76,8 +83,26 @@ export default function DonationForm() {
       )}
 
       {success && (
-        <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-          <p className="text-green-400 text-sm">Thank you for your donation! We&apos;ll send you a receipt shortly.</p>
+        <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4 space-y-3">
+          <p className="text-green-400 text-sm font-semibold">Thank you for your donation!</p>
+          {formData.payment_method === "card" && (
+            <p className="text-green-400 text-sm">Redirecting to checkout...</p>
+          )}
+          {formData.payment_method === "zelle" && (
+            <div className="text-green-400 text-sm space-y-2">
+              <p>Send ${formData.amount} via Zelle to:</p>
+              <p className="font-mono text-xs bg-white/10 p-2 rounded">
+                zelle@newahorganization.org
+              </p>
+              <p className="text-xs">Include your name and "Donation - {formData.donation_type || 'General Fund'}" in the memo.</p>
+            </div>
+          )}
+          {formData.payment_method === "cash" && (
+            <div className="text-green-400 text-sm space-y-2">
+              <p>You can bring ${formData.amount} in cash to our next event.</p>
+              <p className="text-xs">Our team will be there to receive your donation.</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -159,6 +184,32 @@ export default function DonationForm() {
       </div>
 
       <div>
+        <label className="block text-sm font-medium text-white mb-2">Payment Method *</label>
+        <div className="space-y-2">
+          {[
+            { value: "card", label: "💳 Credit/Debit Card", desc: "Pay with card via Stripe" },
+            { value: "zelle", label: "📱 Zelle", desc: "Send donation via Zelle" },
+            { value: "cash", label: "💵 Cash", desc: "Pay at the event" },
+          ].map((option) => (
+            <label key={option.value} className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="radio"
+                name="payment_method"
+                value={option.value}
+                checked={formData.payment_method === option.value}
+                onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
+                className="mt-1 size-4"
+              />
+              <div>
+                <span className="text-sm font-medium text-white">{option.label}</span>
+                <p className="text-xs text-white/60">{option.desc}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div>
         <label className="block text-sm font-medium text-white mb-2">Donation Purpose</label>
         <select
           value={formData.donation_type}
@@ -190,43 +241,57 @@ export default function DonationForm() {
             <span>Donation amount:</span>
             <span>${toDollars(amountCents)}</span>
           </div>
-          <div className="flex justify-between text-sm text-white/70">
-            <span>Processing fee:</span>
-            <span>${toDollars(feeCents)}</span>
-          </div>
-          <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
-            <span>You will be charged:</span>
-            <span>${toDollars(chargedCents)}</span>
-          </div>
-          <div className="flex justify-between text-sm text-white/70">
-            <span>Organization receives:</span>
-            <span>${toDollars(toOrganizationCents)}</span>
-          </div>
+          {formData.payment_method === "card" && (
+            <>
+              <div className="flex justify-between text-sm text-white/70">
+                <span>Processing fee:</span>
+                <span>${toDollars(feeCents)}</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
+                <span>You will be charged:</span>
+                <span>${toDollars(chargedCents)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-white/70">
+                <span>Organization receives:</span>
+                <span>${toDollars(toOrganizationCents)}</span>
+              </div>
+            </>
+          )}
+          {(formData.payment_method === "cash" || formData.payment_method === "zelle") && (
+            <div className="border-t border-white/10 pt-3 flex justify-between text-sm font-medium text-white">
+              <span>You will give:</span>
+              <span>${toDollars(amountCents)}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <div>
-        <label className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={formData.covers_fee}
-            onChange={(e) => setFormData({ ...formData, covers_fee: e.target.checked })}
-            className="size-4 rounded"
-          />
-          <span className="text-sm text-white/80">
-            {formData.covers_fee
-              ? "I'm covering the processing fee so the organization gets my full donation"
-              : "Deduct processing fee from my donation"}
-          </span>
-        </label>
-      </div>
+      {formData.payment_method === "card" && (
+        <div>
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={formData.covers_fee}
+              onChange={(e) => setFormData({ ...formData, covers_fee: e.target.checked })}
+              className="size-4 rounded"
+            />
+            <span className="text-sm text-white/80">
+              {formData.covers_fee
+                ? "I'm covering the processing fee so the organization gets my full donation"
+                : "Deduct processing fee from my donation"}
+            </span>
+          </label>
+        </div>
+      )}
 
       <LiquidButton type="submit" disabled={loading} className="w-full text-white text-sm">
-        {loading ? "Processing..." : "Proceed to Checkout"}
+        {loading ? "Processing..." : formData.payment_method === "card" ? "Proceed to Checkout" : "Continue"}
       </LiquidButton>
 
       <p className="text-xs text-white/50 text-center">
-        Secure payment processing via Stripe. All donations are tax-deductible.
+        {formData.payment_method === "card" && "Secure payment processing via Stripe. All donations are tax-deductible."}
+        {formData.payment_method === "zelle" && "All donations are tax-deductible."}
+        {formData.payment_method === "cash" && "All donations are tax-deductible."}
       </p>
     </form>
   );
