@@ -152,18 +152,6 @@ export default async function MhaPujaRegistrations({
         first. Seats count paid registrations only, cash included. &ldquo;Received by card&rdquo; is before Stripe&rsquo;s
         card fee.
       </p>
-      <p className="mb-6">
-        <Link
-          href="/checkin/mhapuja"
-          className="inline-block rounded-xl bg-patasi px-5 py-3 text-sm font-semibold text-white hover:bg-patasi/90"
-        >
-          Open check-in page
-        </Link>
-        <span className="ml-3 text-sm text-white/55">
-          For the door, or when only part of a group arrives. The buttons below check in everyone
-          registered.
-        </span>
-      </p>
 
       <div className="mb-8 space-y-6">
         <DoorRegistrationForm />
