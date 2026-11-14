@@ -14,6 +14,7 @@ export default function DonationForm() {
     donor_email: "",
     donor_phone: "",
     amount: "50",
+    amountType: "preset",
     donation_type: "",
     anonymous: false,
     covers_fee: false,
@@ -119,28 +120,39 @@ export default function DonationForm() {
             { value: "25", label: "$25 - Student/Limited Income" },
             { value: "50", label: "$50 - Standard Donation" },
             { value: "100", label: "$100 - Generous Donation" },
-            { value: "custom", label: "Custom Amount" },
           ].map((option) => (
             <label key={option.value} className="flex items-center gap-3">
               <input
                 type="radio"
-                name="amount"
+                name="amountType"
                 value={option.value}
-                checked={formData.amount === option.value}
-                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                checked={formData.amountType === "preset" && formData.amount === option.value}
+                onChange={(e) => setFormData({ ...formData, amount: e.target.value, amountType: "preset" })}
                 className="size-4"
               />
               <span className="text-sm text-white">{option.label}</span>
             </label>
           ))}
+          <label className="flex items-center gap-3">
+            <input
+              type="radio"
+              name="amountType"
+              value="custom"
+              checked={formData.amountType === "custom"}
+              onChange={(e) => setFormData({ ...formData, amountType: "custom" })}
+              className="size-4"
+            />
+            <span className="text-sm text-white">Custom Amount</span>
+          </label>
         </div>
 
-        {formData.amount === "custom" && (
+        {formData.amountType === "custom" && (
           <input
             type="number"
             placeholder="Enter custom amount"
-            value={formData.amount === "custom" ? "" : formData.amount}
+            value={formData.amountType === "custom" ? formData.amount : ""}
             onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+            min="1"
             className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-white/50 focus:border-white/40 focus:outline-none text-sm mt-2"
           />
         )}
