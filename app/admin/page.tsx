@@ -18,6 +18,7 @@ import MhaPujaRegistrations from "./mhapuja-registrations";
 import ComprehensiveTotals from "@/components/admin/comprehensive-totals";
 import SidebarNav from "@/components/admin/sidebar-nav";
 import RegistrationTotals from "@/components/admin/registration-totals";
+import RegistrationActions from "@/components/admin/registration-actions";
 import {
   EVENT_REGISTRATIONS,
   hasRegistrations,
@@ -256,6 +257,7 @@ export default async function AdminPage(props: {
     return (
       <Shell>
         {header}
+        <RegistrationActions />
         <ComprehensiveTotals supabase={supabase} />
         <MhaPujaRegistrations
           supabase={supabase}
